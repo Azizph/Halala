@@ -1,0 +1,25 @@
+# Profile ALLaM 7B on the hand-written parallel set: every item goes to one split, no router training.
+# Both tiers are ALLaM: the small tier sees the cleaned/rewritten prompt, the large tier the raw question,
+# so comparing them isolates the effect of the rewrite step.
+# Run: python -m halala collect --config configs/allam_profile.toml --split test
+#      python -m halala profile --config configs/allam_profile.toml
+
+[run]
+data = "data/smoke_parallel.jsonl"
+limit_groups = 0
+split_fractions = { train = 0.0, calib = 0.0, test = 1.0 }
+
+[floors]
+latency_limit_s = 0       # no limit: laptop latency says nothing about a served model
+
+[models.small]
+backend = "ollama"
+name = "allam-7b"
+params_b = 7
+host = "http://localhost:11434"
+
+[models.large]
+backend = "ollama"
+name = "allam-7b"
+params_b = 7
+host = "http://localhost:11434"

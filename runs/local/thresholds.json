@@ -1,0 +1,42 @@
+{
+  "router": {
+    "global": 0.77,
+    "per_variant": {
+      "en": 0.84,
+      "msa": null,
+      "dialect": null,
+      "arabizi": null,
+      "mixed": null
+    },
+    "group_sizes": {
+      "en": 25,
+      "msa": 34,
+      "dialect": 16,
+      "arabizi": 25,
+      "mixed": 25
+    },
+    "epsilon": 0.1,
+    "delta": 0.1,
+    "n": 125
+  },
+  "agreement": {
+    "global": 0.61,
+    "per_variant": {
+      "en": 0.81,
+      "msa": 0.81,
+      "dialect": null,
+      "arabizi": 0.81,
+      "mixed": 0.61
+    },
+    "group_sizes": {
+      "en": 25,
+      "msa": 34,
+      "dialect": 16,
+      "arabizi": 25,
+      "mixed": 25
+    },
+    "epsilon": 0.1,
+    "delta": 0.1,
+    "n": 125
+  }
+}

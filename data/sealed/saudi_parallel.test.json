@@ -1,0 +1,13 @@
+{
+  "source": "saudi_parallel.jsonl",
+  "dev_file": "saudi_parallel.dev.jsonl",
+  "sealed_file": "saudi_parallel.test.jsonl",
+  "sha256": "19d402a46dce8baf380ffc028285c4a95eae65cf401f0e2b48ca9a7fd358ecef",
+  "test_groups": 11,
+  "test_items": 55,
+  "dev_items": 225,
+  "test_fraction": 0.2,
+  "seed": 13,
+  "created": "2026-10-30T16:17:56",
+  "unsealed": []
+}

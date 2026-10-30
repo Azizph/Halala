@@ -1,0 +1,6 @@
+# Keep data byte-exact on every checkout. The sealed test file is checked against a recorded SHA-256,
+# so a line-ending conversion would make it look tampered with.
+*.jsonl -text
+*.json -text
+*.sqlite binary
+*.png binary

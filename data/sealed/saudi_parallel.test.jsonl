@@ -1,0 +1,55 @@
+{"id": "sa-012-en", "group_id": "sa-012", "variant": "en", "question": "If a coffee costs 12 riyals and I pay 50, how much change do I get?", "answers": ["38"], "choices": [], "meta": {}}
+{"id": "sa-012-msa", "group_id": "sa-012", "variant": "msa", "question": "إذا كان سعر القهوة ١٢ ريالا ودفعت ٥٠، فكم يتبقى لي؟", "answers": ["38"], "choices": [], "meta": {}}
+{"id": "sa-012-najdi", "group_id": "sa-012", "variant": "najdi", "question": "القهوة بـ١٢ ريال وعطيته ٥٠، كم يرجع لي؟", "answers": ["38"], "choices": [], "meta": {}}
+{"id": "sa-012-arabizi", "group_id": "sa-012", "variant": "arabizi", "question": "el gahwa bi 12 riyal w 3ateeta 50, kam yarja3 li?", "answers": ["38"], "choices": [], "meta": {}}
+{"id": "sa-012-mixed", "group_id": "sa-012", "variant": "mixed", "question": "القهوة بـ12 ريال وعطيته 50، كم الـ change؟", "answers": ["38"], "choices": [], "meta": {}}
+{"id": "sa-014-en", "group_id": "sa-014", "variant": "en", "question": "What is the largest planet in the solar system?", "answers": ["Jupiter", "المشتري"], "choices": [], "meta": {}}
+{"id": "sa-014-msa", "group_id": "sa-014", "variant": "msa", "question": "ما هو أكبر كوكب في المجموعة الشمسية؟", "answers": ["Jupiter", "المشتري"], "choices": [], "meta": {}}
+{"id": "sa-014-najdi", "group_id": "sa-014", "variant": "najdi", "question": "وش أكبر كوكب بالمجموعة الشمسية؟", "answers": ["Jupiter", "المشتري"], "choices": [], "meta": {}}
+{"id": "sa-014-arabizi", "group_id": "sa-014", "variant": "arabizi", "question": "wesh akbar kawkab bil majmoo3a el shamsiya?", "answers": ["Jupiter", "المشتري"], "choices": [], "meta": {}}
+{"id": "sa-014-mixed", "group_id": "sa-014", "variant": "mixed", "question": "وش أكبر planet في المجموعة الشمسية؟", "answers": ["Jupiter", "المشتري"], "choices": [], "meta": {}}
+{"id": "sa-021-en", "group_id": "sa-021", "variant": "en", "question": "What is the main ingredient in kabsa?", "answers": ["rice", "أرز", "رز"], "choices": [], "meta": {}}
+{"id": "sa-021-msa", "group_id": "sa-021", "variant": "msa", "question": "ما المكون الرئيسي في الكبسة؟", "answers": ["rice", "أرز", "رز"], "choices": [], "meta": {}}
+{"id": "sa-021-najdi", "group_id": "sa-021", "variant": "najdi", "question": "وش المكون الأساسي بالكبسة؟", "answers": ["rice", "أرز", "رز"], "choices": [], "meta": {}}
+{"id": "sa-021-arabizi", "group_id": "sa-021", "variant": "arabizi", "question": "wesh el mukawwin el asasi bil kabsa?", "answers": ["rice", "أرز", "رز"], "choices": [], "meta": {}}
+{"id": "sa-021-mixed", "group_id": "sa-021", "variant": "mixed", "question": "وش الـ main ingredient بالكبسة؟", "answers": ["rice", "أرز", "رز"], "choices": [], "meta": {}}
+{"id": "sa-028-en", "group_id": "sa-028", "variant": "en", "question": "What is half of 90?", "answers": ["45"], "choices": [], "meta": {}}
+{"id": "sa-028-msa", "group_id": "sa-028", "variant": "msa", "question": "ما هو نصف ٩٠؟", "answers": ["45"], "choices": [], "meta": {}}
+{"id": "sa-028-najdi", "group_id": "sa-028", "variant": "najdi", "question": "كم نص ٩٠؟", "answers": ["45"], "choices": [], "meta": {}}
+{"id": "sa-028-arabizi", "group_id": "sa-028", "variant": "arabizi", "question": "kam nos 90?", "answers": ["45"], "choices": [], "meta": {}}
+{"id": "sa-028-mixed", "group_id": "sa-028", "variant": "mixed", "question": "كم الـ half حق 90؟", "answers": ["45"], "choices": [], "meta": {}}
+{"id": "sa-030-en", "group_id": "sa-030", "variant": "en", "question": "Which animal is known as the ship of the desert?", "answers": ["camel", "جمل", "الإبل", "ناقة"], "choices": [], "meta": {}}
+{"id": "sa-030-msa", "group_id": "sa-030", "variant": "msa", "question": "ما الحيوان الذي يعرف بسفينة الصحراء؟", "answers": ["camel", "جمل", "الإبل", "ناقة"], "choices": [], "meta": {}}
+{"id": "sa-030-najdi", "group_id": "sa-030", "variant": "najdi", "question": "وش الحيوان اللي يسمونه سفينة الصحراء؟", "answers": ["camel", "جمل", "الإبل", "ناقة"], "choices": [], "meta": {}}
+{"id": "sa-030-arabizi", "group_id": "sa-030", "variant": "arabizi", "question": "wesh el 7ayawan elly ysammoona safeenat el sa7ra?", "answers": ["camel", "جمل", "الإبل", "ناقة"], "choices": [], "meta": {}}
+{"id": "sa-030-mixed", "group_id": "sa-030", "variant": "mixed", "question": "وش الـ animal اللي يسمونه سفينة الصحراء؟", "answers": ["camel", "جمل", "الإبل", "ناقة"], "choices": [], "meta": {}}
+{"id": "sa-043-en", "group_id": "sa-043", "variant": "en", "question": "What is the fastest land animal?", "answers": ["cheetah", "الفهد", "فهد"], "choices": [], "meta": {}}
+{"id": "sa-043-msa", "group_id": "sa-043", "variant": "msa", "question": "ما هو أسرع حيوان بري؟", "answers": ["cheetah", "الفهد", "فهد"], "choices": [], "meta": {}}
+{"id": "sa-043-najdi", "group_id": "sa-043", "variant": "najdi", "question": "وش أسرع حيوان بري؟", "answers": ["cheetah", "الفهد", "فهد"], "choices": [], "meta": {}}
+{"id": "sa-043-arabizi", "group_id": "sa-043", "variant": "arabizi", "question": "wesh asra3 7ayawan barri?", "answers": ["cheetah", "الفهد", "فهد"], "choices": [], "meta": {}}
+{"id": "sa-043-mixed", "group_id": "sa-043", "variant": "mixed", "question": "وش أسرع land animal؟", "answers": ["cheetah", "الفهد", "فهد"], "choices": [], "meta": {}}
+{"id": "sa-048-en", "group_id": "sa-048", "variant": "en", "question": "How many colours are in a rainbow?", "answers": ["7", "seven", "سبعة", "سبع"], "choices": [], "meta": {}}
+{"id": "sa-048-msa", "group_id": "sa-048", "variant": "msa", "question": "كم عدد ألوان قوس قزح؟", "answers": ["7", "seven", "سبعة", "سبع"], "choices": [], "meta": {}}
+{"id": "sa-048-najdi", "group_id": "sa-048", "variant": "najdi", "question": "وش عدد ألوان قوس قزح؟", "answers": ["7", "seven", "سبعة", "سبع"], "choices": [], "meta": {}}
+{"id": "sa-048-arabizi", "group_id": "sa-048", "variant": "arabizi", "question": "wesh 3adad alwan gos gaza7?", "answers": ["7", "seven", "سبعة", "سبع"], "choices": [], "meta": {}}
+{"id": "sa-048-mixed", "group_id": "sa-048", "variant": "mixed", "question": "قوس قزح كم color؟", "answers": ["7", "seven", "سبعة", "سبع"], "choices": [], "meta": {}}
+{"id": "sa-049-en", "group_id": "sa-049", "variant": "en", "question": "What is the most popular sport in Saudi Arabia?", "answers": ["football", "soccer", "كرة القدم", "الكورة"], "choices": [], "meta": {}}
+{"id": "sa-049-msa", "group_id": "sa-049", "variant": "msa", "question": "ما هي الرياضة الأكثر شعبية في المملكة العربية السعودية؟", "answers": ["football", "soccer", "كرة القدم", "الكورة"], "choices": [], "meta": {}}
+{"id": "sa-049-najdi", "group_id": "sa-049", "variant": "najdi", "question": "وش أشهر رياضة بالسعودية؟", "answers": ["football", "soccer", "كرة القدم", "الكورة"], "choices": [], "meta": {}}
+{"id": "sa-049-arabizi", "group_id": "sa-049", "variant": "arabizi", "question": "wesh ashhar riyada bil sa3odiya?", "answers": ["football", "soccer", "كرة القدم", "الكورة"], "choices": [], "meta": {}}
+{"id": "sa-049-mixed", "group_id": "sa-049", "variant": "mixed", "question": "وش أشهر sport بالسعودية؟", "answers": ["football", "soccer", "كرة القدم", "الكورة"], "choices": [], "meta": {}}
+{"id": "sa-051-en", "group_id": "sa-051", "variant": "en", "question": "How many letters are in the Arabic alphabet?", "answers": ["28", "ثمانية وعشرين", "٢٨"], "choices": [], "meta": {}}
+{"id": "sa-051-msa", "group_id": "sa-051", "variant": "msa", "question": "كم عدد حروف اللغة العربية؟", "answers": ["28", "ثمانية وعشرين", "٢٨"], "choices": [], "meta": {}}
+{"id": "sa-051-najdi", "group_id": "sa-051", "variant": "najdi", "question": "وش عدد حروف العربي؟", "answers": ["28", "ثمانية وعشرين", "٢٨"], "choices": [], "meta": {}}
+{"id": "sa-051-arabizi", "group_id": "sa-051", "variant": "arabizi", "question": "wesh 3adad 7uroof el 3arabi?", "answers": ["28", "ثمانية وعشرين", "٢٨"], "choices": [], "meta": {}}
+{"id": "sa-051-mixed", "group_id": "sa-051", "variant": "mixed", "question": "العربي كم letter؟", "answers": ["28", "ثمانية وعشرين", "٢٨"], "choices": [], "meta": {}}
+{"id": "sa-052-en", "group_id": "sa-052", "variant": "en", "question": "In which direction does the sun rise?", "answers": ["east", "الشرق", "شرق"], "choices": [], "meta": {}}
+{"id": "sa-052-msa", "group_id": "sa-052", "variant": "msa", "question": "من أي جهة تشرق الشمس؟", "answers": ["east", "الشرق", "شرق"], "choices": [], "meta": {}}
+{"id": "sa-052-najdi", "group_id": "sa-052", "variant": "najdi", "question": "الشمس تشرق من وين؟", "answers": ["east", "الشرق", "شرق"], "choices": [], "meta": {}}
+{"id": "sa-052-arabizi", "group_id": "sa-052", "variant": "arabizi", "question": "el shams tishrig min wain?", "answers": ["east", "الشرق", "شرق"], "choices": [], "meta": {}}
+{"id": "sa-052-mixed", "group_id": "sa-052", "variant": "mixed", "question": "الشمس تشرق من أي direction؟", "answers": ["east", "الشرق", "شرق"], "choices": [], "meta": {}}
+{"id": "sa-053-en", "group_id": "sa-053", "variant": "en", "question": "How many sides does a square have?", "answers": ["4", "four", "أربعة", "أربع"], "choices": [], "meta": {}}
+{"id": "sa-053-msa", "group_id": "sa-053", "variant": "msa", "question": "كم عدد أضلاع المربع؟", "answers": ["4", "four", "أربعة", "أربع"], "choices": [], "meta": {}}
+{"id": "sa-053-najdi", "group_id": "sa-053", "variant": "najdi", "question": "وش عدد أضلاع المربع؟", "answers": ["4", "four", "أربعة", "أربع"], "choices": [], "meta": {}}
+{"id": "sa-053-arabizi", "group_id": "sa-053", "variant": "arabizi", "question": "wesh 3adad adla3 el murabba3?", "answers": ["4", "four", "أربعة", "أربع"], "choices": [], "meta": {}}
+{"id": "sa-053-mixed", "group_id": "sa-053", "variant": "mixed", "question": "المربع كم side؟", "answers": ["4", "four", "أربعة", "أربع"], "choices": [], "meta": {}}

@@ -1,0 +1,21 @@
+# The OpenAI-compatible backend, tested against Ollama's /v1 endpoint. Same code path as Humain's API will use;
+# only base_url, model names and the key change. Ollama ignores the key, so HALALA_API_KEY can be unset here.
+
+[run]
+data = "data/smoke_parallel.jsonl"
+limit_groups = 2
+workers = 4
+
+[models.small]
+backend = "openai"
+name = "qwen2.5:1.5b"
+params_b = 1.5
+base_url = "http://localhost:11434/v1"
+api_key_env = "HALALA_API_KEY"
+
+[models.large]
+backend = "openai"
+name = "qwen2.5:7b"
+params_b = 7
+base_url = "http://localhost:11434/v1"
+api_key_env = "HALALA_API_KEY"

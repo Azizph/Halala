@@ -1,0 +1,6 @@
+numpy>=2.0
+scikit-learn>=1.5
+matplotlib>=3.9
+requests>=2.31
+arabizikit==1.0.0
+# optional: xgboost (set [router] model = "xgboost")

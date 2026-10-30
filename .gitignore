@@ -1,0 +1,4 @@
+__pycache__/
+*.pyc
+.venv/
+# runs/ and cache/ are kept on purpose: they hold the results and the replayable call cache.

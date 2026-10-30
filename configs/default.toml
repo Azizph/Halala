@@ -1,0 +1,62 @@
+# Halala base configuration. Other configs are layered on top of this file, so they
+# only need to list what they change. Every run writes the merged config it used.
+
+[run]
+data = "data/synthetic_arith.jsonl"
+out_dir = "runs"
+cache_path = "cache/calls.sqlite"
+seed = 13
+workers = 1               # parallel requests during collection (raise for API backends)
+limit_groups = 0          # 0 = all question groups; set e.g. 40 for a quick live check
+sealed = ""               # sealed test file from `halala seal`; opened only by `collect --split sealed --unseal`
+# Splits are assigned per question group, so all variants of a question share a split.
+split_fractions = { train = 0.5, calib = 0.25, test = 0.25 }
+
+[cost]
+primary = "flops"         # tokens | flops | usd | latency_s (match what the judges score)
+
+[floors]
+# From the challenge brief: "Cheap only counts if the answer is right, and in time."
+min_variant_success = 0.80   # every variant must reach this success rate
+latency_limit_s = 30.0       # a task only succeeds if answered within this; 0 = no limit
+
+[models.small]
+backend = "mock"          # mock | ollama | openai
+name = "mock-small"
+params_b = 7              # billions of parameters, used for the FLOPs estimate
+max_tokens = 64
+usd_per_mtok_in = 0.0
+usd_per_mtok_out = 0.0
+# mock only: chance of a correct answer for each detected variant of the prompt it receives
+mock_accuracy = { en = 0.92, msa = 0.88, dialect = 0.72, arabizi = 0.45, mixed = 0.62 }
+
+[models.large]
+backend = "mock"
+name = "mock-large"
+params_b = 34
+max_tokens = 64
+usd_per_mtok_in = 0.0
+usd_per_mtok_out = 0.0
+mock_accuracy = { en = 0.97, msa = 0.97, dialect = 0.95, arabizi = 0.90, mixed = 0.93 }
+
+[cascade]
+samples = 5               # small-model samples for self-consistency; sample 0 is greedy
+temperature = 0.7
+# Samples after the first reuse its prompt pass (n>1 on an API, or Ollama's prompt cache), so only their
+# generated tokens are counted. Without this, 5 samples of a 7B model cost more than one 34B call.
+# Confirm at kickoff that the serving setup really does this; if not, set false and lower samples.
+shared_prefill = true
+normalize = true          # strip diacritics and tatweel, convert Arabic-Indic digits
+arabizi = "model"         # none | rules | model: rewrite Arabizi in Arabic script before the small model
+arabizi_examples = ""     # JSONL of {"arabizi", "arabic"} pairs added to the rewrite prompt (H5); "" for none
+cache = true              # reuse answers to near-duplicate questions
+cache_similarity = 0.92
+
+[router]
+model = "hgb"             # hgb (scikit-learn HistGradientBoosting) | xgboost | logreg | agreement
+
+[calibrate]
+epsilon = 0.05            # max accuracy loss vs always-large, per variant
+delta = 0.1               # allowed chance that the guarantee fails
+min_group_size = 50       # with epsilon 0.05 and delta 0.1, at least 45 items are needed to certify anything
+small_group_policy = "escalate"   # escalate | global: what to do for variants below min_group_size

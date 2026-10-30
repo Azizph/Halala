@@ -1,0 +1,40 @@
+{"id": "smoke-01-en", "group_id": "smoke-01", "variant": "en", "question": "What is the capital of Saudi Arabia?", "answers": ["Riyadh", "الرياض"]}
+{"id": "smoke-01-msa", "group_id": "smoke-01", "variant": "msa", "question": "ما هي عاصمة المملكة العربية السعودية؟", "answers": ["Riyadh", "الرياض"]}
+{"id": "smoke-01-najdi", "group_id": "smoke-01", "variant": "najdi", "question": "وش عاصمة السعودية؟", "answers": ["Riyadh", "الرياض"]}
+{"id": "smoke-01-arabizi", "group_id": "smoke-01", "variant": "arabizi", "question": "wesh 3asmat el sa3odiya?", "answers": ["Riyadh", "الرياض"]}
+{"id": "smoke-01-mixed", "group_id": "smoke-01", "variant": "mixed", "question": "What's the عاصمة of السعودية?", "answers": ["Riyadh", "الرياض"]}
+{"id": "smoke-02-en", "group_id": "smoke-02", "variant": "en", "question": "How many days are in a week?", "answers": ["7", "seven", "سبعة", "سبع"]}
+{"id": "smoke-02-msa", "group_id": "smoke-02", "variant": "msa", "question": "كم عدد أيام الأسبوع؟", "answers": ["7", "seven", "سبعة", "سبع"]}
+{"id": "smoke-02-najdi", "group_id": "smoke-02", "variant": "najdi", "question": "وش عدد أيام الأسبوع؟", "answers": ["7", "seven", "سبعة", "سبع"]}
+{"id": "smoke-02-arabizi", "group_id": "smoke-02", "variant": "arabizi", "question": "el osboo3 kam yom?", "answers": ["7", "seven", "سبعة", "سبع"]}
+{"id": "smoke-02-mixed", "group_id": "smoke-02", "variant": "mixed", "question": "How many أيام in a week?", "answers": ["7", "seven", "سبعة", "سبع"]}
+{"id": "smoke-03-en", "group_id": "smoke-03", "variant": "en", "question": "What is 15 plus 27?", "answers": ["42"]}
+{"id": "smoke-03-msa", "group_id": "smoke-03", "variant": "msa", "question": "ما ناتج جمع ١٥ و٢٧؟", "answers": ["42"]}
+{"id": "smoke-03-najdi", "group_id": "smoke-03", "variant": "najdi", "question": "كم يطلع ١٥ زايد ٢٧؟", "answers": ["42"]}
+{"id": "smoke-03-arabizi", "group_id": "smoke-03", "variant": "arabizi", "question": "kam ytla3 15 zayed 27?", "answers": ["42"]}
+{"id": "smoke-03-mixed", "group_id": "smoke-03", "variant": "mixed", "question": "كم 15 plus 27؟", "answers": ["42"]}
+{"id": "smoke-04-en", "group_id": "smoke-04", "variant": "en", "question": "What is the largest planet in the solar system?", "answers": ["Jupiter", "المشتري"]}
+{"id": "smoke-04-msa", "group_id": "smoke-04", "variant": "msa", "question": "ما هو أكبر كوكب في المجموعة الشمسية؟", "answers": ["Jupiter", "المشتري"]}
+{"id": "smoke-04-najdi", "group_id": "smoke-04", "variant": "najdi", "question": "وش أكبر كوكب بالمجموعة الشمسية؟", "answers": ["Jupiter", "المشتري"]}
+{"id": "smoke-04-arabizi", "group_id": "smoke-04", "variant": "arabizi", "question": "wesh akbar kawkab bil majmoo3a el shamsiya?", "answers": ["Jupiter", "المشتري"]}
+{"id": "smoke-04-mixed", "group_id": "smoke-04", "variant": "mixed", "question": "وش أكبر planet في the solar system؟", "answers": ["Jupiter", "المشتري"]}
+{"id": "smoke-05-en", "group_id": "smoke-05", "variant": "en", "question": "What is the currency of Saudi Arabia?", "answers": ["riyal", "ريال"]}
+{"id": "smoke-05-msa", "group_id": "smoke-05", "variant": "msa", "question": "ما هي عملة المملكة العربية السعودية؟", "answers": ["riyal", "ريال"]}
+{"id": "smoke-05-najdi", "group_id": "smoke-05", "variant": "najdi", "question": "وش عملة السعودية؟", "answers": ["riyal", "ريال"]}
+{"id": "smoke-05-arabizi", "group_id": "smoke-05", "variant": "arabizi", "question": "wesh 3omlat el sa3odiya?", "answers": ["riyal", "ريال"]}
+{"id": "smoke-05-mixed", "group_id": "smoke-05", "variant": "mixed", "question": "What's the عملة in Saudi?", "answers": ["riyal", "ريال"]}
+{"id": "smoke-06-en", "group_id": "smoke-06", "variant": "en", "question": "What color do you get when you mix blue and yellow?", "answers": ["green", "أخضر"]}
+{"id": "smoke-06-msa", "group_id": "smoke-06", "variant": "msa", "question": "ما اللون الناتج عن خلط الأزرق والأصفر؟", "answers": ["green", "أخضر"]}
+{"id": "smoke-06-najdi", "group_id": "smoke-06", "variant": "najdi", "question": "لو خلطت الأزرق مع الأصفر وش يطلع؟", "answers": ["green", "أخضر"]}
+{"id": "smoke-06-arabizi", "group_id": "smoke-06", "variant": "arabizi", "question": "law khalat el azrag ma3 el asfar wesh ytla3?", "answers": ["green", "أخضر"]}
+{"id": "smoke-06-mixed", "group_id": "smoke-06", "variant": "mixed", "question": "لو mix الأزرق with الأصفر وش يطلع؟", "answers": ["green", "أخضر"]}
+{"id": "smoke-07-en", "group_id": "smoke-07", "variant": "en", "question": "How many minutes are in an hour?", "answers": ["60", "sixty", "ستين", "ستون"]}
+{"id": "smoke-07-msa", "group_id": "smoke-07", "variant": "msa", "question": "كم دقيقة في الساعة؟", "answers": ["60", "sixty", "ستين", "ستون"]}
+{"id": "smoke-07-najdi", "group_id": "smoke-07", "variant": "najdi", "question": "وش عدد الدقايق في الساعة؟", "answers": ["60", "sixty", "ستين", "ستون"]}
+{"id": "smoke-07-arabizi", "group_id": "smoke-07", "variant": "arabizi", "question": "el sa3a kam dgeega?", "answers": ["60", "sixty", "ستين", "ستون"]}
+{"id": "smoke-07-mixed", "group_id": "smoke-07", "variant": "mixed", "question": "How many دقيقة in a ساعة?", "answers": ["60", "sixty", "ستين", "ستون"]}
+{"id": "smoke-08-en", "group_id": "smoke-08", "variant": "en", "question": "Which sea lies along Saudi Arabia's west coast?", "answers": ["Red Sea", "البحر الأحمر", "الأحمر"]}
+{"id": "smoke-08-msa", "group_id": "smoke-08", "variant": "msa", "question": "ما البحر الذي يقع على الساحل الغربي للمملكة العربية السعودية؟", "answers": ["Red Sea", "البحر الأحمر", "الأحمر"]}
+{"id": "smoke-08-najdi", "group_id": "smoke-08", "variant": "najdi", "question": "وش البحر اللي على الساحل الغربي للسعودية؟", "answers": ["Red Sea", "البحر الأحمر", "الأحمر"]}
+{"id": "smoke-08-arabizi", "group_id": "smoke-08", "variant": "arabizi", "question": "wesh el ba7r elly 3ala el sa7el el gharbi lil sa3odiya?", "answers": ["Red Sea", "البحر الأحمر", "الأحمر"]}
+{"id": "smoke-08-mixed", "group_id": "smoke-08", "variant": "mixed", "question": "Which بحر is على the west coast of Saudi?", "answers": ["Red Sea", "البحر الأحمر", "الأحمر"]}

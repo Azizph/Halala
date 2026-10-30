@@ -1,0 +1,79 @@
+{
+  "label": "Halala: router, per-variant thresholds",
+  "accuracy": 0.9764705882352941,
+  "success_rate": 0.9764705882352941,
+  "worst_success_rate": 0.9509803921568627,
+  "cost_per_success": 1182084337349.3977,
+  "relative_cost_per_success": 0.6052678426917523,
+  "p95_latency_s": 0.2731399999999999,
+  "worst_accuracy": 0.9509803921568627,
+  "worst_gap": 0.0,
+  "worst_variant": "najdi",
+  "escalation_rate": 0.4,
+  "cache_rate": 0.0,
+  "cost": {
+    "tokens": 40.911764705882355,
+    "flops": 1154270588235.2942,
+    "usd": 0.0,
+    "latency_s": 0.20457686274509806
+  },
+  "relative_cost": 0.6240649806635458,
+  "per_variant": {
+    "en": {
+      "n": 102,
+      "accuracy": 1.0,
+      "reference_accuracy": 0.9509803921568627,
+      "gap": -0.0490196078431373,
+      "loss_rate": 0.0,
+      "escalation_rate": 0.0,
+      "cost": 434686274509.8039,
+      "success_rate": 1.0,
+      "cost_per_success": 434686274509.8039
+    },
+    "msa": {
+      "n": 102,
+      "accuracy": 1.0,
+      "reference_accuracy": 0.9901960784313726,
+      "gap": -0.009803921568627416,
+      "loss_rate": 0.0,
+      "escalation_rate": 0.0,
+      "cost": 459666666666.6667,
+      "success_rate": 1.0,
+      "cost_per_success": 459666666666.6667
+    },
+    "najdi": {
+      "n": 102,
+      "accuracy": 0.9509803921568627,
+      "reference_accuracy": 0.9509803921568627,
+      "gap": 0.0,
+      "loss_rate": 0.0,
+      "escalation_rate": 1.0,
+      "cost": 1898666666666.6667,
+      "success_rate": 0.9509803921568627,
+      "cost_per_success": 1996536082474.2268
+    },
+    "arabizi": {
+      "n": 102,
+      "accuracy": 0.9803921568627451,
+      "reference_accuracy": 0.8921568627450981,
+      "gap": -0.08823529411764697,
+      "loss_rate": 0.0196078431372549,
+      "escalation_rate": 0.0,
+      "cost": 1215666666666.6667,
+      "success_rate": 0.9803921568627451,
+      "cost_per_success": 1239980000000.0
+    },
+    "mixed": {
+      "n": 102,
+      "accuracy": 0.9509803921568627,
+      "reference_accuracy": 0.9509803921568627,
+      "gap": 0.0,
+      "loss_rate": 0.0,
+      "escalation_rate": 1.0,
+      "cost": 1762666666666.6667,
+      "success_rate": 0.9509803921568627,
+      "cost_per_success": 1853525773195.8762
+    }
+  },
+  "meets_floors": true
+}

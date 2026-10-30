@@ -1,0 +1,225 @@
+{"id": "sa-001-en", "group_id": "sa-001", "variant": "en", "question": "What is the capital of Saudi Arabia?", "answers": ["Riyadh", "الرياض"], "choices": [], "meta": {}}
+{"id": "sa-001-msa", "group_id": "sa-001", "variant": "msa", "question": "ما هي عاصمة المملكة العربية السعودية؟", "answers": ["Riyadh", "الرياض"], "choices": [], "meta": {}}
+{"id": "sa-001-najdi", "group_id": "sa-001", "variant": "najdi", "question": "وش عاصمة السعودية؟", "answers": ["Riyadh", "الرياض"], "choices": [], "meta": {}}
+{"id": "sa-001-arabizi", "group_id": "sa-001", "variant": "arabizi", "question": "wesh 3asmat el sa3odiya?", "answers": ["Riyadh", "الرياض"], "choices": [], "meta": {}}
+{"id": "sa-001-mixed", "group_id": "sa-001", "variant": "mixed", "question": "وش الـ capital حق السعودية؟", "answers": ["Riyadh", "الرياض"], "choices": [], "meta": {}}
+{"id": "sa-002-en", "group_id": "sa-002", "variant": "en", "question": "What is the currency of Saudi Arabia?", "answers": ["riyal", "ريال"], "choices": [], "meta": {}}
+{"id": "sa-002-msa", "group_id": "sa-002", "variant": "msa", "question": "ما هي عملة المملكة العربية السعودية؟", "answers": ["riyal", "ريال"], "choices": [], "meta": {}}
+{"id": "sa-002-najdi", "group_id": "sa-002", "variant": "najdi", "question": "وش عملة السعودية؟", "answers": ["riyal", "ريال"], "choices": [], "meta": {}}
+{"id": "sa-002-arabizi", "group_id": "sa-002", "variant": "arabizi", "question": "wesh 3omlat el sa3odiya?", "answers": ["riyal", "ريال"], "choices": [], "meta": {}}
+{"id": "sa-002-mixed", "group_id": "sa-002", "variant": "mixed", "question": "وش الـ currency في السعودية؟", "answers": ["riyal", "ريال"], "choices": [], "meta": {}}
+{"id": "sa-003-en", "group_id": "sa-003", "variant": "en", "question": "How many halalas are in one riyal?", "answers": ["100", "مئة", "مائة"], "choices": [], "meta": {}}
+{"id": "sa-003-msa", "group_id": "sa-003", "variant": "msa", "question": "كم هللة في الريال الواحد؟", "answers": ["100", "مئة", "مائة"], "choices": [], "meta": {}}
+{"id": "sa-003-najdi", "group_id": "sa-003", "variant": "najdi", "question": "الريال كم هللة؟", "answers": ["100", "مئة", "مائة"], "choices": [], "meta": {}}
+{"id": "sa-003-arabizi", "group_id": "sa-003", "variant": "arabizi", "question": "el riyal kam halala?", "answers": ["100", "مئة", "مائة"], "choices": [], "meta": {}}
+{"id": "sa-003-mixed", "group_id": "sa-003", "variant": "mixed", "question": "الريال كم halala؟", "answers": ["100", "مئة", "مائة"], "choices": [], "meta": {}}
+{"id": "sa-004-en", "group_id": "sa-004", "variant": "en", "question": "Which sea lies along Saudi Arabia's west coast?", "answers": ["Red Sea", "البحر الأحمر", "الأحمر"], "choices": [], "meta": {}}
+{"id": "sa-004-msa", "group_id": "sa-004", "variant": "msa", "question": "ما البحر الذي يقع على الساحل الغربي للمملكة؟", "answers": ["Red Sea", "البحر الأحمر", "الأحمر"], "choices": [], "meta": {}}
+{"id": "sa-004-najdi", "group_id": "sa-004", "variant": "najdi", "question": "وش البحر اللي على الساحل الغربي للسعودية؟", "answers": ["Red Sea", "البحر الأحمر", "الأحمر"], "choices": [], "meta": {}}
+{"id": "sa-004-arabizi", "group_id": "sa-004", "variant": "arabizi", "question": "wesh el ba7r elly 3ala el sa7el el gharbi lil sa3odiya?", "answers": ["Red Sea", "البحر الأحمر", "الأحمر"], "choices": [], "meta": {}}
+{"id": "sa-004-mixed", "group_id": "sa-004", "variant": "mixed", "question": "وش الـ sea اللي على الساحل الغربي؟", "answers": ["Red Sea", "البحر الأحمر", "الأحمر"], "choices": [], "meta": {}}
+{"id": "sa-005-en", "group_id": "sa-005", "variant": "en", "question": "Which city is Saudi Arabia's main Red Sea port?", "answers": ["Jeddah", "جدة"], "choices": [], "meta": {}}
+{"id": "sa-005-msa", "group_id": "sa-005", "variant": "msa", "question": "ما المدينة التي تعد الميناء الرئيسي للمملكة على البحر الأحمر؟", "answers": ["Jeddah", "جدة"], "choices": [], "meta": {}}
+{"id": "sa-005-najdi", "group_id": "sa-005", "variant": "najdi", "question": "وش المدينة اللي فيها أكبر ميناء على البحر الأحمر؟", "answers": ["Jeddah", "جدة"], "choices": [], "meta": {}}
+{"id": "sa-005-arabizi", "group_id": "sa-005", "variant": "arabizi", "question": "wesh el madina elly feeha akbar meena 3ala el ba7r el a7mar?", "answers": ["Jeddah", "جدة"], "choices": [], "meta": {}}
+{"id": "sa-005-mixed", "group_id": "sa-005", "variant": "mixed", "question": "وش المدينة اللي فيها أكبر port على البحر الأحمر؟", "answers": ["Jeddah", "جدة"], "choices": [], "meta": {}}
+{"id": "sa-006-en", "group_id": "sa-006", "variant": "en", "question": "In which city is the Kaaba?", "answers": ["Mecca", "Makkah", "مكة"], "choices": [], "meta": {}}
+{"id": "sa-006-msa", "group_id": "sa-006", "variant": "msa", "question": "في أي مدينة تقع الكعبة؟", "answers": ["Mecca", "Makkah", "مكة"], "choices": [], "meta": {}}
+{"id": "sa-006-najdi", "group_id": "sa-006", "variant": "najdi", "question": "الكعبة بأي مدينة؟", "answers": ["Mecca", "Makkah", "مكة"], "choices": [], "meta": {}}
+{"id": "sa-006-arabizi", "group_id": "sa-006", "variant": "arabizi", "question": "el ka3ba bi ay madina?", "answers": ["Mecca", "Makkah", "مكة"], "choices": [], "meta": {}}
+{"id": "sa-006-mixed", "group_id": "sa-006", "variant": "mixed", "question": "الكعبة في أي city؟", "answers": ["Mecca", "Makkah", "مكة"], "choices": [], "meta": {}}
+{"id": "sa-007-en", "group_id": "sa-007", "variant": "en", "question": "How many days are in a week?", "answers": ["7", "seven", "سبعة", "سبع"], "choices": [], "meta": {}}
+{"id": "sa-007-msa", "group_id": "sa-007", "variant": "msa", "question": "كم عدد أيام الأسبوع؟", "answers": ["7", "seven", "سبعة", "سبع"], "choices": [], "meta": {}}
+{"id": "sa-007-najdi", "group_id": "sa-007", "variant": "najdi", "question": "الأسبوع كم يوم؟", "answers": ["7", "seven", "سبعة", "سبع"], "choices": [], "meta": {}}
+{"id": "sa-007-arabizi", "group_id": "sa-007", "variant": "arabizi", "question": "el osboo3 kam yom?", "answers": ["7", "seven", "سبعة", "سبع"], "choices": [], "meta": {}}
+{"id": "sa-007-mixed", "group_id": "sa-007", "variant": "mixed", "question": "الأسبوع كم day؟", "answers": ["7", "seven", "سبعة", "سبع"], "choices": [], "meta": {}}
+{"id": "sa-008-en", "group_id": "sa-008", "variant": "en", "question": "How many minutes are in an hour?", "answers": ["60", "sixty", "ستين", "ستون"], "choices": [], "meta": {}}
+{"id": "sa-008-msa", "group_id": "sa-008", "variant": "msa", "question": "كم دقيقة في الساعة الواحدة؟", "answers": ["60", "sixty", "ستين", "ستون"], "choices": [], "meta": {}}
+{"id": "sa-008-najdi", "group_id": "sa-008", "variant": "najdi", "question": "الساعة كم دقيقة؟", "answers": ["60", "sixty", "ستين", "ستون"], "choices": [], "meta": {}}
+{"id": "sa-008-arabizi", "group_id": "sa-008", "variant": "arabizi", "question": "el sa3a kam dagiga?", "answers": ["60", "sixty", "ستين", "ستون"], "choices": [], "meta": {}}
+{"id": "sa-008-mixed", "group_id": "sa-008", "variant": "mixed", "question": "الساعة كم minute؟", "answers": ["60", "sixty", "ستين", "ستون"], "choices": [], "meta": {}}
+{"id": "sa-009-en", "group_id": "sa-009", "variant": "en", "question": "How many months are in a year?", "answers": ["12", "twelve", "اثنا عشر", "١٢"], "choices": [], "meta": {}}
+{"id": "sa-009-msa", "group_id": "sa-009", "variant": "msa", "question": "كم عدد أشهر السنة؟", "answers": ["12", "twelve", "اثنا عشر", "١٢"], "choices": [], "meta": {}}
+{"id": "sa-009-najdi", "group_id": "sa-009", "variant": "najdi", "question": "السنة كم شهر؟", "answers": ["12", "twelve", "اثنا عشر", "١٢"], "choices": [], "meta": {}}
+{"id": "sa-009-arabizi", "group_id": "sa-009", "variant": "arabizi", "question": "el sana kam shahar?", "answers": ["12", "twelve", "اثنا عشر", "١٢"], "choices": [], "meta": {}}
+{"id": "sa-009-mixed", "group_id": "sa-009", "variant": "mixed", "question": "السنة كم month؟", "answers": ["12", "twelve", "اثنا عشر", "١٢"], "choices": [], "meta": {}}
+{"id": "sa-010-en", "group_id": "sa-010", "variant": "en", "question": "What is 15 plus 27?", "answers": ["42"], "choices": [], "meta": {}}
+{"id": "sa-010-msa", "group_id": "sa-010", "variant": "msa", "question": "ما ناتج جمع ١٥ و٢٧؟", "answers": ["42"], "choices": [], "meta": {}}
+{"id": "sa-010-najdi", "group_id": "sa-010", "variant": "najdi", "question": "كم يطلع ١٥ زايد ٢٧؟", "answers": ["42"], "choices": [], "meta": {}}
+{"id": "sa-010-arabizi", "group_id": "sa-010", "variant": "arabizi", "question": "kam ytla3 15 zayed 27?", "answers": ["42"], "choices": [], "meta": {}}
+{"id": "sa-010-mixed", "group_id": "sa-010", "variant": "mixed", "question": "كم يطلع 15 plus 27؟", "answers": ["42"], "choices": [], "meta": {}}
+{"id": "sa-011-en", "group_id": "sa-011", "variant": "en", "question": "What is 8 times 7?", "answers": ["56"], "choices": [], "meta": {}}
+{"id": "sa-011-msa", "group_id": "sa-011", "variant": "msa", "question": "ما ناتج ضرب ٨ في ٧؟", "answers": ["56"], "choices": [], "meta": {}}
+{"id": "sa-011-najdi", "group_id": "sa-011", "variant": "najdi", "question": "كم يطلع ٨ ضرب ٧؟", "answers": ["56"], "choices": [], "meta": {}}
+{"id": "sa-011-arabizi", "group_id": "sa-011", "variant": "arabizi", "question": "kam ytla3 8 darb 7?", "answers": ["56"], "choices": [], "meta": {}}
+{"id": "sa-011-mixed", "group_id": "sa-011", "variant": "mixed", "question": "كم يطلع 8 times 7؟", "answers": ["56"], "choices": [], "meta": {}}
+{"id": "sa-013-en", "group_id": "sa-013", "variant": "en", "question": "What colour do you get when you mix blue and yellow?", "answers": ["green", "أخضر"], "choices": [], "meta": {}}
+{"id": "sa-013-msa", "group_id": "sa-013", "variant": "msa", "question": "ما اللون الناتج عن خلط الأزرق والأصفر؟", "answers": ["green", "أخضر"], "choices": [], "meta": {}}
+{"id": "sa-013-najdi", "group_id": "sa-013", "variant": "najdi", "question": "لو خلطت الأزرق مع الأصفر وش يطلع؟", "answers": ["green", "أخضر"], "choices": [], "meta": {}}
+{"id": "sa-013-arabizi", "group_id": "sa-013", "variant": "arabizi", "question": "law khalatt el azrag ma3 el asfar wesh ytla3?", "answers": ["green", "أخضر"], "choices": [], "meta": {}}
+{"id": "sa-013-mixed", "group_id": "sa-013", "variant": "mixed", "question": "لو خلطت الأزرق with الأصفر وش يطلع؟", "answers": ["green", "أخضر"], "choices": [], "meta": {}}
+{"id": "sa-015-en", "group_id": "sa-015", "variant": "en", "question": "What gas do humans breathe in to stay alive?", "answers": ["oxygen", "أكسجين", "اكسجين"], "choices": [], "meta": {}}
+{"id": "sa-015-msa", "group_id": "sa-015", "variant": "msa", "question": "ما الغاز الذي يتنفسه الإنسان ليبقى حيا؟", "answers": ["oxygen", "أكسجين", "اكسجين"], "choices": [], "meta": {}}
+{"id": "sa-015-najdi", "group_id": "sa-015", "variant": "najdi", "question": "وش الغاز اللي نتنفسه عشان نعيش؟", "answers": ["oxygen", "أكسجين", "اكسجين"], "choices": [], "meta": {}}
+{"id": "sa-015-arabizi", "group_id": "sa-015", "variant": "arabizi", "question": "wesh el ghaz elly netnafasa 3ashan n3eesh?", "answers": ["oxygen", "أكسجين", "اكسجين"], "choices": [], "meta": {}}
+{"id": "sa-015-mixed", "group_id": "sa-015", "variant": "mixed", "question": "وش الـ gas اللي نتنفسه عشان نعيش؟", "answers": ["oxygen", "أكسجين", "اكسجين"], "choices": [], "meta": {}}
+{"id": "sa-016-en", "group_id": "sa-016", "variant": "en", "question": "At what temperature in Celsius does water boil at sea level?", "answers": ["100"], "choices": [], "meta": {}}
+{"id": "sa-016-msa", "group_id": "sa-016", "variant": "msa", "question": "عند أي درجة حرارة مئوية يغلي الماء عند مستوى سطح البحر؟", "answers": ["100"], "choices": [], "meta": {}}
+{"id": "sa-016-najdi", "group_id": "sa-016", "variant": "najdi", "question": "الموية تغلي على كم درجة مئوية؟", "answers": ["100"], "choices": [], "meta": {}}
+{"id": "sa-016-arabizi", "group_id": "sa-016", "variant": "arabizi", "question": "el moya tighli 3ala kam daraja?", "answers": ["100"], "choices": [], "meta": {}}
+{"id": "sa-016-mixed", "group_id": "sa-016", "variant": "mixed", "question": "الموية تغلي على كم degree؟", "answers": ["100"], "choices": [], "meta": {}}
+{"id": "sa-017-en", "group_id": "sa-017", "variant": "en", "question": "How many players are on a football team on the pitch?", "answers": ["11", "eleven", "أحد عشر", "١١"], "choices": [], "meta": {}}
+{"id": "sa-017-msa", "group_id": "sa-017", "variant": "msa", "question": "كم عدد لاعبي فريق كرة القدم في الملعب؟", "answers": ["11", "eleven", "أحد عشر", "١١"], "choices": [], "meta": {}}
+{"id": "sa-017-najdi", "group_id": "sa-017", "variant": "najdi", "question": "فريق الكورة كم لاعب بالملعب؟", "answers": ["11", "eleven", "أحد عشر", "١١"], "choices": [], "meta": {}}
+{"id": "sa-017-arabizi", "group_id": "sa-017", "variant": "arabizi", "question": "fareeg el koora kam la3eb bil mal3ab?", "answers": ["11", "eleven", "أحد عشر", "١١"], "choices": [], "meta": {}}
+{"id": "sa-017-mixed", "group_id": "sa-017", "variant": "mixed", "question": "فريق الـ football كم player بالملعب؟", "answers": ["11", "eleven", "أحد عشر", "١١"], "choices": [], "meta": {}}
+{"id": "sa-018-en", "group_id": "sa-018", "variant": "en", "question": "What is the first month of the Hijri calendar?", "answers": ["Muharram", "محرم"], "choices": [], "meta": {}}
+{"id": "sa-018-msa", "group_id": "sa-018", "variant": "msa", "question": "ما هو أول شهر في التقويم الهجري؟", "answers": ["Muharram", "محرم"], "choices": [], "meta": {}}
+{"id": "sa-018-najdi", "group_id": "sa-018", "variant": "najdi", "question": "وش أول شهر بالتقويم الهجري؟", "answers": ["Muharram", "محرم"], "choices": [], "meta": {}}
+{"id": "sa-018-arabizi", "group_id": "sa-018", "variant": "arabizi", "question": "wesh awwal shahar bil tagweem el hijri?", "answers": ["Muharram", "محرم"], "choices": [], "meta": {}}
+{"id": "sa-018-mixed", "group_id": "sa-018", "variant": "mixed", "question": "وش أول month بالتقويم الهجري؟", "answers": ["Muharram", "محرم"], "choices": [], "meta": {}}
+{"id": "sa-019-en", "group_id": "sa-019", "variant": "en", "question": "In which month do Muslims fast?", "answers": ["Ramadan", "رمضان"], "choices": [], "meta": {}}
+{"id": "sa-019-msa", "group_id": "sa-019", "variant": "msa", "question": "في أي شهر يصوم المسلمون؟", "answers": ["Ramadan", "رمضان"], "choices": [], "meta": {}}
+{"id": "sa-019-najdi", "group_id": "sa-019", "variant": "najdi", "question": "بأي شهر نصوم؟", "answers": ["Ramadan", "رمضان"], "choices": [], "meta": {}}
+{"id": "sa-019-arabizi", "group_id": "sa-019", "variant": "arabizi", "question": "bi ay shahar nsoom?", "answers": ["Ramadan", "رمضان"], "choices": [], "meta": {}}
+{"id": "sa-019-mixed", "group_id": "sa-019", "variant": "mixed", "question": "في أي month نصوم؟", "answers": ["Ramadan", "رمضان"], "choices": [], "meta": {}}
+{"id": "sa-020-en", "group_id": "sa-020", "variant": "en", "question": "How many prayers do Muslims perform each day?", "answers": ["5", "five", "خمس", "خمسة"], "choices": [], "meta": {}}
+{"id": "sa-020-msa", "group_id": "sa-020", "variant": "msa", "question": "كم عدد الصلوات المفروضة في اليوم؟", "answers": ["5", "five", "خمس", "خمسة"], "choices": [], "meta": {}}
+{"id": "sa-020-najdi", "group_id": "sa-020", "variant": "najdi", "question": "كم صلاة في اليوم؟", "answers": ["5", "five", "خمس", "خمسة"], "choices": [], "meta": {}}
+{"id": "sa-020-arabizi", "group_id": "sa-020", "variant": "arabizi", "question": "kam salah fi el yom?", "answers": ["5", "five", "خمس", "خمسة"], "choices": [], "meta": {}}
+{"id": "sa-020-mixed", "group_id": "sa-020", "variant": "mixed", "question": "كم prayer في اليوم؟", "answers": ["5", "five", "خمس", "خمسة"], "choices": [], "meta": {}}
+{"id": "sa-022-en", "group_id": "sa-022", "variant": "en", "question": "What fruit comes from a palm tree?", "answers": ["dates", "date", "تمر", "بلح", "رطب"], "choices": [], "meta": {}}
+{"id": "sa-022-msa", "group_id": "sa-022", "variant": "msa", "question": "ما الثمرة التي تنتجها شجرة النخيل؟", "answers": ["dates", "date", "تمر", "بلح", "رطب"], "choices": [], "meta": {}}
+{"id": "sa-022-najdi", "group_id": "sa-022", "variant": "najdi", "question": "وش اللي يطلع من النخلة؟", "answers": ["dates", "date", "تمر", "بلح", "رطب"], "choices": [], "meta": {}}
+{"id": "sa-022-arabizi", "group_id": "sa-022", "variant": "arabizi", "question": "wesh elly ytla3 min el nakhla?", "answers": ["dates", "date", "تمر", "بلح", "رطب"], "choices": [], "meta": {}}
+{"id": "sa-022-mixed", "group_id": "sa-022", "variant": "mixed", "question": "وش الـ fruit اللي يطلع من النخلة؟", "answers": ["dates", "date", "تمر", "بلح", "رطب"], "choices": [], "meta": {}}
+{"id": "sa-023-en", "group_id": "sa-023", "variant": "en", "question": "What is the largest desert in Saudi Arabia?", "answers": ["Empty Quarter", "Rub al Khali", "الربع الخالي"], "choices": [], "meta": {}}
+{"id": "sa-023-msa", "group_id": "sa-023", "variant": "msa", "question": "ما أكبر صحراء في المملكة العربية السعودية؟", "answers": ["Empty Quarter", "Rub al Khali", "الربع الخالي"], "choices": [], "meta": {}}
+{"id": "sa-023-najdi", "group_id": "sa-023", "variant": "najdi", "question": "وش أكبر صحراء بالسعودية؟", "answers": ["Empty Quarter", "Rub al Khali", "الربع الخالي"], "choices": [], "meta": {}}
+{"id": "sa-023-arabizi", "group_id": "sa-023", "variant": "arabizi", "question": "wesh akbar sa7ra bil sa3odiya?", "answers": ["Empty Quarter", "Rub al Khali", "الربع الخالي"], "choices": [], "meta": {}}
+{"id": "sa-023-mixed", "group_id": "sa-023", "variant": "mixed", "question": "وش أكبر desert بالسعودية؟", "answers": ["Empty Quarter", "Rub al Khali", "الربع الخالي"], "choices": [], "meta": {}}
+{"id": "sa-024-en", "group_id": "sa-024", "variant": "en", "question": "Which Saudi city is known for its oil industry in the Eastern Province?", "answers": ["Dhahran", "الظهران", "Dammam", "الدمام"], "choices": [], "meta": {}}
+{"id": "sa-024-msa", "group_id": "sa-024", "variant": "msa", "question": "ما المدينة السعودية المعروفة بصناعة النفط في المنطقة الشرقية؟", "answers": ["Dhahran", "الظهران", "Dammam", "الدمام"], "choices": [], "meta": {}}
+{"id": "sa-024-najdi", "group_id": "sa-024", "variant": "najdi", "question": "وش المدينة بالشرقية المعروفة بالبترول؟", "answers": ["Dhahran", "الظهران", "Dammam", "الدمام"], "choices": [], "meta": {}}
+{"id": "sa-024-arabizi", "group_id": "sa-024", "variant": "arabizi", "question": "wesh el madina bil sharqiya el ma3roofa bil betrol?", "answers": ["Dhahran", "الظهران", "Dammam", "الدمام"], "choices": [], "meta": {}}
+{"id": "sa-024-mixed", "group_id": "sa-024", "variant": "mixed", "question": "وش المدينة بالشرقية المعروفة بالـ oil؟", "answers": ["Dhahran", "الظهران", "Dammam", "الدمام"], "choices": [], "meta": {}}
+{"id": "sa-025-en", "group_id": "sa-025", "variant": "en", "question": "How many wheels does a car usually have?", "answers": ["4", "four", "أربع", "أربعة"], "choices": [], "meta": {}}
+{"id": "sa-025-msa", "group_id": "sa-025", "variant": "msa", "question": "كم عدد عجلات السيارة عادة؟", "answers": ["4", "four", "أربع", "أربعة"], "choices": [], "meta": {}}
+{"id": "sa-025-najdi", "group_id": "sa-025", "variant": "najdi", "question": "السيارة كم كفر بالعادة؟", "answers": ["4", "four", "أربع", "أربعة"], "choices": [], "meta": {}}
+{"id": "sa-025-arabizi", "group_id": "sa-025", "variant": "arabizi", "question": "el sayyara kam kafar bil 3ada?", "answers": ["4", "four", "أربع", "أربعة"], "choices": [], "meta": {}}
+{"id": "sa-025-mixed", "group_id": "sa-025", "variant": "mixed", "question": "السيارة كم wheel بالعادة؟", "answers": ["4", "four", "أربع", "أربعة"], "choices": [], "meta": {}}
+{"id": "sa-026-en", "group_id": "sa-026", "variant": "en", "question": "What is the capital of Egypt?", "answers": ["Cairo", "القاهرة"], "choices": [], "meta": {}}
+{"id": "sa-026-msa", "group_id": "sa-026", "variant": "msa", "question": "ما هي عاصمة مصر؟", "answers": ["Cairo", "القاهرة"], "choices": [], "meta": {}}
+{"id": "sa-026-najdi", "group_id": "sa-026", "variant": "najdi", "question": "وش عاصمة مصر؟", "answers": ["Cairo", "القاهرة"], "choices": [], "meta": {}}
+{"id": "sa-026-arabizi", "group_id": "sa-026", "variant": "arabizi", "question": "wesh 3asmat masr?", "answers": ["Cairo", "القاهرة"], "choices": [], "meta": {}}
+{"id": "sa-026-mixed", "group_id": "sa-026", "variant": "mixed", "question": "وش الـ capital حق مصر؟", "answers": ["Cairo", "القاهرة"], "choices": [], "meta": {}}
+{"id": "sa-027-en", "group_id": "sa-027", "variant": "en", "question": "How many sides does a triangle have?", "answers": ["3", "three", "ثلاثة", "ثلاث"], "choices": [], "meta": {}}
+{"id": "sa-027-msa", "group_id": "sa-027", "variant": "msa", "question": "كم عدد أضلاع المثلث؟", "answers": ["3", "three", "ثلاثة", "ثلاث"], "choices": [], "meta": {}}
+{"id": "sa-027-najdi", "group_id": "sa-027", "variant": "najdi", "question": "المثلث كم ضلع؟", "answers": ["3", "three", "ثلاثة", "ثلاث"], "choices": [], "meta": {}}
+{"id": "sa-027-arabizi", "group_id": "sa-027", "variant": "arabizi", "question": "el muthallath kam dil3?", "answers": ["3", "three", "ثلاثة", "ثلاث"], "choices": [], "meta": {}}
+{"id": "sa-027-mixed", "group_id": "sa-027", "variant": "mixed", "question": "المثلث كم side؟", "answers": ["3", "three", "ثلاثة", "ثلاث"], "choices": [], "meta": {}}
+{"id": "sa-029-en", "group_id": "sa-029", "variant": "en", "question": "What is the official language of Saudi Arabia?", "answers": ["Arabic", "العربية", "عربي"], "choices": [], "meta": {}}
+{"id": "sa-029-msa", "group_id": "sa-029", "variant": "msa", "question": "ما اللغة الرسمية في المملكة العربية السعودية؟", "answers": ["Arabic", "العربية", "عربي"], "choices": [], "meta": {}}
+{"id": "sa-029-najdi", "group_id": "sa-029", "variant": "najdi", "question": "وش اللغة الرسمية بالسعودية؟", "answers": ["Arabic", "العربية", "عربي"], "choices": [], "meta": {}}
+{"id": "sa-029-arabizi", "group_id": "sa-029", "variant": "arabizi", "question": "wesh el lugha el rasmiya bil sa3odiya?", "answers": ["Arabic", "العربية", "عربي"], "choices": [], "meta": {}}
+{"id": "sa-029-mixed", "group_id": "sa-029", "variant": "mixed", "question": "وش الـ official language بالسعودية؟", "answers": ["Arabic", "العربية", "عربي"], "choices": [], "meta": {}}
+{"id": "sa-031-en", "group_id": "sa-031", "variant": "en", "question": "How many days are in February in a normal year?", "answers": ["28"], "choices": [], "meta": {}}
+{"id": "sa-031-msa", "group_id": "sa-031", "variant": "msa", "question": "كم عدد أيام شهر فبراير في السنة العادية؟", "answers": ["28"], "choices": [], "meta": {}}
+{"id": "sa-031-najdi", "group_id": "sa-031", "variant": "najdi", "question": "وش عدد أيام فبراير بالسنة العادية؟", "answers": ["28"], "choices": [], "meta": {}}
+{"id": "sa-031-arabizi", "group_id": "sa-031", "variant": "arabizi", "question": "wesh 3adad ayyam febrayer bil sana el 3adiya?", "answers": ["28"], "choices": [], "meta": {}}
+{"id": "sa-031-mixed", "group_id": "sa-031", "variant": "mixed", "question": "وش عدد الـ days في فبراير بالسنة العادية؟", "answers": ["28"], "choices": [], "meta": {}}
+{"id": "sa-032-en", "group_id": "sa-032", "variant": "en", "question": "What is the opposite of hot?", "answers": ["cold", "بارد"], "choices": [], "meta": {}}
+{"id": "sa-032-msa", "group_id": "sa-032", "variant": "msa", "question": "ما عكس كلمة حار؟", "answers": ["cold", "بارد"], "choices": [], "meta": {}}
+{"id": "sa-032-najdi", "group_id": "sa-032", "variant": "najdi", "question": "وش عكس حار؟", "answers": ["cold", "بارد"], "choices": [], "meta": {}}
+{"id": "sa-032-arabizi", "group_id": "sa-032", "variant": "arabizi", "question": "wesh 3aks 7ar?", "answers": ["cold", "بارد"], "choices": [], "meta": {}}
+{"id": "sa-032-mixed", "group_id": "sa-032", "variant": "mixed", "question": "وش الـ opposite حق حار؟", "answers": ["cold", "بارد"], "choices": [], "meta": {}}
+{"id": "sa-033-en", "group_id": "sa-033", "variant": "en", "question": "Which gulf lies to the east of Saudi Arabia?", "answers": ["Arabian Gulf", "الخليج العربي", "الخليج"], "choices": [], "meta": {}}
+{"id": "sa-033-msa", "group_id": "sa-033", "variant": "msa", "question": "ما الخليج الذي يقع شرق المملكة العربية السعودية؟", "answers": ["Arabian Gulf", "الخليج العربي", "الخليج"], "choices": [], "meta": {}}
+{"id": "sa-033-najdi", "group_id": "sa-033", "variant": "najdi", "question": "وش الخليج اللي شرق السعودية؟", "answers": ["Arabian Gulf", "الخليج العربي", "الخليج"], "choices": [], "meta": {}}
+{"id": "sa-033-arabizi", "group_id": "sa-033", "variant": "arabizi", "question": "wesh el khaleej elly sharg el sa3odiya?", "answers": ["Arabian Gulf", "الخليج العربي", "الخليج"], "choices": [], "meta": {}}
+{"id": "sa-033-mixed", "group_id": "sa-033", "variant": "mixed", "question": "وش الـ gulf اللي شرق السعودية؟", "answers": ["Arabian Gulf", "الخليج العربي", "الخليج"], "choices": [], "meta": {}}
+{"id": "sa-034-en", "group_id": "sa-034", "variant": "en", "question": "The King Fahd Causeway connects Saudi Arabia to which country?", "answers": ["Bahrain", "البحرين"], "choices": [], "meta": {}}
+{"id": "sa-034-msa", "group_id": "sa-034", "variant": "msa", "question": "ما الدولة التي يربطها جسر الملك فهد بالمملكة؟", "answers": ["Bahrain", "البحرين"], "choices": [], "meta": {}}
+{"id": "sa-034-najdi", "group_id": "sa-034", "variant": "najdi", "question": "وش الدولة اللي يوصلها جسر الملك فهد؟", "answers": ["Bahrain", "البحرين"], "choices": [], "meta": {}}
+{"id": "sa-034-arabizi", "group_id": "sa-034", "variant": "arabizi", "question": "wesh el dawla elly ywassilha jisr el malik fahd?", "answers": ["Bahrain", "البحرين"], "choices": [], "meta": {}}
+{"id": "sa-034-mixed", "group_id": "sa-034", "variant": "mixed", "question": "جسر الملك فهد يوصل السعودية بأي country؟", "answers": ["Bahrain", "البحرين"], "choices": [], "meta": {}}
+{"id": "sa-035-en", "group_id": "sa-035", "variant": "en", "question": "In which month is Saudi National Day?", "answers": ["September", "سبتمبر"], "choices": [], "meta": {}}
+{"id": "sa-035-msa", "group_id": "sa-035", "variant": "msa", "question": "في أي شهر يصادف اليوم الوطني السعودي؟", "answers": ["September", "سبتمبر"], "choices": [], "meta": {}}
+{"id": "sa-035-najdi", "group_id": "sa-035", "variant": "najdi", "question": "وش الشهر اللي فيه اليوم الوطني؟", "answers": ["September", "سبتمبر"], "choices": [], "meta": {}}
+{"id": "sa-035-arabizi", "group_id": "sa-035", "variant": "arabizi", "question": "wesh el shahar elly feeh el yom el watani?", "answers": ["September", "سبتمبر"], "choices": [], "meta": {}}
+{"id": "sa-035-mixed", "group_id": "sa-035", "variant": "mixed", "question": "اليوم الوطني في أي month؟", "answers": ["September", "سبتمبر"], "choices": [], "meta": {}}
+{"id": "sa-036-en", "group_id": "sa-036", "variant": "en", "question": "What is 100 minus 35?", "answers": ["65"], "choices": [], "meta": {}}
+{"id": "sa-036-msa", "group_id": "sa-036", "variant": "msa", "question": "ما ناتج طرح ٣٥ من ١٠٠؟", "answers": ["65"], "choices": [], "meta": {}}
+{"id": "sa-036-najdi", "group_id": "sa-036", "variant": "najdi", "question": "كم يطلع ١٠٠ ناقص ٣٥؟", "answers": ["65"], "choices": [], "meta": {}}
+{"id": "sa-036-arabizi", "group_id": "sa-036", "variant": "arabizi", "question": "kam ytla3 100 nagis 35?", "answers": ["65"], "choices": [], "meta": {}}
+{"id": "sa-036-mixed", "group_id": "sa-036", "variant": "mixed", "question": "كم يطلع 100 minus 35؟", "answers": ["65"], "choices": [], "meta": {}}
+{"id": "sa-037-en", "group_id": "sa-037", "variant": "en", "question": "What is the capital of the United Arab Emirates?", "answers": ["Abu Dhabi", "أبوظبي", "ابوظبي", "أبو ظبي"], "choices": [], "meta": {}}
+{"id": "sa-037-msa", "group_id": "sa-037", "variant": "msa", "question": "ما هي عاصمة دولة الإمارات العربية المتحدة؟", "answers": ["Abu Dhabi", "أبوظبي", "ابوظبي", "أبو ظبي"], "choices": [], "meta": {}}
+{"id": "sa-037-najdi", "group_id": "sa-037", "variant": "najdi", "question": "وش عاصمة الإمارات؟", "answers": ["Abu Dhabi", "أبوظبي", "ابوظبي", "أبو ظبي"], "choices": [], "meta": {}}
+{"id": "sa-037-arabizi", "group_id": "sa-037", "variant": "arabizi", "question": "wesh 3asmat el imarat?", "answers": ["Abu Dhabi", "أبوظبي", "ابوظبي", "أبو ظبي"], "choices": [], "meta": {}}
+{"id": "sa-037-mixed", "group_id": "sa-037", "variant": "mixed", "question": "وش الـ capital حق الإمارات؟", "answers": ["Abu Dhabi", "أبوظبي", "ابوظبي", "أبو ظبي"], "choices": [], "meta": {}}
+{"id": "sa-038-en", "group_id": "sa-038", "variant": "en", "question": "In which city is the Prophet's Mosque?", "answers": ["Medina", "Madinah", "المدينة", "المدينة المنورة"], "choices": [], "meta": {}}
+{"id": "sa-038-msa", "group_id": "sa-038", "variant": "msa", "question": "في أي مدينة يقع المسجد النبوي؟", "answers": ["Medina", "Madinah", "المدينة", "المدينة المنورة"], "choices": [], "meta": {}}
+{"id": "sa-038-najdi", "group_id": "sa-038", "variant": "najdi", "question": "وش المدينة اللي فيها المسجد النبوي؟", "answers": ["Medina", "Madinah", "المدينة", "المدينة المنورة"], "choices": [], "meta": {}}
+{"id": "sa-038-arabizi", "group_id": "sa-038", "variant": "arabizi", "question": "wesh el madina elly feeha el masjid el nabawi?", "answers": ["Medina", "Madinah", "المدينة", "المدينة المنورة"], "choices": [], "meta": {}}
+{"id": "sa-038-mixed", "group_id": "sa-038", "variant": "mixed", "question": "المسجد النبوي في أي city؟", "answers": ["Medina", "Madinah", "المدينة", "المدينة المنورة"], "choices": [], "meta": {}}
+{"id": "sa-039-en", "group_id": "sa-039", "variant": "en", "question": "How many hours are in a day?", "answers": ["24", "أربع وعشرين", "٢٤"], "choices": [], "meta": {}}
+{"id": "sa-039-msa", "group_id": "sa-039", "variant": "msa", "question": "كم عدد ساعات اليوم الواحد؟", "answers": ["24", "أربع وعشرين", "٢٤"], "choices": [], "meta": {}}
+{"id": "sa-039-najdi", "group_id": "sa-039", "variant": "najdi", "question": "وش عدد ساعات اليوم؟", "answers": ["24", "أربع وعشرين", "٢٤"], "choices": [], "meta": {}}
+{"id": "sa-039-arabizi", "group_id": "sa-039", "variant": "arabizi", "question": "wesh 3adad sa3at el yom?", "answers": ["24", "أربع وعشرين", "٢٤"], "choices": [], "meta": {}}
+{"id": "sa-039-mixed", "group_id": "sa-039", "variant": "mixed", "question": "اليوم كم hour؟", "answers": ["24", "أربع وعشرين", "٢٤"], "choices": [], "meta": {}}
+{"id": "sa-040-en", "group_id": "sa-040", "variant": "en", "question": "What do bees produce?", "answers": ["honey", "عسل"], "choices": [], "meta": {}}
+{"id": "sa-040-msa", "group_id": "sa-040", "variant": "msa", "question": "ماذا ينتج النحل؟", "answers": ["honey", "عسل"], "choices": [], "meta": {}}
+{"id": "sa-040-najdi", "group_id": "sa-040", "variant": "najdi", "question": "وش اللي يطلع من النحل؟", "answers": ["honey", "عسل"], "choices": [], "meta": {}}
+{"id": "sa-040-arabizi", "group_id": "sa-040", "variant": "arabizi", "question": "wesh elly ytla3 min el na7al?", "answers": ["honey", "عسل"], "choices": [], "meta": {}}
+{"id": "sa-040-mixed", "group_id": "sa-040", "variant": "mixed", "question": "وش اللي ينتجه الـ bees؟", "answers": ["honey", "عسل"], "choices": [], "meta": {}}
+{"id": "sa-041-en", "group_id": "sa-041", "variant": "en", "question": "What is the largest ocean on Earth?", "answers": ["Pacific", "الهادئ", "المحيط الهادئ"], "choices": [], "meta": {}}
+{"id": "sa-041-msa", "group_id": "sa-041", "variant": "msa", "question": "ما هو أكبر محيط على سطح الأرض؟", "answers": ["Pacific", "الهادئ", "المحيط الهادئ"], "choices": [], "meta": {}}
+{"id": "sa-041-najdi", "group_id": "sa-041", "variant": "najdi", "question": "وش أكبر محيط بالعالم؟", "answers": ["Pacific", "الهادئ", "المحيط الهادئ"], "choices": [], "meta": {}}
+{"id": "sa-041-arabizi", "group_id": "sa-041", "variant": "arabizi", "question": "wesh akbar mu7eet bil 3alam?", "answers": ["Pacific", "الهادئ", "المحيط الهادئ"], "choices": [], "meta": {}}
+{"id": "sa-041-mixed", "group_id": "sa-041", "variant": "mixed", "question": "وش أكبر ocean بالعالم؟", "answers": ["Pacific", "الهادئ", "المحيط الهادئ"], "choices": [], "meta": {}}
+{"id": "sa-042-en", "group_id": "sa-042", "variant": "en", "question": "How many legs does a spider have?", "answers": ["8", "eight", "ثمانية", "ثمان"], "choices": [], "meta": {}}
+{"id": "sa-042-msa", "group_id": "sa-042", "variant": "msa", "question": "كم عدد أرجل العنكبوت؟", "answers": ["8", "eight", "ثمانية", "ثمان"], "choices": [], "meta": {}}
+{"id": "sa-042-najdi", "group_id": "sa-042", "variant": "najdi", "question": "وش عدد أرجل العنكبوت؟", "answers": ["8", "eight", "ثمانية", "ثمان"], "choices": [], "meta": {}}
+{"id": "sa-042-arabizi", "group_id": "sa-042", "variant": "arabizi", "question": "wesh 3adad arjul el 3ankaboot?", "answers": ["8", "eight", "ثمانية", "ثمان"], "choices": [], "meta": {}}
+{"id": "sa-042-mixed", "group_id": "sa-042", "variant": "mixed", "question": "العنكبوت كم leg؟", "answers": ["8", "eight", "ثمانية", "ثمان"], "choices": [], "meta": {}}
+{"id": "sa-044-en", "group_id": "sa-044", "variant": "en", "question": "What is the name of Saudi Arabia's national vision plan?", "answers": ["2030", "٢٠٣٠"], "choices": [], "meta": {}}
+{"id": "sa-044-msa", "group_id": "sa-044", "variant": "msa", "question": "ما اسم الرؤية الوطنية للمملكة العربية السعودية؟", "answers": ["2030", "٢٠٣٠"], "choices": [], "meta": {}}
+{"id": "sa-044-najdi", "group_id": "sa-044", "variant": "najdi", "question": "وش اسم رؤية السعودية؟", "answers": ["2030", "٢٠٣٠"], "choices": [], "meta": {}}
+{"id": "sa-044-arabizi", "group_id": "sa-044", "variant": "arabizi", "question": "wesh esm ro2yat el sa3odiya?", "answers": ["2030", "٢٠٣٠"], "choices": [], "meta": {}}
+{"id": "sa-044-mixed", "group_id": "sa-044", "variant": "mixed", "question": "وش اسم الـ vision حق السعودية؟", "answers": ["2030", "٢٠٣٠"], "choices": [], "meta": {}}
+{"id": "sa-045-en", "group_id": "sa-045", "variant": "en", "question": "What is 144 divided by 12?", "answers": ["12"], "choices": [], "meta": {}}
+{"id": "sa-045-msa", "group_id": "sa-045", "variant": "msa", "question": "ما ناتج قسمة ١٤٤ على ١٢؟", "answers": ["12"], "choices": [], "meta": {}}
+{"id": "sa-045-najdi", "group_id": "sa-045", "variant": "najdi", "question": "كم يطلع ١٤٤ على ١٢؟", "answers": ["12"], "choices": [], "meta": {}}
+{"id": "sa-045-arabizi", "group_id": "sa-045", "variant": "arabizi", "question": "kam ytla3 144 3ala 12?", "answers": ["12"], "choices": [], "meta": {}}
+{"id": "sa-045-mixed", "group_id": "sa-045", "variant": "mixed", "question": "كم يطلع 144 divided by 12؟", "answers": ["12"], "choices": [], "meta": {}}
+{"id": "sa-046-en", "group_id": "sa-046", "variant": "en", "question": "Which planet is closest to the Sun?", "answers": ["Mercury", "عطارد"], "choices": [], "meta": {}}
+{"id": "sa-046-msa", "group_id": "sa-046", "variant": "msa", "question": "ما الكوكب الأقرب إلى الشمس؟", "answers": ["Mercury", "عطارد"], "choices": [], "meta": {}}
+{"id": "sa-046-najdi", "group_id": "sa-046", "variant": "najdi", "question": "وش الكوكب اللي أقرب للشمس؟", "answers": ["Mercury", "عطارد"], "choices": [], "meta": {}}
+{"id": "sa-046-arabizi", "group_id": "sa-046", "variant": "arabizi", "question": "wesh el kawkab elly agrab lil shams?", "answers": ["Mercury", "عطارد"], "choices": [], "meta": {}}
+{"id": "sa-046-mixed", "group_id": "sa-046", "variant": "mixed", "question": "وش الـ planet اللي أقرب للشمس؟", "answers": ["Mercury", "عطارد"], "choices": [], "meta": {}}
+{"id": "sa-047-en", "group_id": "sa-047", "variant": "en", "question": "What is frozen water called?", "answers": ["ice", "ثلج", "جليد"], "choices": [], "meta": {}}
+{"id": "sa-047-msa", "group_id": "sa-047", "variant": "msa", "question": "ماذا يسمى الماء المتجمد؟", "answers": ["ice", "ثلج", "جليد"], "choices": [], "meta": {}}
+{"id": "sa-047-najdi", "group_id": "sa-047", "variant": "najdi", "question": "الموية لما تتجمد وش تصير؟", "answers": ["ice", "ثلج", "جليد"], "choices": [], "meta": {}}
+{"id": "sa-047-arabizi", "group_id": "sa-047", "variant": "arabizi", "question": "el moya lamma titjammad wesh tseer?", "answers": ["ice", "ثلج", "جليد"], "choices": [], "meta": {}}
+{"id": "sa-047-mixed", "group_id": "sa-047", "variant": "mixed", "question": "الـ water لما يتجمد وش يصير؟", "answers": ["ice", "ثلج", "جليد"], "choices": [], "meta": {}}
+{"id": "sa-050-en", "group_id": "sa-050", "variant": "en", "question": "Which season is the hottest?", "answers": ["summer", "الصيف", "صيف"], "choices": [], "meta": {}}
+{"id": "sa-050-msa", "group_id": "sa-050", "variant": "msa", "question": "ما هو أشد فصول السنة حرارة؟", "answers": ["summer", "الصيف", "صيف"], "choices": [], "meta": {}}
+{"id": "sa-050-najdi", "group_id": "sa-050", "variant": "najdi", "question": "وش أحر فصل بالسنة؟", "answers": ["summer", "الصيف", "صيف"], "choices": [], "meta": {}}
+{"id": "sa-050-arabizi", "group_id": "sa-050", "variant": "arabizi", "question": "wesh a7ar fasl bil sana?", "answers": ["summer", "الصيف", "صيف"], "choices": [], "meta": {}}
+{"id": "sa-050-mixed", "group_id": "sa-050", "variant": "mixed", "question": "وش أحر season بالسنة؟", "answers": ["summer", "الصيف", "صيف"], "choices": [], "meta": {}}
+{"id": "sa-054-en", "group_id": "sa-054", "variant": "en", "question": "Which vitamin does the body get from sunlight?", "answers": ["vitamin D", "فيتامين د"], "choices": [], "meta": {}}
+{"id": "sa-054-msa", "group_id": "sa-054", "variant": "msa", "question": "ما الفيتامين الذي يحصل عليه الجسم من أشعة الشمس؟", "answers": ["vitamin D", "فيتامين د"], "choices": [], "meta": {}}
+{"id": "sa-054-najdi", "group_id": "sa-054", "variant": "najdi", "question": "وش الفيتامين اللي ياخذه الجسم من الشمس؟", "answers": ["vitamin D", "فيتامين د"], "choices": [], "meta": {}}
+{"id": "sa-054-arabizi", "group_id": "sa-054", "variant": "arabizi", "question": "wesh el vitamin elly yakhtha el jisim min el shams?", "answers": ["vitamin D", "فيتامين د"], "choices": [], "meta": {}}
+{"id": "sa-054-mixed", "group_id": "sa-054", "variant": "mixed", "question": "وش الـ vitamin اللي ياخذه الجسم من الشمس؟", "answers": ["vitamin D", "فيتامين د"], "choices": [], "meta": {}}
+{"id": "sa-055-en", "group_id": "sa-055", "variant": "en", "question": "If one sandwich costs 7 riyals, how much do three cost?", "answers": ["21"], "choices": [], "meta": {}}
+{"id": "sa-055-msa", "group_id": "sa-055", "variant": "msa", "question": "إذا كان سعر الساندويتش سبعة ريالات، فكم تكلفة ثلاثة؟", "answers": ["21"], "choices": [], "meta": {}}
+{"id": "sa-055-najdi", "group_id": "sa-055", "variant": "najdi", "question": "الساندويتش بسبعة ريال، كم يطلع ثلاثة؟", "answers": ["21"], "choices": [], "meta": {}}
+{"id": "sa-055-arabizi", "group_id": "sa-055", "variant": "arabizi", "question": "el sandwich bi sab3a riyal, kam ytla3 thalatha?", "answers": ["21"], "choices": [], "meta": {}}
+{"id": "sa-055-mixed", "group_id": "sa-055", "variant": "mixed", "question": "الساندويتش بسبعة ريال، كم الـ total حق ثلاثة؟", "answers": ["21"], "choices": [], "meta": {}}
+{"id": "sa-056-en", "group_id": "sa-056", "variant": "en", "question": "What is the highest mountain in the world?", "answers": ["Everest", "إيفرست", "ايفرست"], "choices": [], "meta": {}}
+{"id": "sa-056-msa", "group_id": "sa-056", "variant": "msa", "question": "ما هو أعلى جبل في العالم؟", "answers": ["Everest", "إيفرست", "ايفرست"], "choices": [], "meta": {}}
+{"id": "sa-056-najdi", "group_id": "sa-056", "variant": "najdi", "question": "وش أعلى جبل بالعالم؟", "answers": ["Everest", "إيفرست", "ايفرست"], "choices": [], "meta": {}}
+{"id": "sa-056-arabizi", "group_id": "sa-056", "variant": "arabizi", "question": "wesh a3la jabal bil 3alam?", "answers": ["Everest", "إيفرست", "ايفرست"], "choices": [], "meta": {}}
+{"id": "sa-056-mixed", "group_id": "sa-056", "variant": "mixed", "question": "وش أعلى mountain بالعالم؟", "answers": ["Everest", "إيفرست", "ايفرست"], "choices": [], "meta": {}}

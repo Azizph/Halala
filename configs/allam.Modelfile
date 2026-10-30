@@ -1,0 +1,13 @@
+# ALLaM 7B with its real prompt format, from tokenizer_config.json in ALLaM-AI/ALLaM-7B-Instruct-preview:
+#   <s> [INST] <<SYS>>\nsystem\n<</SYS>>\n\nuser [/INST]
+# Without this, Ollama falls back to a generic ChatML template (<|im_start|>), which ALLaM wasn't trained on.
+# Ollama adds <s> itself, so it isn't in the template.
+# Build: ollama create allam-7b-q4-inst -f configs/allam.Modelfile
+FROM allam-7b-q4
+TEMPLATE """[INST] {{ if .System }}<<SYS>>
+{{ .System }}
+<</SYS>>
+
+{{ end }}{{ .Prompt }} [/INST]{{ .Response }}"""
+PARAMETER stop "</s>"
+PARAMETER stop "[INST]"

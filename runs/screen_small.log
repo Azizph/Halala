@@ -1,0 +1,22 @@
+﻿  gemma3:4b: 45/225
+  gemma3:4b: 90/225
+  gemma3:4b: 135/225
+  gemma3:4b: 180/225
+  gemma3:4b: 225/225
+=== gemma3:4b: mean 3.0s per call
+  en       43 of 45   tokens per call 44
+  msa      36 of 45   tokens per call 46
+  najdi    31 of 45   tokens per call 45
+  arabizi  20 of 45   tokens per call 45
+  mixed    32 of 45   tokens per call 44
+  qwen3:4b: 45/225
+  qwen3:4b: 90/225
+  qwen3:4b: 135/225
+  qwen3:4b: 180/225
+  qwen3:4b: 225/225
+=== qwen3:4b: mean 7.7s per call
+  en       31 of 45   tokens per call 104
+  msa      24 of 45   tokens per call 106
+  najdi    21 of 45   tokens per call 105
+  arabizi  14 of 45   tokens per call 105
+  mixed    18 of 45   tokens per call 104

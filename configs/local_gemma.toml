@@ -1,0 +1,32 @@
+# configs/local.toml with a bigger small model. Screened on 225 dev questions, one answer each:
+# gemma3:4b beat qwen2.5:1.5b on every form and qwen3:4b on all of them, at about 3s per call.
+# 3 samples instead of 5 keeps the checking cost down.
+
+[run]
+data = "data/saudi_parallel.dev.jsonl"
+sealed = "data/sealed/saudi_parallel.test.jsonl"
+workers = 2
+split_fractions = { train = 0.30, calib = 0.50, test = 0.20 }
+
+[calibrate]
+epsilon = 0.10
+min_group_size = 22
+
+[cascade]
+arabizi = "rules"
+samples = 3
+
+[floors]
+latency_limit_s = 0       # no limit: laptop latency says nothing about a served model
+
+[models.small]
+backend = "ollama"
+name = "gemma3:4b"
+params_b = 4
+host = "http://localhost:11434"
+
+[models.large]
+backend = "ollama"
+name = "allam-7b-q4-inst"  # built from configs/allam.Modelfile: ALLaM's real [INST] prompt format
+params_b = 7
+host = "http://localhost:11434"

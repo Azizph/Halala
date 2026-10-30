@@ -1,0 +1,35 @@
+# The hackathon setup: no API was provided, so both tiers run locally through Ollama.
+#   small = qwen2.5:1.5b      about 1.5s per call, a real quality gap below ALLaM
+#   large = allam-7b-q4       about 4.3s per call, Humain's Arabic-first model
+# Rejected alternative: ALLaM Q4 as small and ALLaM Q8 as large. Measured 2026-10-30: only 1.5x compute
+# apart (4.3s vs 6.6s) and the same answer on 4 of 5 probe questions, so there was nothing to route.
+
+[run]
+data = "data/saudi_parallel.dev.jsonl"
+sealed = "data/sealed/saudi_parallel.test.jsonl"
+workers = 2               # Ollama serialises on one GPU; 2 keeps the queue fed without thrashing
+# Calibration needs the most items, so it gets the largest share. At 56 groups, sealed at 0.20, this gives
+# 14 train / 25 calib / 6 dev-test groups: 25 per variant, enough for epsilon 0.10 (which needs 22).
+split_fractions = { train = 0.30, calib = 0.50, test = 0.20 }
+
+[calibrate]
+epsilon = 0.10            # tighten to 0.08 at 70 groups, or 0.05 at 112
+min_group_size = 22
+
+[cascade]
+arabizi = "rules"         # the cheapest per correct answer on 45 dev questions; see runs/local/rewrite_eval.md
+
+[floors]
+latency_limit_s = 0       # no limit: laptop latency says nothing about a served model
+
+[models.small]
+backend = "ollama"
+name = "qwen2.5:1.5b"
+params_b = 1.5
+host = "http://localhost:11434"
+
+[models.large]
+backend = "ollama"
+name = "allam-7b-q4-inst"  # built from configs/allam.Modelfile: ALLaM's real [INST] prompt format
+params_b = 7
+host = "http://localhost:11434"

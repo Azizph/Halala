@@ -1,0 +1,1144 @@
+{
+  "run": "default",
+  "primary": "flops",
+  "mock": true,
+  "models": {
+    "small": "mock-small",
+    "large": "mock-large"
+  },
+  "n_test": 510,
+  "variants": [
+    "en",
+    "msa",
+    "najdi",
+    "arabizi",
+    "mixed"
+  ],
+  "epsilon": 0.05,
+  "delta": 0.1,
+  "floors": {
+    "min_variant_success": 0.8,
+    "latency_limit_s": 30.0
+  },
+  "policies": {
+    "always_small": {
+      "label": "Always small",
+      "accuracy": 0.807843137254902,
+      "success_rate": 0.807843137254902,
+      "worst_success_rate": 0.6078431372549019,
+      "cost_per_success": 662927184466.0194,
+      "relative_cost_per_success": 0.339441522170228,
+      "p95_latency_s": 0.11633999999999987,
+      "worst_accuracy": 0.6078431372549019,
+      "worst_gap": 0.3431372549019608,
+      "worst_variant": "mixed",
+      "escalation_rate": 0.0,
+      "cache_rate": 0.0,
+      "cost": {
+        "tokens": 38.252941176470586,
+        "flops": 535541176470.58826,
+        "usd": 0.0,
+        "latency_s": 0.05355411764705882
+      },
+      "relative_cost": 0.2895443211886831,
+      "per_variant": {
+        "en": {
+          "n": 102,
+          "accuracy": 0.9313725490196079,
+          "reference_accuracy": 0.9509803921568627,
+          "gap": 0.019607843137254832,
+          "loss_rate": 0.06862745098039216,
+          "escalation_rate": 0.0,
+          "cost": 372647058823.5294,
+          "success_rate": 0.9313725490196079,
+          "cost_per_success": 400105263157.8947
+        },
+        "msa": {
+          "n": 102,
+          "accuracy": 0.9117647058823529,
+          "reference_accuracy": 0.9901960784313726,
+          "gap": 0.07843137254901966,
+          "loss_rate": 0.08823529411764706,
+          "escalation_rate": 0.0,
+          "cost": 397627450980.39215,
+          "success_rate": 0.9117647058823529,
+          "cost_per_success": 436107526881.72046
+        },
+        "najdi": {
+          "n": 102,
+          "accuracy": 0.7352941176470589,
+          "reference_accuracy": 0.9509803921568627,
+          "gap": 0.21568627450980382,
+          "loss_rate": 0.2647058823529412,
+          "escalation_rate": 0.0,
+          "cost": 390901960784.3137,
+          "success_rate": 0.7352941176470589,
+          "cost_per_success": 531626666666.6667
+        },
+        "arabizi": {
+          "n": 102,
+          "accuracy": 0.8529411764705882,
+          "reference_accuracy": 0.8921568627450981,
+          "gap": 0.03921568627450989,
+          "loss_rate": 0.14705882352941177,
+          "escalation_rate": 0.0,
+          "cost": 1153627450980.392,
+          "success_rate": 0.8529411764705882,
+          "cost_per_success": 1352528735632.1838
+        },
+        "mixed": {
+          "n": 102,
+          "accuracy": 0.6078431372549019,
+          "reference_accuracy": 0.9509803921568627,
+          "gap": 0.3431372549019608,
+          "loss_rate": 0.35294117647058826,
+          "escalation_rate": 0.0,
+          "cost": 362901960784.3137,
+          "success_rate": 0.6078431372549019,
+          "cost_per_success": 597032258064.5161
+        }
+      },
+      "meets_floors": false
+    },
+    "always_large": {
+      "label": "Always large",
+      "accuracy": 0.9470588235294117,
+      "success_rate": 0.9470588235294117,
+      "worst_success_rate": 0.8921568627450981,
+      "cost_per_success": 1952993788819.8757,
+      "relative_cost_per_success": 1.0,
+      "p95_latency_s": 0.1972,
+      "worst_accuracy": 0.8921568627450981,
+      "worst_gap": 0.0,
+      "worst_variant": "en",
+      "escalation_rate": 1.0,
+      "cache_rate": 0.0,
+      "cost": {
+        "tokens": 27.2,
+        "flops": 1849600000000.0,
+        "usd": 0.0,
+        "latency_s": 0.18496
+      },
+      "relative_cost": 1.0,
+      "per_variant": {
+        "en": {
+          "n": 102,
+          "accuracy": 0.9509803921568627,
+          "reference_accuracy": 0.9509803921568627,
+          "gap": 0.0,
+          "loss_rate": 0.0,
+          "escalation_rate": 1.0,
+          "cost": 1810000000000.0,
+          "success_rate": 0.9509803921568627,
+          "cost_per_success": 1903298969072.165
+        },
+        "msa": {
+          "n": 102,
+          "accuracy": 0.9901960784313726,
+          "reference_accuracy": 0.9901960784313726,
+          "gap": 0.0,
+          "loss_rate": 0.0,
+          "escalation_rate": 1.0,
+          "cost": 1931333333333.3333,
+          "success_rate": 0.9901960784313726,
+          "cost_per_success": 1950455445544.5544
+        },
+        "najdi": {
+          "n": 102,
+          "accuracy": 0.9509803921568627,
+          "reference_accuracy": 0.9509803921568627,
+          "gap": 0.0,
+          "loss_rate": 0.0,
+          "escalation_rate": 1.0,
+          "cost": 1898666666666.6667,
+          "success_rate": 0.9509803921568627,
+          "cost_per_success": 1996536082474.2268
+        },
+        "arabizi": {
+          "n": 102,
+          "accuracy": 0.8921568627450981,
+          "reference_accuracy": 0.8921568627450981,
+          "gap": 0.0,
+          "loss_rate": 0.0,
+          "escalation_rate": 1.0,
+          "cost": 1845333333333.3333,
+          "success_rate": 0.8921568627450981,
+          "cost_per_success": 2068395604395.6045
+        },
+        "mixed": {
+          "n": 102,
+          "accuracy": 0.9509803921568627,
+          "reference_accuracy": 0.9509803921568627,
+          "gap": 0.0,
+          "loss_rate": 0.0,
+          "escalation_rate": 1.0,
+          "cost": 1762666666666.6667,
+          "success_rate": 0.9509803921568627,
+          "cost_per_success": 1853525773195.8762
+        }
+      },
+      "meets_floors": true
+    },
+    "agreement_global": {
+      "label": "Agreement, one threshold",
+      "accuracy": 0.9882352941176471,
+      "success_rate": 0.9882352941176471,
+      "worst_success_rate": 0.9509803921568627,
+      "cost_per_success": 802623015873.0159,
+      "relative_cost_per_success": 0.41097059318248635,
+      "p95_latency_s": 0.3588,
+      "worst_accuracy": 0.9509803921568627,
+      "worst_gap": 0.0,
+      "worst_variant": "mixed",
+      "escalation_rate": 0.10784313725490197,
+      "cache_rate": 0.0,
+      "cost": {
+        "tokens": 45.56078431372549,
+        "flops": 793180392156.8628,
+        "usd": 0.0,
+        "latency_s": 0.22629058823529413
+      },
+      "relative_cost": 0.4288388798425945,
+      "per_variant": {
+        "en": {
+          "n": 102,
+          "accuracy": 1.0,
+          "reference_accuracy": 0.9509803921568627,
+          "gap": -0.0490196078431373,
+          "loss_rate": 0.0,
+          "escalation_rate": 0.0,
+          "cost": 434686274509.8039,
+          "success_rate": 1.0,
+          "cost_per_success": 434686274509.8039
+        },
+        "msa": {
+          "n": 102,
+          "accuracy": 1.0,
+          "reference_accuracy": 0.9901960784313726,
+          "gap": -0.009803921568627416,
+          "loss_rate": 0.0,
+          "escalation_rate": 0.029411764705882353,
+          "cost": 515666666666.6667,
+          "success_rate": 1.0,
+          "cost_per_success": 515666666666.6667
+        },
+        "najdi": {
+          "n": 102,
+          "accuracy": 0.9901960784313726,
+          "reference_accuracy": 0.9509803921568627,
+          "gap": -0.03921568627450989,
+          "loss_rate": 0.0,
+          "escalation_rate": 0.13725490196078433,
+          "cost": 714941176470.5883,
+          "success_rate": 0.9901960784313726,
+          "cost_per_success": 722019801980.198
+        },
+        "arabizi": {
+          "n": 102,
+          "accuracy": 1.0,
+          "reference_accuracy": 0.8921568627450981,
+          "gap": -0.10784313725490191,
+          "loss_rate": 0.0,
+          "escalation_rate": 0.049019607843137254,
+          "cost": 1305666666666.6667,
+          "success_rate": 1.0,
+          "cost_per_success": 1305666666666.6667
+        },
+        "mixed": {
+          "n": 102,
+          "accuracy": 0.9509803921568627,
+          "reference_accuracy": 0.9509803921568627,
+          "gap": 0.0,
+          "loss_rate": 0.0196078431372549,
+          "escalation_rate": 0.3235294117647059,
+          "cost": 994941176470.5883,
+          "success_rate": 0.9509803921568627,
+          "cost_per_success": 1046226804123.7113
+        }
+      },
+      "meets_floors": true
+    },
+    "router_global": {
+      "label": "Router, one threshold",
+      "accuracy": 0.9647058823529412,
+      "success_rate": 0.9647058823529412,
+      "worst_success_rate": 0.8823529411764706,
+      "cost_per_success": 693109756097.561,
+      "relative_cost_per_success": 0.3548960370818089,
+      "p95_latency_s": 0.2814,
+      "worst_accuracy": 0.8823529411764706,
+      "worst_gap": 0.06862745098039214,
+      "worst_variant": "mixed",
+      "escalation_rate": 0.0392156862745098,
+      "cache_rate": 0.0,
+      "cost": {
+        "tokens": 43.72941176470588,
+        "flops": 668647058823.5294,
+        "usd": 0.0,
+        "latency_s": 0.2138372549019608
+      },
+      "relative_cost": 0.3615090067168736,
+      "per_variant": {
+        "en": {
+          "n": 102,
+          "accuracy": 1.0,
+          "reference_accuracy": 0.9509803921568627,
+          "gap": -0.0490196078431373,
+          "loss_rate": 0.0,
+          "escalation_rate": 0.0,
+          "cost": 434686274509.8039,
+          "success_rate": 1.0,
+          "cost_per_success": 434686274509.8039
+        },
+        "msa": {
+          "n": 102,
+          "accuracy": 1.0,
+          "reference_accuracy": 0.9901960784313726,
+          "gap": -0.009803921568627416,
+          "loss_rate": 0.0,
+          "escalation_rate": 0.029411764705882353,
+          "cost": 515666666666.6667,
+          "success_rate": 1.0,
+          "cost_per_success": 515666666666.6667
+        },
+        "najdi": {
+          "n": 102,
+          "accuracy": 0.9607843137254902,
+          "reference_accuracy": 0.9509803921568627,
+          "gap": -0.009803921568627527,
+          "loss_rate": 0.029411764705882353,
+          "escalation_rate": 0.049019607843137254,
+          "cost": 546274509803.9216,
+          "success_rate": 0.9607843137254902,
+          "cost_per_success": 568571428571.4286
+        },
+        "arabizi": {
+          "n": 102,
+          "accuracy": 0.9803921568627451,
+          "reference_accuracy": 0.8921568627450981,
+          "gap": -0.08823529411764697,
+          "loss_rate": 0.0196078431372549,
+          "escalation_rate": 0.0196078431372549,
+          "cost": 1251666666666.6667,
+          "success_rate": 0.9803921568627451,
+          "cost_per_success": 1276700000000.0
+        },
+        "mixed": {
+          "n": 102,
+          "accuracy": 0.8823529411764706,
+          "reference_accuracy": 0.9509803921568627,
+          "gap": 0.06862745098039214,
+          "loss_rate": 0.08823529411764706,
+          "escalation_rate": 0.09803921568627451,
+          "cost": 594941176470.5883,
+          "success_rate": 0.8823529411764706,
+          "cost_per_success": 674266666666.6666
+        }
+      },
+      "meets_floors": true
+    },
+    "halala": {
+      "label": "Halala: router, per-variant thresholds",
+      "accuracy": 0.9764705882352941,
+      "success_rate": 0.9764705882352941,
+      "worst_success_rate": 0.9509803921568627,
+      "cost_per_success": 1182084337349.3977,
+      "relative_cost_per_success": 0.6052678426917523,
+      "p95_latency_s": 0.2731399999999999,
+      "worst_accuracy": 0.9509803921568627,
+      "worst_gap": 0.0,
+      "worst_variant": "najdi",
+      "escalation_rate": 0.4,
+      "cache_rate": 0.0,
+      "cost": {
+        "tokens": 40.911764705882355,
+        "flops": 1154270588235.2942,
+        "usd": 0.0,
+        "latency_s": 0.20457686274509806
+      },
+      "relative_cost": 0.6240649806635458,
+      "per_variant": {
+        "en": {
+          "n": 102,
+          "accuracy": 1.0,
+          "reference_accuracy": 0.9509803921568627,
+          "gap": -0.0490196078431373,
+          "loss_rate": 0.0,
+          "escalation_rate": 0.0,
+          "cost": 434686274509.8039,
+          "success_rate": 1.0,
+          "cost_per_success": 434686274509.8039
+        },
+        "msa": {
+          "n": 102,
+          "accuracy": 1.0,
+          "reference_accuracy": 0.9901960784313726,
+          "gap": -0.009803921568627416,
+          "loss_rate": 0.0,
+          "escalation_rate": 0.0,
+          "cost": 459666666666.6667,
+          "success_rate": 1.0,
+          "cost_per_success": 459666666666.6667
+        },
+        "najdi": {
+          "n": 102,
+          "accuracy": 0.9509803921568627,
+          "reference_accuracy": 0.9509803921568627,
+          "gap": 0.0,
+          "loss_rate": 0.0,
+          "escalation_rate": 1.0,
+          "cost": 1898666666666.6667,
+          "success_rate": 0.9509803921568627,
+          "cost_per_success": 1996536082474.2268
+        },
+        "arabizi": {
+          "n": 102,
+          "accuracy": 0.9803921568627451,
+          "reference_accuracy": 0.8921568627450981,
+          "gap": -0.08823529411764697,
+          "loss_rate": 0.0196078431372549,
+          "escalation_rate": 0.0,
+          "cost": 1215666666666.6667,
+          "success_rate": 0.9803921568627451,
+          "cost_per_success": 1239980000000.0
+        },
+        "mixed": {
+          "n": 102,
+          "accuracy": 0.9509803921568627,
+          "reference_accuracy": 0.9509803921568627,
+          "gap": 0.0,
+          "loss_rate": 0.0,
+          "escalation_rate": 1.0,
+          "cost": 1762666666666.6667,
+          "success_rate": 0.9509803921568627,
+          "cost_per_success": 1853525773195.8762
+        }
+      },
+      "meets_floors": true
+    },
+    "halala_cache": {
+      "label": "Halala + answer cache",
+      "accuracy": 0.9764705882352941,
+      "success_rate": 0.9764705882352941,
+      "worst_success_rate": 0.9509803921568627,
+      "cost_per_success": 1182084337349.3977,
+      "relative_cost_per_success": 0.6052678426917523,
+      "p95_latency_s": 0.2731399999999999,
+      "worst_accuracy": 0.9509803921568627,
+      "worst_gap": 0.0,
+      "worst_variant": "najdi",
+      "escalation_rate": 0.4,
+      "cache_rate": 0.0,
+      "cost": {
+        "tokens": 40.911764705882355,
+        "flops": 1154270588235.2942,
+        "usd": 0.0,
+        "latency_s": 0.20457686274509806
+      },
+      "relative_cost": 0.6240649806635458,
+      "per_variant": {
+        "en": {
+          "n": 102,
+          "accuracy": 1.0,
+          "reference_accuracy": 0.9509803921568627,
+          "gap": -0.0490196078431373,
+          "loss_rate": 0.0,
+          "escalation_rate": 0.0,
+          "cost": 434686274509.8039,
+          "success_rate": 1.0,
+          "cost_per_success": 434686274509.8039
+        },
+        "msa": {
+          "n": 102,
+          "accuracy": 1.0,
+          "reference_accuracy": 0.9901960784313726,
+          "gap": -0.009803921568627416,
+          "loss_rate": 0.0,
+          "escalation_rate": 0.0,
+          "cost": 459666666666.6667,
+          "success_rate": 1.0,
+          "cost_per_success": 459666666666.6667
+        },
+        "najdi": {
+          "n": 102,
+          "accuracy": 0.9509803921568627,
+          "reference_accuracy": 0.9509803921568627,
+          "gap": 0.0,
+          "loss_rate": 0.0,
+          "escalation_rate": 1.0,
+          "cost": 1898666666666.6667,
+          "success_rate": 0.9509803921568627,
+          "cost_per_success": 1996536082474.2268
+        },
+        "arabizi": {
+          "n": 102,
+          "accuracy": 0.9803921568627451,
+          "reference_accuracy": 0.8921568627450981,
+          "gap": -0.08823529411764697,
+          "loss_rate": 0.0196078431372549,
+          "escalation_rate": 0.0,
+          "cost": 1215666666666.6667,
+          "success_rate": 0.9803921568627451,
+          "cost_per_success": 1239980000000.0
+        },
+        "mixed": {
+          "n": 102,
+          "accuracy": 0.9509803921568627,
+          "reference_accuracy": 0.9509803921568627,
+          "gap": 0.0,
+          "loss_rate": 0.0,
+          "escalation_rate": 1.0,
+          "cost": 1762666666666.6667,
+          "success_rate": 0.9509803921568627,
+          "cost_per_success": 1853525773195.8762
+        }
+      },
+      "meets_floors": true
+    }
+  },
+  "sweeps": {
+    "router": [
+      {
+        "threshold": 1.0,
+        "relative_cost": 1.3230862846868852,
+        "accuracy": 0.9470588235294117,
+        "worst_accuracy": 0.8921568627450981,
+        "worst_gap": 0.0
+      },
+      {
+        "threshold": 0.975,
+        "relative_cost": 0.4468607944908067,
+        "accuracy": 0.984313725490196,
+        "worst_accuracy": 0.9411764705882353,
+        "worst_gap": 0.009803921568627416
+      },
+      {
+        "threshold": 0.95,
+        "relative_cost": 0.4259553734988805,
+        "accuracy": 0.9803921568627451,
+        "worst_accuracy": 0.9411764705882353,
+        "worst_gap": 0.009803921568627416
+      },
+      {
+        "threshold": 0.925,
+        "relative_cost": 0.4240090067168736,
+        "accuracy": 0.9803921568627451,
+        "worst_accuracy": 0.9411764705882353,
+        "worst_gap": 0.009803921568627416
+      },
+      {
+        "threshold": 0.9,
+        "relative_cost": 0.4240090067168736,
+        "accuracy": 0.9803921568627451,
+        "worst_accuracy": 0.9411764705882353,
+        "worst_gap": 0.009803921568627416
+      },
+      {
+        "threshold": 0.875,
+        "relative_cost": 0.4126912443177963,
+        "accuracy": 0.9784313725490196,
+        "worst_accuracy": 0.9411764705882353,
+        "worst_gap": 0.009803921568627416
+      },
+      {
+        "threshold": 0.85,
+        "relative_cost": 0.41081696519438227,
+        "accuracy": 0.9784313725490196,
+        "worst_accuracy": 0.9411764705882353,
+        "worst_gap": 0.009803921568627416
+      },
+      {
+        "threshold": 0.825,
+        "relative_cost": 0.403319848700726,
+        "accuracy": 0.9784313725490196,
+        "worst_accuracy": 0.9411764705882353,
+        "worst_gap": 0.009803921568627416
+      },
+      {
+        "threshold": 0.8,
+        "relative_cost": 0.403319848700726,
+        "accuracy": 0.9784313725490196,
+        "worst_accuracy": 0.9411764705882353,
+        "worst_gap": 0.009803921568627416
+      },
+      {
+        "threshold": 0.775,
+        "relative_cost": 0.403319848700726,
+        "accuracy": 0.9784313725490196,
+        "worst_accuracy": 0.9411764705882353,
+        "worst_gap": 0.009803921568627416
+      },
+      {
+        "threshold": 0.75,
+        "relative_cost": 0.40144556957731187,
+        "accuracy": 0.9764705882352941,
+        "worst_accuracy": 0.9313725490196079,
+        "worst_gap": 0.019607843137254832
+      },
+      {
+        "threshold": 0.725,
+        "relative_cost": 0.3939484530836556,
+        "accuracy": 0.9745098039215686,
+        "worst_accuracy": 0.9215686274509803,
+        "worst_gap": 0.02941176470588236
+      },
+      {
+        "threshold": 0.7,
+        "relative_cost": 0.3883256157134134,
+        "accuracy": 0.9745098039215686,
+        "worst_accuracy": 0.9215686274509803,
+        "worst_gap": 0.02941176470588236
+      },
+      {
+        "threshold": 0.675,
+        "relative_cost": 0.38241442770879974,
+        "accuracy": 0.9745098039215686,
+        "worst_accuracy": 0.9215686274509803,
+        "worst_gap": 0.02941176470588236
+      },
+      {
+        "threshold": 0.6499999999999999,
+        "relative_cost": 0.38241442770879974,
+        "accuracy": 0.9745098039215686,
+        "worst_accuracy": 0.9215686274509803,
+        "worst_gap": 0.02941176470588236
+      },
+      {
+        "threshold": 0.625,
+        "relative_cost": 0.3749173112151435,
+        "accuracy": 0.9725490196078431,
+        "worst_accuracy": 0.9117647058823529,
+        "worst_gap": 0.039215686274509776
+      },
+      {
+        "threshold": 0.6,
+        "relative_cost": 0.36742019472148724,
+        "accuracy": 0.9686274509803922,
+        "worst_accuracy": 0.8921568627450981,
+        "worst_gap": 0.05882352941176461
+      },
+      {
+        "threshold": 0.575,
+        "relative_cost": 0.36554591559807315,
+        "accuracy": 0.9666666666666667,
+        "worst_accuracy": 0.8823529411764706,
+        "worst_gap": 0.06862745098039214
+      },
+      {
+        "threshold": 0.55,
+        "relative_cost": 0.36554591559807315,
+        "accuracy": 0.9666666666666667,
+        "worst_accuracy": 0.8823529411764706,
+        "worst_gap": 0.06862745098039214
+      },
+      {
+        "threshold": 0.5249999999999999,
+        "relative_cost": 0.36554591559807315,
+        "accuracy": 0.9666666666666667,
+        "worst_accuracy": 0.8823529411764706,
+        "worst_gap": 0.06862745098039214
+      },
+      {
+        "threshold": 0.5,
+        "relative_cost": 0.36554591559807315,
+        "accuracy": 0.9666666666666667,
+        "worst_accuracy": 0.8823529411764706,
+        "worst_gap": 0.06862745098039214
+      },
+      {
+        "threshold": 0.475,
+        "relative_cost": 0.3615090067168736,
+        "accuracy": 0.9647058823529412,
+        "worst_accuracy": 0.8823529411764706,
+        "worst_gap": 0.06862745098039214
+      },
+      {
+        "threshold": 0.44999999999999996,
+        "relative_cost": 0.3579046237872312,
+        "accuracy": 0.9647058823529412,
+        "worst_accuracy": 0.8823529411764706,
+        "worst_gap": 0.06862745098039214
+      },
+      {
+        "threshold": 0.42499999999999993,
+        "relative_cost": 0.3579046237872312,
+        "accuracy": 0.9647058823529412,
+        "worst_accuracy": 0.8823529411764706,
+        "worst_gap": 0.06862745098039214
+      },
+      {
+        "threshold": 0.3999999999999999,
+        "relative_cost": 0.35213761109980324,
+        "accuracy": 0.9647058823529412,
+        "worst_accuracy": 0.8823529411764706,
+        "worst_gap": 0.06862745098039214
+      },
+      {
+        "threshold": 0.375,
+        "relative_cost": 0.3502633319763892,
+        "accuracy": 0.9666666666666667,
+        "worst_accuracy": 0.8921568627450981,
+        "worst_gap": 0.05882352941176461
+      },
+      {
+        "threshold": 0.35,
+        "relative_cost": 0.346514773729561,
+        "accuracy": 0.9666666666666667,
+        "worst_accuracy": 0.8921568627450981,
+        "worst_gap": 0.05882352941176461
+      },
+      {
+        "threshold": 0.32499999999999996,
+        "relative_cost": 0.3404594104077617,
+        "accuracy": 0.9647058823529412,
+        "worst_accuracy": 0.8921568627450981,
+        "worst_gap": 0.05882352941176461
+      },
+      {
+        "threshold": 0.29999999999999993,
+        "relative_cost": 0.338440955967162,
+        "accuracy": 0.9647058823529412,
+        "worst_accuracy": 0.8921568627450981,
+        "worst_gap": 0.05882352941176461
+      },
+      {
+        "threshold": 0.2749999999999999,
+        "relative_cost": 0.33079966415631995,
+        "accuracy": 0.9686274509803922,
+        "worst_accuracy": 0.9019607843137255,
+        "worst_gap": 0.04901960784313719
+      },
+      {
+        "threshold": 0.25,
+        "relative_cost": 0.3289974726914987,
+        "accuracy": 0.9666666666666667,
+        "worst_accuracy": 0.8921568627450981,
+        "worst_gap": 0.05882352941176461
+      },
+      {
+        "threshold": 0.22499999999999998,
+        "relative_cost": 0.3289974726914987,
+        "accuracy": 0.9666666666666667,
+        "worst_accuracy": 0.8921568627450981,
+        "worst_gap": 0.05882352941176461
+      },
+      {
+        "threshold": 0.19999999999999996,
+        "relative_cost": 0.3289974726914987,
+        "accuracy": 0.9666666666666667,
+        "worst_accuracy": 0.8921568627450981,
+        "worst_gap": 0.05882352941176461
+      },
+      {
+        "threshold": 0.17499999999999993,
+        "relative_cost": 0.3250326514688921,
+        "accuracy": 0.9666666666666667,
+        "worst_accuracy": 0.8921568627450981,
+        "worst_gap": 0.05882352941176461
+      },
+      {
+        "threshold": 0.1499999999999999,
+        "relative_cost": 0.32308628468688516,
+        "accuracy": 0.9666666666666667,
+        "worst_accuracy": 0.8921568627450981,
+        "worst_gap": 0.05882352941176461
+      },
+      {
+        "threshold": 0.125,
+        "relative_cost": 0.32308628468688516,
+        "accuracy": 0.9666666666666667,
+        "worst_accuracy": 0.8921568627450981,
+        "worst_gap": 0.05882352941176461
+      },
+      {
+        "threshold": 0.09999999999999998,
+        "relative_cost": 0.32308628468688516,
+        "accuracy": 0.9666666666666667,
+        "worst_accuracy": 0.8921568627450981,
+        "worst_gap": 0.05882352941176461
+      },
+      {
+        "threshold": 0.07499999999999996,
+        "relative_cost": 0.32308628468688516,
+        "accuracy": 0.9666666666666667,
+        "worst_accuracy": 0.8921568627450981,
+        "worst_gap": 0.05882352941176461
+      },
+      {
+        "threshold": 0.04999999999999993,
+        "relative_cost": 0.32308628468688516,
+        "accuracy": 0.9666666666666667,
+        "worst_accuracy": 0.8921568627450981,
+        "worst_gap": 0.05882352941176461
+      },
+      {
+        "threshold": 0.02499999999999991,
+        "relative_cost": 0.32308628468688516,
+        "accuracy": 0.9666666666666667,
+        "worst_accuracy": 0.8921568627450981,
+        "worst_gap": 0.05882352941176461
+      },
+      {
+        "threshold": 0.0,
+        "relative_cost": 0.32308628468688516,
+        "accuracy": 0.9666666666666667,
+        "worst_accuracy": 0.8921568627450981,
+        "worst_gap": 0.05882352941176461
+      }
+    ],
+    "agreement": [
+      {
+        "threshold": 1.0,
+        "relative_cost": 0.8659784415496302,
+        "accuracy": 0.9764705882352941,
+        "worst_accuracy": 0.9607843137254902,
+        "worst_gap": -0.009803921568627416
+      },
+      {
+        "threshold": 0.975,
+        "relative_cost": 0.8659784415496302,
+        "accuracy": 0.9764705882352941,
+        "worst_accuracy": 0.9607843137254902,
+        "worst_gap": -0.009803921568627416
+      },
+      {
+        "threshold": 0.95,
+        "relative_cost": 0.8659784415496302,
+        "accuracy": 0.9764705882352941,
+        "worst_accuracy": 0.9607843137254902,
+        "worst_gap": -0.009803921568627416
+      },
+      {
+        "threshold": 0.925,
+        "relative_cost": 0.8659784415496302,
+        "accuracy": 0.9764705882352941,
+        "worst_accuracy": 0.9607843137254902,
+        "worst_gap": -0.009803921568627416
+      },
+      {
+        "threshold": 0.9,
+        "relative_cost": 0.8659784415496302,
+        "accuracy": 0.9764705882352941,
+        "worst_accuracy": 0.9607843137254902,
+        "worst_gap": -0.009803921568627416
+      },
+      {
+        "threshold": 0.875,
+        "relative_cost": 0.8659784415496302,
+        "accuracy": 0.9764705882352941,
+        "worst_accuracy": 0.9607843137254902,
+        "worst_gap": -0.009803921568627416
+      },
+      {
+        "threshold": 0.85,
+        "relative_cost": 0.8659784415496302,
+        "accuracy": 0.9764705882352941,
+        "worst_accuracy": 0.9607843137254902,
+        "worst_gap": -0.009803921568627416
+      },
+      {
+        "threshold": 0.825,
+        "relative_cost": 0.8659784415496302,
+        "accuracy": 0.9764705882352941,
+        "worst_accuracy": 0.9607843137254902,
+        "worst_gap": -0.009803921568627416
+      },
+      {
+        "threshold": 0.8,
+        "relative_cost": 0.6040839778818101,
+        "accuracy": 0.9862745098039216,
+        "worst_accuracy": 0.9607843137254902,
+        "worst_gap": -0.009803921568627416
+      },
+      {
+        "threshold": 0.775,
+        "relative_cost": 0.6040839778818101,
+        "accuracy": 0.9862745098039216,
+        "worst_accuracy": 0.9607843137254902,
+        "worst_gap": -0.009803921568627416
+      },
+      {
+        "threshold": 0.75,
+        "relative_cost": 0.6040839778818101,
+        "accuracy": 0.9862745098039216,
+        "worst_accuracy": 0.9607843137254902,
+        "worst_gap": -0.009803921568627416
+      },
+      {
+        "threshold": 0.725,
+        "relative_cost": 0.6040839778818101,
+        "accuracy": 0.9862745098039216,
+        "worst_accuracy": 0.9607843137254902,
+        "worst_gap": -0.009803921568627416
+      },
+      {
+        "threshold": 0.7,
+        "relative_cost": 0.6040839778818101,
+        "accuracy": 0.9862745098039216,
+        "worst_accuracy": 0.9607843137254902,
+        "worst_gap": -0.009803921568627416
+      },
+      {
+        "threshold": 0.675,
+        "relative_cost": 0.6040839778818101,
+        "accuracy": 0.9862745098039216,
+        "worst_accuracy": 0.9607843137254902,
+        "worst_gap": -0.009803921568627416
+      },
+      {
+        "threshold": 0.6499999999999999,
+        "relative_cost": 0.6040839778818101,
+        "accuracy": 0.9862745098039216,
+        "worst_accuracy": 0.9607843137254902,
+        "worst_gap": -0.009803921568627416
+      },
+      {
+        "threshold": 0.625,
+        "relative_cost": 0.6040839778818101,
+        "accuracy": 0.9862745098039216,
+        "worst_accuracy": 0.9607843137254902,
+        "worst_gap": -0.009803921568627416
+      },
+      {
+        "threshold": 0.6,
+        "relative_cost": 0.4288388798425945,
+        "accuracy": 0.9882352941176471,
+        "worst_accuracy": 0.9509803921568627,
+        "worst_gap": 0.0
+      },
+      {
+        "threshold": 0.575,
+        "relative_cost": 0.4288388798425945,
+        "accuracy": 0.9882352941176471,
+        "worst_accuracy": 0.9509803921568627,
+        "worst_gap": 0.0
+      },
+      {
+        "threshold": 0.55,
+        "relative_cost": 0.4288388798425945,
+        "accuracy": 0.9882352941176471,
+        "worst_accuracy": 0.9509803921568627,
+        "worst_gap": 0.0
+      },
+      {
+        "threshold": 0.5249999999999999,
+        "relative_cost": 0.4288388798425945,
+        "accuracy": 0.9882352941176471,
+        "worst_accuracy": 0.9509803921568627,
+        "worst_gap": 0.0
+      },
+      {
+        "threshold": 0.5,
+        "relative_cost": 0.4288388798425945,
+        "accuracy": 0.9882352941176471,
+        "worst_accuracy": 0.9509803921568627,
+        "worst_gap": 0.0
+      },
+      {
+        "threshold": 0.475,
+        "relative_cost": 0.4288388798425945,
+        "accuracy": 0.9882352941176471,
+        "worst_accuracy": 0.9509803921568627,
+        "worst_gap": 0.0
+      },
+      {
+        "threshold": 0.44999999999999996,
+        "relative_cost": 0.4288388798425945,
+        "accuracy": 0.9882352941176471,
+        "worst_accuracy": 0.9509803921568627,
+        "worst_gap": 0.0
+      },
+      {
+        "threshold": 0.42499999999999993,
+        "relative_cost": 0.4288388798425945,
+        "accuracy": 0.9882352941176471,
+        "worst_accuracy": 0.9509803921568627,
+        "worst_gap": 0.0
+      },
+      {
+        "threshold": 0.3999999999999999,
+        "relative_cost": 0.32308628468688516,
+        "accuracy": 0.9666666666666667,
+        "worst_accuracy": 0.8921568627450981,
+        "worst_gap": 0.05882352941176461
+      },
+      {
+        "threshold": 0.375,
+        "relative_cost": 0.32308628468688516,
+        "accuracy": 0.9666666666666667,
+        "worst_accuracy": 0.8921568627450981,
+        "worst_gap": 0.05882352941176461
+      },
+      {
+        "threshold": 0.35,
+        "relative_cost": 0.32308628468688516,
+        "accuracy": 0.9666666666666667,
+        "worst_accuracy": 0.8921568627450981,
+        "worst_gap": 0.05882352941176461
+      },
+      {
+        "threshold": 0.32499999999999996,
+        "relative_cost": 0.32308628468688516,
+        "accuracy": 0.9666666666666667,
+        "worst_accuracy": 0.8921568627450981,
+        "worst_gap": 0.05882352941176461
+      },
+      {
+        "threshold": 0.29999999999999993,
+        "relative_cost": 0.32308628468688516,
+        "accuracy": 0.9666666666666667,
+        "worst_accuracy": 0.8921568627450981,
+        "worst_gap": 0.05882352941176461
+      },
+      {
+        "threshold": 0.2749999999999999,
+        "relative_cost": 0.32308628468688516,
+        "accuracy": 0.9666666666666667,
+        "worst_accuracy": 0.8921568627450981,
+        "worst_gap": 0.05882352941176461
+      },
+      {
+        "threshold": 0.25,
+        "relative_cost": 0.32308628468688516,
+        "accuracy": 0.9666666666666667,
+        "worst_accuracy": 0.8921568627450981,
+        "worst_gap": 0.05882352941176461
+      },
+      {
+        "threshold": 0.22499999999999998,
+        "relative_cost": 0.32308628468688516,
+        "accuracy": 0.9666666666666667,
+        "worst_accuracy": 0.8921568627450981,
+        "worst_gap": 0.05882352941176461
+      },
+      {
+        "threshold": 0.19999999999999996,
+        "relative_cost": 0.32308628468688516,
+        "accuracy": 0.9666666666666667,
+        "worst_accuracy": 0.8921568627450981,
+        "worst_gap": 0.05882352941176461
+      },
+      {
+        "threshold": 0.17499999999999993,
+        "relative_cost": 0.32308628468688516,
+        "accuracy": 0.9666666666666667,
+        "worst_accuracy": 0.8921568627450981,
+        "worst_gap": 0.05882352941176461
+      },
+      {
+        "threshold": 0.1499999999999999,
+        "relative_cost": 0.32308628468688516,
+        "accuracy": 0.9666666666666667,
+        "worst_accuracy": 0.8921568627450981,
+        "worst_gap": 0.05882352941176461
+      },
+      {
+        "threshold": 0.125,
+        "relative_cost": 0.32308628468688516,
+        "accuracy": 0.9666666666666667,
+        "worst_accuracy": 0.8921568627450981,
+        "worst_gap": 0.05882352941176461
+      },
+      {
+        "threshold": 0.09999999999999998,
+        "relative_cost": 0.32308628468688516,
+        "accuracy": 0.9666666666666667,
+        "worst_accuracy": 0.8921568627450981,
+        "worst_gap": 0.05882352941176461
+      },
+      {
+        "threshold": 0.07499999999999996,
+        "relative_cost": 0.32308628468688516,
+        "accuracy": 0.9666666666666667,
+        "worst_accuracy": 0.8921568627450981,
+        "worst_gap": 0.05882352941176461
+      },
+      {
+        "threshold": 0.04999999999999993,
+        "relative_cost": 0.32308628468688516,
+        "accuracy": 0.9666666666666667,
+        "worst_accuracy": 0.8921568627450981,
+        "worst_gap": 0.05882352941176461
+      },
+      {
+        "threshold": 0.02499999999999991,
+        "relative_cost": 0.32308628468688516,
+        "accuracy": 0.9666666666666667,
+        "worst_accuracy": 0.8921568627450981,
+        "worst_gap": 0.05882352941176461
+      },
+      {
+        "threshold": 0.0,
+        "relative_cost": 0.32308628468688516,
+        "accuracy": 0.9666666666666667,
+        "worst_accuracy": 0.8921568627450981,
+        "worst_gap": 0.05882352941176461
+      }
+    ]
+  },
+  "thresholds": {
+    "router": {
+      "global": 0.48,
+      "per_variant": {
+        "en": 0.0,
+        "msa": 0.0,
+        "dialect": null,
+        "arabizi": 0.0,
+        "mixed": null
+      },
+      "group_sizes": {
+        "en": 101,
+        "msa": 101,
+        "dialect": 101,
+        "arabizi": 101,
+        "mixed": 101
+      },
+      "epsilon": 0.05,
+      "delta": 0.1,
+      "n": 505
+    },
+    "agreement": {
+      "global": 0.41000000000000003,
+      "per_variant": {
+        "en": 0.0,
+        "msa": 0.0,
+        "dialect": 0.41000000000000003,
+        "arabizi": 0.0,
+        "mixed": 0.41000000000000003
+      },
+      "group_sizes": {
+        "en": 101,
+        "msa": 101,
+        "dialect": 101,
+        "arabizi": 101,
+        "mixed": 101
+      },
+      "epsilon": 0.05,
+      "delta": 0.1,
+      "n": 505
+    }
+  },
+  "guarantee": {
+    "en": {
+      "loss_rate": 0.0,
+      "within_epsilon": true
+    },
+    "msa": {
+      "loss_rate": 0.0,
+      "within_epsilon": true
+    },
+    "najdi": {
+      "loss_rate": 0.0,
+      "within_epsilon": true
+    },
+    "arabizi": {
+      "loss_rate": 0.0196078431372549,
+      "within_epsilon": true
+    },
+    "mixed": {
+      "loss_rate": 0.0,
+      "within_epsilon": true
+    }
+  },
+  "split": "test"
+}
