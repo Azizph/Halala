@@ -21,15 +21,17 @@ Halala is a thin layer in front of the model. It does three things:
 
 ## How it works
 
-A question comes in and is cleaned up, then Halala detects its form. Arabizi is rewritten into Arabic script by rules and a word
-list, with no model call. Arabic goes to ALLaM. English can go to a smaller model when the hardware has room for both. A free
-check catches empty or refused answers, and every answer's real cost is recorded.
+A question comes in and is cleaned up, then Halala detects its form. Arabizi is rewritten into Arabic script by rules and a list
+of real Arabic words, with no model call. Arabic goes to ALLaM. English can go to a smaller model when the hardware has room for
+both. A free check catches empty or refused answers, and every answer's real cost is recorded.
 
-**Where that leaves the tax:** on the development questions, the Arabizi fix takes it from 8 to 32 of 45 correct, and its tax from
-8.2 times English to 1.1 times. Across all 225, right answers rise from 179 to 202, at 22% less real compute per correct answer
-(`runs/local_gemma/dialect_tax.md`). **On text it hasn't seen, the fix doesn't hold yet:** 15 fresh questions went from 1 to 2 of
-15 correct, against 14 of 15 in proper Arabic (`runs/local_gemma/arabizi_fresh.md`). Keeping Arabic on ALLaM avoids the cheap-model
-cost. The Saudi gap is still open, and the sealed test is still to run.
+**Where that leaves the tax:** on 30 Arabizi questions nobody had seen, ALLaM alone gets 1 right and Halala gets 18, against 28 of
+30 when the same questions are written in proper Arabic. The gap is smaller, and it's still open (`runs/local_gemma/arabizi_fresh2.md`).
+The rewrite before this one got 13, and this one gets 14 without its list of real words (`runs/local_gemma/arabizi_parts.md`). On
+the development questions, which the rewrite was built on, Arabizi goes from 8 to 37 of 45 correct, and its tax from 8.3 times
+English to 0.8 times. Across all 225, right answers rise from 179 to 207, at 27% less real compute per correct answer
+(`runs/local_gemma/dialect_tax.md`). Keeping Arabic on ALLaM avoids the cheap-model cost. The Saudi gap is still open, and the
+sealed test is still to run.
 
 ## The demo
 
@@ -78,8 +80,11 @@ doesn't need to be technically exhaustive. Work top to bottom. Tick each item wi
 | [x] | Run the console on the real models: 225 questions in about 2.5 minutes (00:40) | Lead | 04:30 |
 | [x] | Write 15 fresh Arabizi questions, by an agent kept away from the word list (00:40) | Agent | 09:00 |
 | [x] | Run the fresh Arabizi questions: 1 to 2 of 15, against 14 in proper Arabic (00:45) | Lead | 09:30 |
-| [ ] | Decide whether to build a rewrite that holds on unseen Arabizi | Builder | Now |
-| [ ] | Check the 15 fresh questions and the console's Arabic, and say whether the dataset was hand-checked and whether pre-written code is allowed | Builder | 09:00 |
+| [x] | Decide whether to build a rewrite that holds on unseen Arabizi: yes, with a hard stop at 08:00 (01:00) | Builder | Now |
+| [x] | Repair the Arabizi rules and add word-frequency spelling correction (01:30) | Lead | 08:00 |
+| [x] | Write a second fresh batch, by an agent kept away from the code, and run it once when the fix was final. The fix stays: 13 to 18 of 30 blind, 32 to 37 of 45 on development questions, and no form lost (01:35) | Lead, agent | 08:00 |
+| [ ] | Second rewrite round: fix the general misses, then run it once on a new blind batch. Keep it only if it beats the committed rewrite there without losing development questions. If it doesn't, add it to Tried and dropped | Lead, agent | 08:00 |
+| [ ] | Check the 30 blind questions, the 15 fresh ones and the console's Arabic, and say whether the dataset was hand-checked and whether pre-written code is allowed | Builder | 09:00 |
 | [ ] | Freeze: commit, check that a fresh clone gives the same numbers | Lead, builder approves | 10:00 |
 | [ ] | Run the sealed test once | Lead | 10:30 |
 | [ ] | Put the final numbers in `PROJECT_PAGE.md` and the console | Lead | 11:00 |
@@ -105,6 +110,9 @@ Say what didn't work. The evidence is in `runs/`, and the code is in git at `f9a
 | Freer replies for dialect and Arabizi | 7 more right answers, but Najdi's tax rose to 2.5 times and Arabizi's to 3.4 | `runs/local_gemma/dialect_tax_instructions.md` |
 | Capping answer length | Saved nothing at 24 tokens, and lost accuracy at 16 or fewer | Run on 2026-10-30, 225 dev questions |
 | Answer cache for repeated questions | No repeats in the data to reuse | Consultant's review, 2026-10-30 |
+| The first Arabizi rewrite on unseen text | 2 of 15, against 14 in proper Arabic, which is why it was rebuilt | `runs/local_gemma/arabizi_fresh_before.md` |
+| Treating a vowel before two consonants as short | Changed nothing on 60 checked questions | Run on 2026-10-31, 45 dev and 15 fresh questions |
+| Capping how much a word's commonness counts | Within a word or two either way on the same 60 | Run on 2026-10-31, 45 dev and 15 fresh questions |
 
 ## Parked
 
@@ -112,5 +120,5 @@ Ideas that aren't in the plan. They stay here unless the builder moves them onto
 
 - Open replies on the benchmark, to see if "reply with only the letter" causes part of the Saudi gap. It needs 100 fresh questions.
 - A retry of the Saudi word list on fresh questions, adding `ايش من الجاي` and `الي`.
-- Correcting Arabizi misspellings with a word-frequency list.
+- Update `main` before submitting: it's GitHub's default branch and it's still at `c1bbe6f`, so a clone misses everything since.
 - A friend from Jazan, Al-Ahsa or the Hijaz translating 15 to 20 questions.

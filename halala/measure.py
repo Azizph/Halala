@@ -11,6 +11,7 @@ import copy
 import json
 import random
 from dataclasses import replace
+from pathlib import Path
 
 from .config import resolve, run_dir
 from .data import VARIANTS, load_jsonl
@@ -129,7 +130,7 @@ def cmd_fresh(cfg: dict, data: str) -> str:
     for it, before, after in zip(items, *results.values()):
         lines.append(f"| {it.question} | {prepare(it.question)[0]} | {'right' if before['correct'] else 'wrong'} | "
                      f"{'right' if after['correct'] else 'wrong'} |")
-    return _save(cfg, "arabizi_fresh", "\n".join(lines))
+    return _save(cfg, Path(data).stem, "\n".join(lines))
 
 
 def cmd_check(cfg: dict, save: bool, tolerance: int = 1) -> int:

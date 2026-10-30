@@ -1,8 +1,8 @@
 """Halala: a thin layer in front of the model.
 
-A question comes in and is cleaned up, then Halala detects its form. Arabizi is rewritten into Arabic script by rules and a
-word list, with no model call. Arabic goes to the large model. English can go to the small model when the hardware has room
-for both. A free check catches empty or refused answers, and every call's real cost is recorded.
+A question comes in and is cleaned up, then Halala detects its form. Arabizi is rewritten into Arabic script by rules and word
+lists, with no model call. Arabic goes to the large model. English can go to the small model when the hardware has room for
+both. A free check catches empty or refused answers, and every call's real cost is recorded.
 
 `steps` is the one path: the command line, the measurements, the sealed test and the demo all go through it.
 """

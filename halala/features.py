@@ -14,6 +14,7 @@ ARABIZI_DIGIT_IN_WORD = re.compile(r"[A-Za-z][2356789]|[2356789][A-Za-z]")
 ARABIZI_STRONG = {
     "wesh", "wish", "shlon", "shlonak", "ya3ni", "mafi", "wallah", "inshallah", "abgha", "zain",
     "laish", "leish", "al7een", "hal7een", "wain", "wein", "ytla3", "shu", "keef", "kaif",
+    "wsh", "wush", "meen", "shnu", "shno", "shnoo", "eish", "aish", "feen", "fein", "fain", "wayn", "ween", "leesh", "shloon",
 }
 # Weak markers: Arabic function words that also occur in English ("el", "min", "fi"), so two are needed.
 ARABIZI_WEAK = {

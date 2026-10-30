@@ -2,5 +2,5 @@
 
 | Design | Correct | Seconds per correct | en | msa | najdi | arabizi | mixed |
 |---|---|---|---|---|---|---|---|
-| ALLaM alone | 179 of 225 | 0.54 | 42, 1.00x | 44, 0.88x | 40, 1.01x | 8, 8.23x | 45, 0.91x |
-| With Halala | 202 of 225 | 0.42 | 42, 1.00x | 44, 0.88x | 40, 1.01x | 32, 1.09x | 44, 0.91x |
+| ALLaM alone | 179 of 225 | 0.55 | 42, 1.00x | 44, 0.89x | 40, 1.03x | 8, 8.33x | 45, 0.93x |
+| With Halala | 207 of 225 | 0.40 | 42, 1.00x | 44, 0.90x | 40, 1.03x | 37, 0.81x | 44, 0.93x |

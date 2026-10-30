@@ -2,74 +2,74 @@
   "ALLaM alone": {
     "correct": 179,
     "n": 225,
-    "seconds_per_correct": 0.541,
+    "seconds_per_correct": 0.547,
     "forms": {
       "en": {
         "correct": 42,
         "n": 45,
-        "seconds_per_correct": 0.425,
+        "seconds_per_correct": 0.424,
         "tax": 1.0
       },
       "msa": {
         "correct": 44,
         "n": 45,
-        "seconds_per_correct": 0.375,
-        "tax": 0.88
+        "seconds_per_correct": 0.379,
+        "tax": 0.89
       },
       "najdi": {
         "correct": 40,
         "n": 45,
-        "seconds_per_correct": 0.43,
-        "tax": 1.01
+        "seconds_per_correct": 0.436,
+        "tax": 1.03
       },
       "arabizi": {
         "correct": 8,
         "n": 45,
-        "seconds_per_correct": 3.494,
-        "tax": 8.23
+        "seconds_per_correct": 3.527,
+        "tax": 8.33
       },
       "mixed": {
         "correct": 45,
         "n": 45,
-        "seconds_per_correct": 0.388,
-        "tax": 0.91
+        "seconds_per_correct": 0.396,
+        "tax": 0.93
       }
     }
   },
   "With Halala": {
-    "correct": 202,
+    "correct": 207,
     "n": 225,
-    "seconds_per_correct": 0.425,
+    "seconds_per_correct": 0.397,
     "forms": {
       "en": {
         "correct": 42,
         "n": 45,
-        "seconds_per_correct": 0.439,
+        "seconds_per_correct": 0.424,
         "tax": 1.0
       },
       "msa": {
         "correct": 44,
         "n": 45,
-        "seconds_per_correct": 0.384,
-        "tax": 0.88
+        "seconds_per_correct": 0.38,
+        "tax": 0.9
       },
       "najdi": {
         "correct": 40,
         "n": 45,
-        "seconds_per_correct": 0.443,
-        "tax": 1.01
+        "seconds_per_correct": 0.439,
+        "tax": 1.03
       },
       "arabizi": {
-        "correct": 32,
+        "correct": 37,
         "n": 45,
-        "seconds_per_correct": 0.48,
-        "tax": 1.09
+        "seconds_per_correct": 0.344,
+        "tax": 0.81
       },
       "mixed": {
         "correct": 44,
         "n": 45,
-        "seconds_per_correct": 0.397,
-        "tax": 0.91
+        "seconds_per_correct": 0.394,
+        "tax": 0.93
       }
     }
   }

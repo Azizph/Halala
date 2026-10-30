@@ -10,6 +10,7 @@ from __future__ import annotations
 import re
 
 from .arabizi_lexicon import LEXICON
+from .spelling import spell
 
 _DIACRITICS = re.compile("[ؐ-ًؚ-ٰٟۖ-ۭ]")
 _TATWEEL = "ـ"
@@ -30,11 +31,11 @@ def for_match(text: str) -> str:
     return _SPACES.sub(" ", _PUNCT.sub(" ", text)).strip()
 
 
-# Rule-based Arabizi -> Arabic script: letters, word endings, prefixes, and a word list for what rules can't
-# recover. It needs no model call. Digit conventions vary by region (8 and 9 especially); these follow Gulf usage.
+# Arabizi -> Arabic script: a hand word list first, then real spellings from spelling.py, then rules for letters, word endings
+# and prefixes. It needs no model call. Digit conventions vary by region (8 and 9 especially); these follow Gulf usage.
 _MULTI = [
-    ("3'", "غ"), ("7'", "خ"), ("sh", "ش"), ("kh", "خ"), ("gh", "غ"), ("th", "ث"), ("dh", "ذ"),
-    ("aa", "ا"), ("ee", "ي"), ("ii", "ي"), ("oo", "و"), ("uu", "و"), ("ou", "و"),
+    ("3'", "غ"), ("7'", "خ"), ("6'", "ظ"), ("9'", "ض"), ("sh", "ش"), ("kh", "خ"), ("gh", "غ"), ("th", "ث"), ("dh", "ذ"),
+    ("ch", "ك"), ("aa", "ا"), ("ee", "ي"), ("ii", "ي"), ("oo", "و"), ("uu", "و"), ("ou", "و"),
 ]
 _SINGLE = {
     "2": "ء", "3": "ع", "5": "خ", "6": "ط", "7": "ح", "8": "ق", "9": "ص",
@@ -46,12 +47,19 @@ _VOWELS = set("aeiou")
 _WORD = re.compile(r"[A-Za-z0-9']+")
 
 
-_DOUBLED = re.compile(r"([bcdfghjklmnpqrstvwxyz])\1")   # Arabic writes a doubled consonant once
-_CLITICS = {"el": "ال", "al": "ال", "il": "ال", "bil": "بال", "lil": "لل", "bi": "ب", "w": "و"}
+_DOUBLED = re.compile(r"([bcdfghjklmnpqrstvwxyz235679])\1")   # Arabic writes a doubled consonant once
+_APOSTROPHE_FIRST = re.compile(r"'([3679])")   # '7alifa: some writers put the apostrophe before the digit
+_HYPHENATED = re.compile(r"\b(?:el|al|il|l)-", re.I)   # l-3alam
+_WRITER_DIGITS = re.compile(r"(?<=[a-z'])[35679]|[35679](?=[a-z'])", re.I)
+_CLITICS = {
+    "el": "ال", "al": "ال", "il": "ال", "bil": "بال", "bel": "بال", "bl": "بال", "lil": "لل", "lel": "لل", "ll": "لل",
+    "fil": "في ال", "fel": "في ال", "fl": "في ال", "wal": "وال", "wel": "وال", "wil": "وال", "3al": "على ال",
+    "bi": "ب", "b": "ب", "w": "و",
+}
 # Word endings the letter-by-letter pass would drop. Arabizi writes them; plain rules lose them.
 _ENDINGS = (
     (re.compile(r"(?:iyya|iya|eya|ya)$"), "ية"),
-    (re.compile(r"(?<![sktdg])ha$"), "ها"),   # not "sha" or "kha", which are single letters
+    (re.compile(r"(?<![sktdgc])ha$"), "ها"),   # not "sha" or "kha", which are single letters
     (re.compile(r"a$"), "ة"),
     (re.compile(r"i$"), "ي"),
 )
@@ -77,7 +85,16 @@ def _letters(w: str) -> str:
     return "".join(out)
 
 
-def _translit_word(word: str, followed: bool = False, lexicon: bool = True) -> str:
+def _spelled(word: str, before: str, digits: str) -> str | None:
+    """A definite word is spelled with its article, because الإمارات is common where امارات alone isn't."""
+    if _CLITICS.get(before, "").endswith(("ال", "لل")):
+        spelled = spell("al" + word, digits)
+        if spelled and spelled.startswith("ال"):
+            return spelled[2:]
+    return spell(word, digits)
+
+
+def _translit_word(word: str, followed: bool = False, lexicon: bool = True, before: str = "", digits: str = "") -> str:
     if word.isdigit():
         return word
     w = word.lower()
@@ -85,6 +102,10 @@ def _translit_word(word: str, followed: bool = False, lexicon: bool = True) -> s
         return _CLITICS[w]
     if lexicon and w in LEXICON:
         return LEXICON[w]
+    w = _APOSTROPHE_FIRST.sub(r"\1'", w)
+    spelled = _spelled(w, before, digits) if lexicon else None
+    if spelled:
+        return spelled
     w = _DOUBLED.sub(r"\1", w)
     endings = _ENDINGS + (((_CONSTRUCT, "ة"),) if followed else ())
     for pattern, arabic in endings:
@@ -95,8 +116,11 @@ def _translit_word(word: str, followed: bool = False, lexicon: bool = True) -> s
 
 
 def arabizi_to_arabic(text: str, lexicon: bool = True) -> str:
+    text = _HYPHENATED.sub("al ", text)
     words = list(_WORD.finditer(text))
     last = words[-1].start() if words else -1
-    out = _WORD.sub(lambda m: _translit_word(m.group(), m.start() != last, lexicon), text)
+    before = {word.start(): previous.group().lower() for previous, word in zip(words, words[1:])}
+    digits = "".join(sorted(set(_WRITER_DIGITS.findall(text))))
+    out = _WORD.sub(lambda m: _translit_word(m.group(), m.start() != last, lexicon, before.get(m.start(), ""), digits), text)
     out = re.sub(r"(?<![ء-ي])(ال|بال|لل|ب|و)\s+(?=[ء-ي])", r"\1", out)   # attach prefixes to their word
     return out.replace("?", "؟")

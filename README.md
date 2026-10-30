@@ -20,6 +20,7 @@ The tests use mock models. For real answers, install [Ollama](https://ollama.com
 |---|---|
 | `python -m halala ask "wesh 3asmat el sa3odiya?"` | Sends one question through Halala and prints each step |
 | `python -m halala dialect-tax` | Real seconds per correct answer by form, before and after each fix |
+| `python -m halala fresh --data data/arabizi_fresh2.jsonl` | Arabizi on questions nobody tuned on, against the same questions in proper Arabic |
 | `python -m halala check` | Fails if any form's correct answers fall below the saved baseline |
 | `python -m halala measure` | ALLaM alone against Halala on mixed traffic |
 | `python -m halala dialect-audit` | The tax on a public benchmark, in 7 forms, on both models |
@@ -32,9 +33,15 @@ The tests use mock models. For real answers, install [Ollama](https://ollama.com
 | Path | What it holds |
 |---|---|
 | `halala/pipeline.py` | Halala itself: the one path every command and the demo use |
-| `halala/normalize.py`, `arabizi_lexicon.py` | Cleanup and the Arabizi rewrite, with no model call |
+| `halala/normalize.py`, `arabizi_lexicon.py`, `spelling.py` | Cleanup and the Arabizi rewrite, with no model call |
 | `halala/features.py` | Detecting how a question was written |
 | `halala/measure.py`, `dialect_audit.py` | Measuring the tax |
 | `data/` | Development questions, the sealed test set and the public benchmark sample |
 | `runs/` | Results, including what didn't work |
 | `cache/calls.sqlite` | Saved model calls, so runs can be replayed |
+
+## Credits
+
+`data/arabic_words.txt` merges two public word-frequency lists, and it's shared under CC BY-SA 4.0: subtitles from
+[hermitdave/FrequencyWords](https://github.com/hermitdave/FrequencyWords) (CC BY-SA 4.0) and Arabic Wikipedia from
+[IlyaSemenov/wikipedia-word-frequency](https://github.com/IlyaSemenov/wikipedia-word-frequency).

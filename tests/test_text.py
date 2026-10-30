@@ -5,6 +5,7 @@ from halala.data import load_jsonl
 from halala.features import detect_variant  # noqa: F401  (used by DetectVariantTest and VariantTest)
 from halala.normalize import arabizi_to_arabic, for_match, for_model
 from halala.scoring import extract_choice, is_correct, is_refusal, score
+from halala.spelling import WORDS, spell
 
 EXPECTED = {"en": "en", "msa": "msa", "najdi": "dialect", "arabizi": "arabizi", "mixed": "mixed"}
 
@@ -42,6 +43,41 @@ class NormalizeTest(unittest.TestCase):
         self.assertEqual(arabizi_to_arabic("bi ay shahar?"), "بأي شهر؟")
 
 
+class SpellingTest(unittest.TestCase):
+    def test_long_vowels_come_from_real_words(self):
+        self.assertEqual(arabizi_to_arabic("ensan"), "إنسان")
+        self.assertEqual(arabizi_to_arabic("el ka3ba"), "الكعبة")
+        self.assertEqual(arabizi_to_arabic("el nabawi"), "النبوي")
+
+    def test_a_definite_word_is_spelled_with_its_article(self):
+        self.assertEqual(arabizi_to_arabic("el imarat"), "الإمارات")   # امرأة is far more common alone
+        self.assertEqual(arabizi_to_arabic("el watani"), "الوطني")
+
+    def test_digit_letters_and_where_the_apostrophe_goes(self):
+        self.assertEqual(arabizi_to_arabic("3a6'ma"), "عظمة")
+        self.assertEqual(arabizi_to_arabic("3o9'w"), "عضو")
+        self.assertEqual(arabizi_to_arabic("'7alifa"), "خليفة")
+
+    def test_articles_written_with_a_hyphen(self):
+        self.assertEqual(arabizi_to_arabic("l-3alam"), "العالم")
+
+    def test_a_vowel_before_a_doubled_letter_is_short(self):
+        self.assertEqual(arabizi_to_arabic("jeddah"), "جدة")   # not جيدة, which is far more common
+
+    def test_a_writer_who_types_7_rarely_means_it_by_h(self):
+        self.assertEqual(spell("albhar"), "البحر")
+        self.assertNotEqual(spell("albhar", "7"), "البحر")
+
+    def test_with_no_good_fit_the_rules_take_over(self):
+        self.assertIsNone(spell("y7tonh"))
+        self.assertEqual(arabizi_to_arabic("y7tonh"), "يحتنه")
+
+    def test_vulgar_words_are_never_spelled(self):
+        self.assertEqual(arabizi_to_arabic("kas"), "كأس")   # the rules alone gave a vulgar word
+        words = {line.split()[0] for line in WORDS.read_text(encoding="utf-8").splitlines()}
+        self.assertFalse(words & {"كس", "طيز", "زب", "نيك"})
+
+
 class DetectVariantTest(unittest.TestCase):
     def test_one_english_word_in_an_arabic_sentence_is_mixed(self):
         # Only ~7% of the letters are Latin, so a letter-ratio rule called this pure dialect.
@@ -52,6 +88,7 @@ class DetectVariantTest(unittest.TestCase):
         self.assertEqual(detect_variant("bi ay shahar nsoom?"), "arabizi")   # two weak markers
         self.assertEqual(detect_variant("wesh akbar kawkab?"), "arabizi")    # one strong marker
         self.assertEqual(detect_variant("el ba7r el a7mar"), "arabizi")      # digits inside words
+        self.assertEqual(detect_variant("meen ektashaf al jazibiya?"), "arabizi")
 
     def test_plain_english_is_not_arabizi(self):
         self.assertEqual(detect_variant("What is the capital of Saudi Arabia?"), "en")
