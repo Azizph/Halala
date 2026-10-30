@@ -20,7 +20,8 @@ LABELS = {
     "always_large": "Always large",
     "agreement_global": "Agreement, one threshold",
     "router_global": "Router, one threshold",
-    "halala": "Halala: router, per-variant thresholds",
+    "halala_full": "Full pipeline: router, per-variant thresholds",
+    "halala": "Halala: English to small once, the rest large + rewrite",
     "halala_cache": "Halala + answer cache",
 }
 
@@ -59,6 +60,11 @@ def tier_costs(record: dict, cfg: dict) -> dict[str, dict]:
     }
 
 
+def usable_answer(text: str) -> bool:
+    """The one cheap check Halala keeps: an empty answer or a refusal is never accepted."""
+    return bool(text.strip()) and not is_refusal(text)
+
+
 def nearest_prior(records: list[dict]) -> list[tuple[int, float]]:
     """For each item, the most similar earlier question (character 3-gram cosine) and its similarity.
     Only questions containing the same numbers can match: "12 plus 34" and "12 plus 43" look almost
@@ -84,8 +90,10 @@ def nearest_prior(records: list[dict]) -> list[tuple[int, float]]:
 
 def simulate(records: list[dict], cfg: dict, mode: str, keep: list[bool] | None = None,
              use_cache: bool = False, direct: list[bool] | None = None) -> list[dict]:
-    """mode: small (always small, greedy), large (always large), cascade (keep[i] decides).
-    direct[i] sends a cascade item straight to the large model, skipping the small tier's cost."""
+    """mode: small (always small, greedy), large (always large), cascade (keep[i] decides), split (Halala).
+    direct[i] sends a cascade item straight to the large model, skipping the small tier's cost.
+    split sends English to the small model once and everything else to the large model with any rewrite.
+    An empty answer or a refusal from the small model falls back to the large model."""
     near = nearest_prior(records) if use_cache else None
     tau = float(cfg["cascade"].get("cache_similarity", 0.92))
     limit = float(cfg.get("floors", {}).get("latency_limit_s", 0))
@@ -98,6 +106,14 @@ def simulate(records: list[dict], cfg: dict, mode: str, keep: list[bool] | None 
             text, tier, cost = r["greedy_text"], "small", costs["greedy"]
         elif mode == "large":
             text, tier, cost = r["large_text"], "large", costs["large"]
+        elif mode == "split":
+            if r["detected_variant"] != "en":
+                text, tier, cost = r.get("large_rescued_text", r["large_text"]), "large", costs["direct"]
+            elif usable_answer(r["greedy_text"]):
+                text, tier, cost = r["greedy_text"], "small", costs["greedy"]
+            else:
+                text, tier = r["large_text"], "large"
+                cost = {k: costs["greedy"][k] + costs["large"][k] for k in COST_KEYS}
         elif direct and direct[i]:
             text, tier, cost = r.get("large_rescued_text", r["large_text"]), "large", costs["direct"]
         elif keep[i]:
@@ -197,8 +213,7 @@ def evaluate(test: list[dict], router, thresholds: dict, cfg: dict) -> dict:
     variants = [v for v in VARIANTS if v in present] + sorted(present - set(VARIANTS))
     detected = [r["detected_variant"] for r in test]
     scores = {"router": router.score(test), "agreement": np.array([r["agreement"] for r in test], dtype=float)}
-    # An empty answer or a refusal is never kept, however much the samples agree.
-    answered = np.array([bool(r["majority_text"].strip()) and not is_refusal(r["majority_text"]) for r in test])
+    answered = np.array([usable_answer(r["majority_text"]) for r in test])
 
     def keep(name: str, per_variant: bool) -> list[bool]:
         th = thresholds[name]
@@ -214,11 +229,11 @@ def evaluate(test: list[dict], router, thresholds: dict, cfg: dict) -> dict:
         "always_large": simulate(test, cfg, "large"),
         "agreement_global": simulate(test, cfg, "cascade", keep("agreement", False), direct=direct("agreement", False)),
         "router_global": simulate(test, cfg, "cascade", keep("router", False), direct=direct("router", False)),
-        "halala": simulate(test, cfg, "cascade", keep("router", True), direct=direct("router", True)),
+        "halala_full": simulate(test, cfg, "cascade", keep("router", True), direct=direct("router", True)),
+        "halala": simulate(test, cfg, "split"),
     }
     if cfg["cascade"].get("cache"):
-        runs["halala_cache"] = simulate(test, cfg, "cascade", keep("router", True), use_cache=True,
-                                        direct=direct("router", True))
+        runs["halala_cache"] = simulate(test, cfg, "split", use_cache=True)
     reference = runs["always_large"]
     policies = {k: {"label": LABELS[k], **summarize(o, reference, primary, variants)} for k, o in runs.items()}
     floors = cfg.get("floors", {})
@@ -235,8 +250,8 @@ def evaluate(test: list[dict], router, thresholds: dict, cfg: dict) -> dict:
         sweeps[name] = points
 
     eps = thresholds["router"]["epsilon"]
-    guarantee = {v: {"loss_rate": policies["halala"]["per_variant"][v]["loss_rate"],
-                     "within_epsilon": policies["halala"]["per_variant"][v]["loss_rate"] <= eps}
+    guarantee = {v: {"loss_rate": policies["halala_full"]["per_variant"][v]["loss_rate"],
+                     "within_epsilon": policies["halala_full"]["per_variant"][v]["loss_rate"] <= eps}
                  for v in variants}
     return {
         "run": cfg["run"]["name"],

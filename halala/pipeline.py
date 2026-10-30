@@ -4,25 +4,22 @@ from __future__ import annotations
 
 import html
 import json
-import math
 from collections import defaultdict
-from dataclasses import asdict
 from datetime import datetime
 
 import numpy as np
 
-from .calibrate import calibrate, threshold
-from .collect import SYSTEM_ANSWER, collect, prepare_prompt, small_samples, summarize_samples
+from .calibrate import calibrate
+from .collect import SYSTEM_ANSWER, collect, prepare_prompt
 from .config import resolve, run_dir
 from .data import (VARIANTS, convert_mcq_csv, file_sha256, load_examples, load_jsonl, seal, split_items,
                    write_jsonl)
-from .features import detect_variant, question_features
+from .features import detect_variant
 from .normalize import for_match
 from .models import build_models
-from .policies import call_cost, drop_unprofitable, evaluate, tier_costs
+from .policies import drop_unprofitable, evaluate, tier_costs, usable_answer
 from .report import write_report
 from .router import Router
-from .scoring import is_refusal
 
 
 def _sealed_path(cfg: dict):
@@ -173,7 +170,10 @@ def cmd_evaluate(cfg: dict, readme: bool = False, split: str = "test") -> dict:
     out = run_dir(cfg)
     if not (out / "router.pkl").exists():
         raise SystemExit("No trained router. Run: python -m halala train")
-    test = read_records(cfg, split)
+    if split == "dev":   # every non-sealed question, for policies with no trained parts
+        test = [r for name in cfg["run"]["split_fractions"] for r in read_records(cfg, name)]
+    else:
+        test = read_records(cfg, split)
     router = Router.load(out / "router.pkl")
     thresholds = json.loads((out / "thresholds.json").read_text(encoding="utf-8"))
     res = {**evaluate(test, router, thresholds, cfg), "split": split}
@@ -302,60 +302,46 @@ def _profile_html(records: list[dict]) -> str:
 
 
 def cmd_ask(cfg: dict, question: str) -> dict:
-    """One question through the live cascade, with a trace. The seed of the demo."""
-    out = run_dir(cfg)
+    """One question through Halala, with a trace. The seed of the demo."""
     if any(cfg["models"][t]["backend"] == "mock" for t in ("small", "large")):
-        print("(mock models: answers are placeholders; use --config configs/ollama.toml for real ones)")
+        print("(mock models: answers are placeholders; use --config configs/local_gemma.toml for real ones)")
     small, large, cache = build_models(cfg)
     variant = detect_variant(question)
-    calibrated = (out / "router.pkl").exists()
-    th = json.loads((out / "thresholds.json").read_text(encoding="utf-8"))["router"] if calibrated else None
+    tokens = {"small": 0, "large": 0}
+    seconds = 0.0
+
+    def ask(tier: str, model, prompt: str) -> str:
+        nonlocal seconds
+        c = model.complete(SYSTEM_ANSWER, prompt, 0.0, 0, {})
+        tokens[tier] += c.tokens_in + c.tokens_out
+        seconds += c.latency_s
+        return c.text
+
     try:
-        if calibrated and math.isinf(threshold(th, variant)):
-            # This variant always escalates, so paying for the small tier first would be wasted.
-            big = large.complete(SYSTEM_ANSWER, question, 0.0, 0, {})
-            return _show_trace(out, {
-                "question": question,
-                "detected_variant": variant,
-                "decision": "sent straight to large model: no certified threshold for this variant",
-                "answer": big.text,
-                "tokens": {"small": 0, "large": big.tokens_in + big.tokens_out},
-            })
         prompt, rewrite_calls, rewrite = prepare_prompt(question, cfg["cascade"], small)
-        samples = small_samples(small, SYSTEM_ANSWER, prompt, cfg["cascade"], {})
-        rec = {"features": question_features(question), "detected_variant": variant,
-               "rewrite_rejected": bool(rewrite.get("rejected")), **summarize_samples(samples)}
-        if calibrated:
-            router = Router.load(out / "router.pkl")
-            score, t = float(router.score([rec])[0]), threshold(th, variant)
-            basis = f"calibrated for {variant}"
+        tokens["small"] += sum(c["tokens_in"] + c["tokens_out"] for c in rewrite_calls)
+        if variant != "en":
+            route = "large model, with the rewrite" if rewrite.get("text") else "large model"
+            answer = ask("large", large, prompt)
         else:
-            score, t, basis = rec["agreement"], 0.8, "uncalibrated default; run train first"
-        # An empty answer or a refusal is never kept, however much the samples agree.
-        keep = score >= t and bool(rec["majority_text"].strip()) and not is_refusal(rec["majority_text"])
-        calls_small = rewrite_calls + [asdict(s) for s in samples]
-        cost_small = sum(call_cost(c, cfg["models"]["small"])["tokens"] for c in calls_small)
-        answer, cost_large = rec["majority_text"], 0
-        if not keep:
-            big = large.complete(SYSTEM_ANSWER, question, 0.0, 0, {})
-            answer, cost_large = big.text, big.tokens_in + big.tokens_out
+            route = "small model, once"
+            answer = ask("small", small, prompt)
+            if not usable_answer(answer):
+                route = "small model gave no usable answer, so the large model answered"
+                answer = ask("large", large, question)
     finally:
         if cache is not None:
             cache.close()
-    return _show_trace(out, {
+    return _show_trace(run_dir(cfg), {
         "question": question,
         "detected_variant": variant,
         "rewrite": (f"rejected ({rewrite['rejected']}): {rewrite['text']}" if rewrite.get("rejected")
                     else rewrite.get("text", "not needed")),
-        "small_model_sees": prompt,
-        "small_answers": rec["small_texts"],
-        "agreement": rec["agreement"],
-        "router_score": round(score, 3),
-        "threshold": None if math.isinf(t) else round(t, 3),
-        "threshold_basis": basis,
-        "decision": "kept small answer" if keep else "escalated to large model",
+        "model_sees": prompt,
+        "route": route,
         "answer": answer,
-        "tokens": {"small": cost_small, "large": cost_large},
+        "tokens": tokens,
+        "seconds": round(seconds, 2),
     })
 
 

@@ -10,6 +10,7 @@ from __future__ import annotations
 import re
 
 from .arabizi_lexicon import LEXICON
+from .dialect_lexicon import PHRASES, SAUDI
 
 _DIACRITICS = re.compile("[ؐ-ًؚ-ٰٟۖ-ۭ]")
 _TATWEEL = "ـ"
@@ -113,3 +114,19 @@ def arabizi_to_arabic(text: str, lexicon: bool = True) -> str:
     out = _WORD.sub(lambda m: _translit_word(m.group(), m.start() != last, lexicon), text)
     out = re.sub(r"(?<![ء-ي])(ال|بال|لل|ب|و)\s+(?=[ء-ي])", r"\1", out)   # attach prefixes to their word
     return out.replace("?", "؟")
+
+
+# Saudi dialect -> formal Arabic, by word list, so it needs no model call.
+_ARABIC_WORD = re.compile(r"[ء-ي]+")
+_PHRASE = re.compile(r"(?<![ء-ي])(" + "|".join(PHRASES) + r")(?![ء-ي])")
+
+
+def _formal_word(match: re.Match) -> str:
+    word = match.group()
+    if word in SAUDI:
+        return SAUDI[word]
+    return word[0] + SAUDI[word[1:]] if word[0] in "وف" and word[1:] in SAUDI else word   # keep an attached "and"
+
+
+def dialect_to_formal(text: str) -> str:
+    return _ARABIC_WORD.sub(_formal_word, _PHRASE.sub(lambda m: PHRASES[m.group()], text))

@@ -1,0 +1,1284 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Halala demo</title>
+<link rel="icon" href="data:,">
+<style>
+  :root {
+    --paper: #f5efe3;
+    --card: #fffbf3;
+    --ink: #1b1f1c;
+    --muted: #565b54;
+    --line: #dcd2be;
+    --green: #0a5c48;
+    --copper: #b4701f;
+    --copper-deep: #84490f;
+    --brick: #a8321f;
+    --font-ui: "Segoe UI Variable Text", "Segoe UI", Tahoma, "Noto Sans Arabic", Arial, sans-serif;
+    --font-display: Georgia, "Segoe UI", Tahoma, "Noto Sans Arabic", serif;
+  }
+
+  /* One rem is 1/80 of a 16:9 stage, so the whole demo scales with the window. */
+  html { font-size: min(1.25vw, 2.2222vh); }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    height: 100vh;
+    overflow: hidden;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-ui);
+    line-height: 1.4;
+  }
+  h1, h2, p, ol, ul { margin: 0; }
+  button, input { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  button:disabled { cursor: default; }
+  :focus-visible { outline: .18rem solid var(--green); outline-offset: .15rem; border-radius: .25rem; }
+  [dir="auto"] { unicode-bidi: plaintext; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+
+  .top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.1rem 3rem .4rem;
+  }
+  .brand { display: flex; align-items: baseline; gap: .7rem; }
+  .brand .mark {
+    align-self: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #edc482, var(--copper) 72%);
+    box-shadow: inset 0 0 0 .13rem var(--copper-deep);
+  }
+  .brand b { font-family: var(--font-display); font-size: 1.45rem; font-weight: 400; }
+  .brand .arabic { font-size: 1.25rem; color: var(--copper-deep); }
+  .brand small, .byline { font-size: .95rem; color: var(--muted); }
+  .who { display: flex; align-items: center; gap: 1.1rem; }
+  .mode { font-size: .95rem; font-weight: 600; padding: .12rem .75rem; border-radius: 2rem; border: 1px solid currentColor; }
+  .mode.live { color: var(--green); }
+  .mode.recorded { color: var(--copper-deep); }
+  .mode.mock { background: var(--brick); border-color: var(--brick); color: var(--card); }
+  .stamp { font-size: .8rem; font-weight: 600; padding: .02rem .5rem; border-radius: 2rem; border: 1px solid currentColor; }
+  .stamp.live { color: var(--green); }
+  .stamp.recorded { color: var(--copper-deep); }
+  .stamp.mock { background: var(--brick); border-color: var(--brick); color: var(--card); }
+
+  main { position: relative; min-height: 0; padding: .4rem 3rem; }
+  .beat { height: 100%; display: flex; flex-direction: column; justify-content: space-between; gap: .8rem; padding-bottom: .8rem; animation: enter .28s ease-out; }
+  .beat[hidden] { display: none; }
+  @keyframes enter { from { opacity: 0; transform: translateY(.4rem); } }
+
+  h1 { font-family: var(--font-display); font-size: 2.7rem; font-weight: 400; line-height: 1.15; letter-spacing: -.01em; }
+  .picker { position: absolute; top: .9rem; right: 3rem; max-width: 38rem; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: .4rem; }
+  .picker[hidden] { display: none; }
+  .many .beat h1 { font-size: 2.1rem; max-width: 38rem; }
+  .many .picker { max-width: 34rem; }
+  .picker button, .chips button {
+    border: 1px solid var(--line);
+    background: transparent;
+    border-radius: 2rem;
+    padding: .28rem .85rem;
+    font-size: .95rem;
+    color: var(--muted);
+  }
+  .picker button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+  .chips { display: flex; flex-wrap: wrap; gap: .4rem; }
+  .chips button:disabled { opacity: .5; }
+
+  .kicker { font-size: .95rem; font-weight: 600; letter-spacing: .02em; color: var(--muted); }
+  .q { font-size: 1.65rem; line-height: 1.3; }
+  .said { font-size: .95rem; color: var(--muted); }
+  .reply { font-size: 2.1rem; font-weight: 500; line-height: 1.3; white-space: pre-line; scrollbar-width: none; }
+  .reply.long { font-size: 1.05rem; font-weight: 400; }
+  .two-lines { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+  .reply.empty, .answer.empty { color: var(--muted); font-size: 1.25rem; font-weight: 400; }
+  .waiting { color: var(--copper-deep); font-size: 1.25rem; font-weight: 400; animation: breathe 1.2s ease-in-out infinite; }
+  @keyframes breathe { 50% { opacity: .45; } }
+  .gloss { font-size: 1rem; color: var(--muted); min-height: 1.4rem; }
+  .verdict { font-size: 1.1rem; font-weight: 600; min-height: 1.54rem; }
+  .verdict.ok { color: var(--green); }
+  .verdict.no { color: var(--brick); }
+  .explain { font-size: 1.3rem; line-height: 1.35; max-width: 66rem; }
+  .fine { font-size: .95rem; color: var(--muted); }
+  .problem { color: var(--brick); }
+
+  /* Beat 1 */
+  .duel { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  .ask {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-top: .28rem solid var(--line);
+    border-radius: .5rem;
+    padding: 1.05rem 1.5rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: .3rem;
+  }
+  .ask.good { border-top-color: var(--green); }
+  .ask.bad { border-top-color: var(--brick); }
+  .ask .q { min-height: 4.4rem; }
+  .ask .reply { min-height: 8.25rem; max-height: 8.25rem; overflow-y: auto; }
+
+  /* Coins: filled bought a right answer, hollow was paid for and came back wrong. */
+  .tray { display: grid; grid-template-columns: repeat(9, 1.75rem); gap: .45rem; width: max-content; }
+  .coin { position: relative; width: 1.75rem; height: 1.75rem; border-radius: 50%; }
+  .coin.right {
+    background: radial-gradient(circle at 35% 30%, #edc482, var(--copper) 72%);
+    box-shadow: inset 0 0 0 .13rem var(--copper-deep);
+  }
+  .coin.wrong { box-shadow: inset 0 0 0 .12rem var(--brick); }
+  .coin.wrong::after {
+    content: "×";
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font-size: 1.15rem;
+    line-height: 1;
+    color: var(--brick);
+  }
+  .coin.flip { animation: flip .34s ease-out; }
+  @keyframes flip { from { transform: rotateY(90deg); } to { transform: rotateY(0); } }
+
+  /* Beat 2 */
+  .bill { display: grid; grid-template-columns: 1fr 1fr 18rem; gap: 2rem; align-items: start; }
+  .side { display: flex; flex-direction: column; gap: .6rem; }
+  .side h2 { font-size: 1.3rem; font-weight: 600; }
+  .count { font-size: 1.5rem; }
+  .count b { font-weight: 600; }
+  .meter { height: .9rem; border-radius: .2rem; background: var(--green); transition: width .6s ease-out; }
+  .meter.high { background: var(--brick); }
+  .perright { font-size: 1.15rem; }
+  .perright b { font-size: 2.2rem; font-weight: 300; }
+  .multiple { display: flex; flex-direction: column; gap: .3rem; padding-top: 1.6rem; }
+  .multiple b { font-size: 6.4rem; font-weight: 300; line-height: 1; color: var(--brick); }
+  .multiple span { font-size: 1.3rem; line-height: 1.3; }
+
+  /* Beat 3 */
+  .flow { display: grid; grid-template-columns: 1fr 10rem 1fr 3rem 1fr; gap: .5rem; align-items: stretch; }
+  .node {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: .5rem;
+    padding: .85rem 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: .3rem;
+    min-height: 10.4rem;
+  }
+  .node.good { border-top: .28rem solid var(--green); }
+  .node.bad { border-top: .28rem solid var(--brick); }
+  .node .q { font-size: 1.5rem; }
+  .node .reply { font-size: 1.9rem; max-height: 10rem; overflow-y: auto; }
+  .node .reply.empty, .node .reply.waiting { font-size: 1.05rem; }
+  .node .reply.long { font-size: .9rem; }
+  .node .reply.long + .gloss { min-height: 0; }
+  .node .verdict { margin-top: auto; }
+  .link { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; gap: .1rem; }
+  .link span { font-size: .95rem; line-height: 1.25; color: var(--muted); }
+  .link i { font-style: normal; font-size: 2rem; line-height: 1; color: var(--green); }
+  .link b { font-size: 1.02rem; color: var(--green); font-weight: 600; }
+  .after { display: grid; grid-template-columns: max-content 1fr 1fr; gap: 2.4rem; align-items: start; }
+  .after .count { font-size: 1.3rem; margin-top: .45rem; }
+  .fall { display: flex; flex-direction: column; gap: .45rem; }
+  .fall .pair { font-size: 3.2rem; font-weight: 300; line-height: 1; }
+  .fall .pair s { color: var(--brick); text-decoration-thickness: .12rem; }
+  .fall .pair i { font-style: normal; font-size: 2rem; color: var(--muted); }
+  .fall .pair b { font-weight: 300; color: var(--green); }
+  .caveat { font-size: 1.08rem; line-height: 1.38; }
+  .reveal { opacity: 0; transform: translateY(.45rem); transition: opacity .36s ease-out, transform .36s ease-out; }
+  .reveal.on { opacity: 1; transform: none; }
+
+  /* Beat 4 */
+  .asker { display: flex; gap: .7rem; }
+  .asker input {
+    flex: 1;
+    min-width: 0;
+    font-size: 1.5rem;
+    padding: .38rem .9rem;
+    background: var(--card);
+    border: 1px solid var(--ink);
+    border-radius: .35rem;
+  }
+  .asker input:disabled { border-color: var(--line); color: var(--muted); }
+  .asker input::placeholder { color: var(--muted); opacity: 1; }
+  .asker .action { padding-left: 1.7rem; padding-right: 1.7rem; font-size: 1.15rem; }
+  .console { flex: 1; min-height: 0; display: grid; grid-template-columns: 1.6fr 1fr; gap: 1.5rem; }
+  .trace { list-style: none; padding: 0; display: flex; flex-direction: column; min-height: 0; }
+  .trace li {
+    display: grid;
+    grid-template-columns: 1rem 8.6rem 1fr;
+    gap: .75rem;
+    padding: .42rem 0;
+    border-top: 1px solid var(--line);
+  }
+  .trace li:first-child { border-top: 0; padding-top: 0; }
+  .trace .dot { width: .95rem; height: .95rem; margin-top: .28rem; border-radius: 50%; box-shadow: inset 0 0 0 .1rem var(--line); }
+  .trace li.doing .dot { background: var(--copper); animation: breathe 1s ease-in-out infinite; }
+  .trace li.done .dot {
+    background: radial-gradient(circle at 35% 30%, #edc482, var(--copper) 72%);
+    box-shadow: inset 0 0 0 .1rem var(--copper-deep);
+  }
+  .trace .tag { font-size: 1rem; font-weight: 600; color: var(--muted); }
+  .trace li.idle .tag { opacity: .6; }
+  .value { min-width: 0; }
+  .big { font-size: 1.3rem; line-height: 1.3; }
+  .why { font-size: .95rem; line-height: 1.3; color: var(--muted); }
+  .why.free { color: var(--green); font-weight: 600; }
+  .answer { font-size: 1.7rem; font-weight: 500; line-height: 1.4; white-space: pre-line; max-height: 7.8rem; overflow-y: auto; scrollbar-width: none; }
+  .answer.long { font-size: 1.05rem; font-weight: 400; }
+  .answer.waiting { font-size: 1.25rem; font-weight: 400; }
+  .direct {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-top: .28rem solid var(--line);
+    border-radius: .5rem;
+    padding: .8rem 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: .3rem;
+    min-height: 0;
+  }
+  .direct.good { border-top-color: var(--green); }
+  .direct.bad { border-top-color: var(--brick); }
+  .direct .q { font-size: 1.25rem; }
+  .direct .reply { font-size: 1.7rem; line-height: 1.4; max-height: 10rem; overflow-y: auto; }
+  .direct .reply.long { font-size: 1.05rem; }
+  .direct .verdict { margin-top: auto; }
+  .summary { font-size: 1.22rem; line-height: 1.3; min-height: 1.6rem; }
+
+  /* Beat 5 */
+  .outcome { display: grid; grid-template-columns: 1.08fr .92fr; gap: 3rem; align-items: start; }
+  .bars { display: flex; flex-direction: column; gap: 1.2rem; }
+  .bar-row { display: flex; flex-direction: column; gap: .3rem; }
+  .bar-row .head { display: flex; justify-content: space-between; align-items: baseline; font-size: 1.3rem; }
+  .bar-row .head b { font-weight: 600; }
+  .bar-row .track { height: 3rem; }
+  .bar-row .fill { height: 100%; border-radius: .2rem; background: var(--line); display: flex; align-items: center; justify-content: flex-end; padding-right: .7rem; font-size: 1.1rem; }
+  .bar-row.win .fill { background: var(--green); color: var(--card); font-weight: 600; }
+  .route { list-style: none; padding: 0; display: flex; flex-direction: column; gap: .75rem; }
+  .route li { font-size: 1.3rem; line-height: 1.35; border-left: .22rem solid var(--copper); padding-left: .85rem; }
+  .route b { font-weight: 600; }
+  .closing { font-family: var(--font-display); font-size: 2rem; line-height: 1.25; max-width: 66rem; }
+  .cta { align-self: flex-start; }
+
+  .bottom {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: .55rem 3rem .9rem;
+  }
+  .steps { display: flex; gap: .25rem; }
+  .steps button {
+    border: 0;
+    background: transparent;
+    border-bottom: .16rem solid var(--line);
+    padding: .3rem .7rem;
+    font-size: .98rem;
+    color: var(--muted);
+  }
+  .steps button[aria-current="step"] { color: var(--ink); border-bottom-color: var(--green); font-weight: 600; }
+  .steps button[hidden] { display: none; }
+  .action {
+    border: 1px solid var(--ink);
+    background: transparent;
+    border-radius: .3rem;
+    padding: .34rem 1rem;
+    font-size: 1rem;
+  }
+  .action.main { background: var(--ink); color: var(--paper); }
+  .action:disabled { opacity: .35; }
+  #openNumbers { margin-left: auto; }
+
+  /* The numbers */
+  #numbers {
+    position: fixed;
+    inset: 0;
+    z-index: 5;
+    background: var(--paper);
+    padding: 1.2rem 3rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: .75rem;
+    overflow: auto;
+  }
+  #numbers[hidden] { display: none; }
+  .panel-head { display: flex; justify-content: space-between; align-items: center; }
+  .panel-head h1 { font-size: 2.1rem; }
+  .columns { display: grid; grid-template-columns: 1.12fr 1fr 1.18fr; gap: 2.2rem; align-items: start; }
+  .columns section { display: flex; flex-direction: column; gap: .35rem; }
+  .columns section + section { border-left: 1px solid var(--line); padding-left: 2.2rem; }
+  .columns h2 { font-size: 1.14rem; font-weight: 600; margin-top: .55rem; }
+  .columns h2:first-child { margin-top: 0; }
+  .columns p, .columns li { font-size: 1rem; line-height: 1.38; }
+  .columns ul { padding-left: 1.05rem; display: flex; flex-direction: column; gap: .32rem; }
+  table { border-collapse: collapse; width: 100%; font-size: 1rem; }
+  th { font-weight: 500; color: var(--muted); text-align: left; padding: .18rem .5rem .18rem 0; }
+  td { padding: .22rem .5rem .22rem 0; border-top: 1px solid var(--line); }
+  th:not(:first-child), td:not(:first-child) { text-align: right; font-variant-numeric: tabular-nums; }
+  tr.gap td { color: var(--brick); font-weight: 600; }
+  tr.fixed td, tr.win td { color: var(--green); font-weight: 600; }
+
+  #dataError { position: fixed; inset: 0; z-index: 9; background: var(--paper); padding: 4rem; font-size: 1.6rem; }
+  #dataError[hidden] { display: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+  @media (max-width: 760px) {
+    html { font-size: 13px; }
+    body { height: auto; overflow: auto; }
+    main { padding: .4rem 1rem; }
+    .top, .bottom { padding-left: 1rem; padding-right: 1rem; flex-wrap: wrap; }
+    .duel, .bill, .flow, .after, .outcome, .columns, .console { grid-template-columns: 1fr; }
+    .columns section + section { border-left: 0; padding-left: 0; }
+    .picker { position: static; flex-wrap: wrap; margin-bottom: .6rem; }
+    .link i { transform: rotate(90deg); }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand">
+    <span class="mark" aria-hidden="true"></span>
+    <b>Halala</b>
+    <span class="arabic" lang="ar" dir="rtl">هللة</span>
+    <small>the smallest coin of the riyal</small>
+  </div>
+  <div class="who">
+    <p class="mode" id="mode"></p>
+    <p class="byline">Built by Abdulaziz Althabit</p>
+  </div>
+</header>
+
+<main id="stage">
+  <div class="picker" id="picker" role="group" aria-label="Choose an example"></div>
+
+  <section class="beat" data-beat="1" aria-label="The question">
+    <h1 id="questionHead"></h1>
+    <div class="duel">
+      <article class="ask" id="leftCard">
+        <p class="kicker" id="leftLabel"></p>
+        <p class="q" id="leftQuestion" dir="auto"></p>
+        <p class="said"><span id="leftSaid"></span> <span class="stamp" id="leftStamp"></span></p>
+        <p class="reply" id="leftReply" dir="auto"></p>
+        <p class="gloss" id="leftGloss"></p>
+        <p class="verdict" id="leftVerdict"></p>
+      </article>
+      <article class="ask" id="rightCard">
+        <p class="kicker" id="rightLabel"></p>
+        <p class="q" id="rightQuestion" dir="auto"></p>
+        <p class="said"><span id="rightSaid"></span> <span class="stamp" id="rightStamp"></span></p>
+        <p class="reply" id="rightReply" dir="auto"></p>
+        <p class="gloss" id="rightGloss"></p>
+        <p class="verdict" id="rightVerdict"></p>
+      </article>
+    </div>
+    <p class="explain" id="explain"></p>
+    <p class="fine" id="source1"></p>
+  </section>
+
+  <section class="beat" data-beat="2" aria-label="The cost" hidden>
+    <h1>Wrong answers still get paid for.</h1>
+    <div class="bill">
+      <div class="side">
+        <h2 id="costLabelLeft"></h2>
+        <div class="tray" id="trayLeft"></div>
+        <p class="count" id="countLeft"></p>
+        <div class="meter" id="meterLeft"></div>
+        <p class="perright"><b id="tokensLeft"></b> tokens for each right answer</p>
+      </div>
+      <div class="side">
+        <h2 id="costLabelRight"></h2>
+        <div class="tray" id="trayRight"></div>
+        <p class="count" id="countRight"></p>
+        <div class="meter" id="meterRight"></div>
+        <p class="perright"><b id="tokensRight"></b> tokens for each right answer</p>
+      </div>
+      <div class="multiple">
+        <b id="multiple"></b>
+        <span>as much for each right answer, only because of how the question was typed</span>
+      </div>
+    </div>
+    <p class="explain">A token is the unit AI compute is counted in, roughly a piece of a word. Each try costs about the same, right or wrong, so the failed tries get added to the bill for the right ones.</p>
+    <p class="fine" id="legend"></p>
+  </section>
+
+  <section class="beat" data-beat="3" aria-label="The fix" hidden>
+    <h1 id="fixHead"></h1>
+    <div class="flow">
+      <div class="node">
+        <p class="kicker">You type</p>
+        <p class="q" id="fixTyped" dir="auto"></p>
+      </div>
+      <div class="link reveal" data-step="1">
+        <span id="ruleLabel"></span>
+        <i aria-hidden="true">→</i>
+        <b id="fixCalls"></b>
+      </div>
+      <div class="node reveal" data-step="1">
+        <p class="kicker" id="fixSees"></p>
+        <p class="q" id="fixRewritten" dir="auto"></p>
+      </div>
+      <div class="link reveal" data-step="2"><i aria-hidden="true">→</i></div>
+      <div class="node reveal" id="fixNode" data-step="2">
+        <p class="said"><span id="fixSaid"></span> <span class="stamp" id="fixStamp"></span></p>
+        <p class="reply" id="fixReply" dir="auto"></p>
+        <p class="gloss" id="fixGloss"></p>
+        <p class="verdict" id="fixVerdict"></p>
+      </div>
+    </div>
+    <div class="after reveal" data-step="3">
+      <div>
+        <div class="tray" id="trayFix"></div>
+        <p class="count"><b id="countFix"></b></p>
+      </div>
+      <div class="fall">
+        <p class="kicker">Tokens for each right answer</p>
+        <p class="pair"><s id="tokensBefore"></s> <i aria-hidden="true">→</i> <b id="tokensAfter"></b></p>
+      </div>
+      <p class="caveat" id="caveat"></p>
+    </div>
+    <p class="fine" id="source3"></p>
+  </section>
+
+  <section class="beat" data-beat="4" aria-label="Live" hidden>
+    <h1 id="liveHead"></h1>
+    <form class="asker" id="asker" autocomplete="off">
+      <label class="sr" for="question">Question</label>
+      <input id="question" type="text" dir="auto" maxlength="400" spellcheck="false">
+      <button class="action main" id="askButton" type="submit">Ask</button>
+    </form>
+    <div class="chips" id="picks" role="group" aria-label="Pick a question"></div>
+    <div class="console">
+      <ol class="trace" aria-live="polite">
+        <li id="rowForm" class="idle">
+          <span class="dot" aria-hidden="true"></span>
+          <p class="tag">Form detected</p>
+          <div class="value"><p class="big" id="liveForm"></p></div>
+        </li>
+        <li id="rowRewrite" class="idle">
+          <span class="dot" aria-hidden="true"></span>
+          <p class="tag">Rewrite</p>
+          <div class="value"><p class="big two-lines" id="liveRewrite" dir="auto"></p><p class="why" id="liveRewriteNote"></p></div>
+        </li>
+        <li id="rowRoute" class="idle">
+          <span class="dot" aria-hidden="true"></span>
+          <p class="tag">Model chosen</p>
+          <div class="value"><p class="big" id="liveRoute"></p><p class="why" id="liveRouteWhy"></p></div>
+        </li>
+        <li id="rowAnswer" class="idle">
+          <span class="dot" aria-hidden="true"></span>
+          <p class="tag">Answer</p>
+          <div class="value"><p class="answer" id="liveAnswer" dir="auto"></p><p class="why" id="liveAnswerNote"></p></div>
+        </li>
+        <li id="rowSpent" class="idle">
+          <span class="dot" aria-hidden="true"></span>
+          <p class="tag">Spent</p>
+          <div class="value"><p class="big" id="liveSpent"></p></div>
+        </li>
+      </ol>
+      <article class="direct" id="directCard">
+        <p class="kicker" id="directHead"></p>
+        <p class="q two-lines" id="directQuestion" dir="auto"></p>
+        <p class="said" id="directSaid"></p>
+        <p class="reply" id="directReply" dir="auto"></p>
+        <p class="verdict" id="directVerdict"></p>
+      </article>
+    </div>
+    <p class="summary" id="liveSummary"></p>
+    <p class="fine" id="liveNote"></p>
+  </section>
+
+  <section class="beat" data-beat="5" aria-label="The result" hidden>
+    <h1 id="resultHead"></h1>
+    <div class="outcome">
+      <div class="bars" id="bars"></div>
+      <ol class="route">
+        <li id="routeEnglish"></li>
+        <li id="routeArabizi"></li>
+        <li id="routeRest"></li>
+      </ol>
+    </div>
+    <p class="closing">ALLaM is strong on dialect. It had one gap, and closing it takes no extra model calls.</p>
+    <button class="action main cta" id="openNumbers2">See the numbers and how I tested it</button>
+    <p class="fine" id="resultNote"></p>
+  </section>
+</main>
+
+<footer class="bottom">
+  <nav class="steps" id="steps" aria-label="Demo steps"></nav>
+  <button class="action" id="openNumbers">The numbers</button>
+  <button class="action" id="back">Back</button>
+  <button class="action main" id="next">Next</button>
+</footer>
+
+<aside id="numbers" role="dialog" aria-modal="true" aria-labelledby="numbersTitle" tabindex="-1" hidden>
+  <div class="panel-head">
+    <h1 id="numbersTitle">The numbers</h1>
+    <button class="action" id="closeNumbers">Close</button>
+  </div>
+  <div class="columns">
+    <section>
+      <h2 id="formsTitle"></h2>
+      <table id="formsTable"></table>
+      <h2 id="designsTitle"></h2>
+      <table id="designsTable"></table>
+      <p class="fine">Cost is estimated compute for each right answer, with always using ALLaM as 100%.</p>
+    </section>
+    <section>
+      <h2>How I tested it</h2>
+      <ul id="testing"></ul>
+      <h2>What this doesn't show</h2>
+      <ul>
+        <li>This is a community build of ALLaM 7B on a laptop, not Humain's served models.</li>
+        <li>Compute is estimated, and leaves out the time to load and swap models.</li>
+        <li>The saving from the smaller model depends on how much traffic is in English.</li>
+      </ul>
+    </section>
+    <section>
+      <h2>What I built, measured and threw out</h2>
+      <p id="thrownOut"></p>
+      <h2>The mistake I caught</h2>
+      <p>Ollama was silently running ALLaM with the wrong prompt format, which made ALLaM look worse than it is. I pinned its real format, threw out every number from before the fix and measured again. Everything here comes from the corrected setup.</p>
+      <h2>Rewriting Arabizi: what else I tried</h2>
+      <p id="alternatives"></p>
+    </section>
+  </div>
+</aside>
+
+<div id="dataError" hidden>The demo data didn't load. Keep numbers.js and examples.js next to index.html, or run: python demo/build_examples.py</div>
+
+<script src="numbers.js"></script>
+<script src="examples.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  const N = window.HALALA_NUMBERS;
+  const DATA = window.HALALA_EXAMPLES;
+  if (!N || !DATA || !DATA.comparisons || !DATA.comparisons.length) {
+    document.getElementById("dataError").hidden = false;
+    return;
+  }
+
+  const SERVER = "http://127.0.0.1:8770";   // DEFAULT_PORT in server.py
+  const STEPS = { 1: "The question", 2: "The cost", 3: "The fix", 4: "Live", 5: "The result" };
+  const PACE = 350;   // ms between steps when a recorded run is replayed
+  const calm = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const el = (id) => document.getElementById(id);
+  const put = (id, text) => { el(id).textContent = text; };
+  const form = (key) => N.forms.find((row) => row.key === key);
+  const design = (name) => N.designs.find((row) => row.name === name);
+  const always = design("Always ALLaM");
+  const halala = design("Halala");
+  const examples = DATA.comparisons.flatMap((comparison) => comparison.examples.map((ex) => ({ ...ex, comparison })));
+
+  // A typed question that matches a known one can be marked right or wrong too.
+  const answerKey = new Map();
+  [...examples.flatMap((ex) => [ex.left, ex.right]), ...DATA.picks].forEach((side) => {
+    answerKey.set(side.question, side.answers);
+  });
+
+  let beat = 1;
+  let example = examples[0];
+  let server = null;     // the server's status, or null while replaying recorded answers
+  let lost = false;      // the server was there and stopped answering
+  let liveRun = null;    // what the Live step is showing
+  let livePick = null;   // the pick being replayed
+  let timers = [];
+  let fixStep = 0;
+  let fixWaiting = false;
+  let queue = Promise.resolve();
+  let returnFocus = null;
+  const exampleRuns = new Map();   // live answers on the story steps, so going back doesn't ask again
+
+  const modelName = (name) => N.modelNames[name] || name;
+  const modelLabel = (tier) => modelName((server ? server.models : DATA.recorded)[tier].name);
+  const fill = (text) => text.replaceAll("{small}", modelLabel("small")).replaceAll("{large}", modelLabel("large"));
+  const secondsText = (seconds) => (seconds >= 0.1 ? `${seconds.toFixed(1)}s` : "under 0.1s");
+  const spentText = (call) => `${call.tokens} tokens · ${secondsText(call.seconds)}`;
+
+  function newRun(question, answers) {
+    return { question, answers, form: null, rewrite: null, route: null, asking: null, answer: null, spent: null,
+             direct: null, error: "", done: false };
+  }
+
+  // Live and recorded runs are the same events from run_question in server.py.
+  function apply(run, event) {
+    if (event.step === "form") run.form = event.form;
+    if (event.step === "rewrite") run.rewrite = event;
+    if (event.step === "route") run.route = event;
+    if (event.step === "asking") run.asking = event;
+    if (event.step === "answer") { run.answer = event; run.asking = null; }
+    if (event.step === "spent") run.spent = event;
+    if (event.step === "direct") { run.direct = event; run.asking = null; }
+    if (event.step === "done") { run.done = true; run.asking = null; }
+    if (event.step === "error") { run.error = event.message; run.done = true; run.asking = null; }
+    return run;
+  }
+
+  async function findServer() {
+    const wait = new AbortController();
+    const timeout = setTimeout(() => wait.abort(), 800);
+    try {
+      if (location.protocol === "file:") {
+        await fetch(`${SERVER}/api/status`, { mode: "no-cors", signal: wait.signal });
+        location.replace(`${SERVER}/${location.hash}`);
+        return null;
+      }
+      const response = await fetch("api/status", { cache: "no-store", signal: wait.signal });
+      return response.ok ? await response.json() : null;
+    } catch {
+      return null;
+    } finally {
+      clearTimeout(timeout);
+    }
+  }
+
+  async function stream(run, paths, update) {
+    const response = await fetch("api/ask", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ question: run.question, answers: run.answers, paths }),
+    });
+    if (!response.ok) {
+      const problem = await response.json().catch(() => ({}));
+      apply(run, { step: "error", message: problem.error || `The server answered ${response.status}.` });
+      update();
+      return;
+    }
+    const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
+    let buffer = "";
+    for (;;) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buffer += value;
+      const lines = buffer.split("\n");
+      buffer = lines.pop();
+      lines.filter(Boolean).forEach((line) => { apply(run, JSON.parse(line)); update(); });
+    }
+    if (!run.done) throw new Error("the answer stopped early");
+  }
+
+  function ask(run, paths, update) {
+    queue = queue.then(() => stream(run, paths, update)).catch(loseServer);
+  }
+
+  function connect(status) {
+    server = status;
+    lost = false;
+    liveRun = null;
+    showMode();
+    renderBeat();
+  }
+
+  function loseServer() {
+    if (!server) return;
+    server = null;
+    lost = true;
+    livePick = DATA.picks.find((pick) => liveRun && pick.question === liveRun.question) || livePick;
+    liveRun = null;
+    exampleRuns.clear();
+    showMode();
+    renderBeat();
+  }
+
+  function showMode() {
+    const mode = el("mode");
+    if (!server) {
+      mode.className = "mode recorded";
+      mode.textContent = lost ? "Recorded answers: the live server stopped" : "Recorded answers, no model running";
+    } else if (server.mock) {
+      mode.className = "mode mock";
+      mode.textContent = "Mock models: placeholder answers, do not record";
+    } else {
+      mode.className = "mode live";
+      mode.textContent = `Live: ${modelLabel("small")} and ${modelLabel("large")}`;
+    }
+  }
+
+  function stamp(node) {
+    const kind = !server ? "recorded" : server.mock ? "mock" : "live";
+    node.className = `stamp ${kind}`;
+    node.textContent = kind[0].toUpperCase() + kind.slice(1);
+  }
+
+  function tray(node, right, total) {
+    node.replaceChildren();
+    for (let i = 0; i < total; i += 1) {
+      const coin = document.createElement("span");
+      coin.className = `coin ${i < right ? "right" : "wrong"}`;
+      node.append(coin);
+    }
+    node.setAttribute("role", "img");
+    node.setAttribute("aria-label", `${right} of ${total} right`);
+  }
+
+  function later(work, ms) {
+    timers.push(setTimeout(work, ms));
+  }
+
+  function clearTimers() {
+    timers.forEach(clearTimeout);
+    timers = [];
+    fixWaiting = false;
+  }
+
+  // The run behind a side of the current example: recorded, or live and filling in as events arrive.
+  function runFor(side, paths) {
+    if (!server) return side.events.reduce(apply, newRun(side.question, side.answers));
+    const key = JSON.stringify([side.question, paths]);
+    if (!exampleRuns.has(key)) {
+      const run = newRun(side.question, side.answers);
+      exampleRuns.set(key, run);
+      ask(run, paths, onExampleEvent);
+    }
+    return exampleRuns.get(key);
+  }
+
+  function onExampleEvent() {
+    if (beat === 1) renderQuestion();
+    if (beat === 3) { renderFix(); advanceFix(); }
+  }
+
+  function showReply(prefix, text) {
+    const node = el(`${prefix}Reply`);
+    node.className = `reply${text ? "" : " empty"}${text.length > 90 ? " long" : ""}`;
+    node.textContent = text || "The model returned no text.";
+    put(`${prefix}Gloss`, example.glosses[text] || "");
+  }
+
+  function showWaiting(prefix, text, isProblem) {
+    const node = el(`${prefix}Reply`);
+    node.className = isProblem ? "reply empty problem" : "reply waiting";
+    node.textContent = text;
+    if (el(`${prefix}Gloss`)) put(`${prefix}Gloss`, "");
+    put(`${prefix}Verdict`, "");
+  }
+
+  function showVerdict(id, call) {
+    const node = el(id);
+    if (call.correct === null) {
+      node.className = "verdict";
+      node.textContent = spentText(call);
+      return;
+    }
+    node.className = `verdict ${call.correct ? "ok" : "no"}`;
+    node.textContent = call.correct ? `✓ Right · ${spentText(call)}` : `✗ Wrong · ${spentText(call)}, paid anyway`;
+  }
+
+  function origin() {
+    if (!server) {
+      return `Recorded ${modelLabel("large")} answers from the development set, question ${example.id} (${example.right.source}).`;
+    }
+    if (server.mock) return "Mock models: these replies are placeholders, not model answers.";
+    return "Asked live just now. Tokens and seconds are measured on these calls.";
+  }
+
+  function renderSide(prefix, side, label) {
+    const run = runFor(side, ["direct"]);
+    put(`${prefix}Label`, label);
+    put(`${prefix}Question`, side.question);
+    put(`${prefix}Said`, `${modelLabel("large")} replied`);
+    stamp(el(`${prefix}Stamp`));
+    const card = el(`${prefix}Card`);
+    card.classList.remove("good", "bad");
+    if (run.direct) {
+      showReply(prefix, run.direct.text);
+      showVerdict(`${prefix}Verdict`, run.direct);
+      if (run.direct.correct !== null) card.classList.add(run.direct.correct ? "good" : "bad");
+    } else if (run.error) {
+      showWaiting(prefix, run.error, true);
+    } else {
+      showWaiting(prefix, `Asking ${modelLabel("large")}…`, false);
+    }
+  }
+
+  function renderQuestion() {
+    const { comparison } = example;
+    put("questionHead", comparison.heading);
+    put("explain", comparison.explain);
+    renderSide("left", example.left, comparison.left.label);
+    renderSide("right", example.right, comparison.right.label);
+    put("source1", `Hand-picked to show the problem, so not a typical result. The full count is next. ${origin()}`);
+  }
+
+  function renderCost() {
+    const { left, right } = example.comparison;
+    const rows = [["Left", left, form(left.form)], ["Right", right, form(right.form)]];
+    const top = Math.max(...rows.map(([, , row]) => row.tokensPerRight));
+    rows.forEach(([name, spec, row]) => {
+      put(`costLabel${name}`, spec.label);
+      tray(el(`tray${name}`), row.right, N.perForm);
+      put(`count${name}`, `${row.right} of ${N.perForm} right`);
+      put(`tokens${name}`, row.tokensPerRight);
+      el(`meter${name}`).style.width = `${(row.tokensPerRight / top) * 100}%`;
+      el(`meter${name}`).classList.toggle("high", row.tokensPerRight === top);
+    });
+    put("multiple", `${(form(right.form).tokensPerRight / form(left.form).tokensPerRight).toFixed(1)}×`);
+  }
+
+  const fixRun = () => runFor(example.right, ["halala"]);
+
+  function renderFix() {
+    const run = fixRun();
+    const rules = !server || server.rewrite === "rules";
+    put("fixHead", rules ? "My fix: rewrite it first, with no model." : "My fix: rewrite it first.");
+    put("fixTyped", example.right.question);
+    put("ruleLabel", rules ? `Rules and a ${N.lexiconWords}-word Najdi list` : "A model rewrite");
+    put("fixCalls", run.rewrite ? callsText(run.rewrite) : "");
+    put("fixSees", `${modelLabel("large")} sees`);
+    put("fixRewritten", run.rewrite ? run.rewrite.prompt : "");
+    put("fixSaid", `${modelLabel("large")} replied`);
+    stamp(el("fixStamp"));
+    el("fixNode").classList.remove("good", "bad");
+    if (run.answer) {
+      showReply("fix", run.answer.text);
+      showVerdict("fixVerdict", run.answer);
+      if (run.answer.correct !== null) el("fixNode").classList.add(run.answer.correct ? "good" : "bad");
+    } else if (run.error) {
+      showWaiting("fix", run.error, true);
+    } else {
+      showWaiting("fix", `Asking ${modelLabel("large")}…`, false);
+    }
+    put("source3", `A hand-picked example. ${origin()}`);
+  }
+
+  function showFixPieces(step) {
+    document.querySelectorAll('[data-beat="3"] .reveal').forEach((piece) => {
+      piece.classList.toggle("on", Number(piece.dataset.step) <= step);
+    });
+  }
+
+  function flipCoins() {
+    const before = form(example.comparison.right.form).right;
+    const after = form(example.comparison.fix).right;
+    const trayNode = el("trayFix");
+    const finished = `${after} of ${N.perForm} right`;
+    if (calm.matches) {
+      tray(trayNode, after, N.perForm);
+      put("countFix", finished);
+      return;
+    }
+    const coins = trayNode.children;
+    for (let i = before; i < after; i += 1) {
+      later(() => { coins[i].className = "coin right flip"; }, 500 + (i - before) * 45);
+    }
+    later(() => {
+      put("countFix", finished);
+      trayNode.setAttribute("aria-label", finished);
+    }, 500 + (after - before) * 45);
+  }
+
+  // Each piece of the fix appears once its result exists, so a slow live model sets the pace.
+  function advanceFix() {
+    if (beat !== 3 || fixWaiting || fixStep >= 3) return;
+    const run = fixRun();
+    const ready = [run.rewrite || run.error, run.answer || run.error, true][fixStep];
+    if (!ready) return;
+    fixStep += 1;
+    showFixPieces(fixStep);
+    if (fixStep === 3) {
+      flipCoins();
+      return;
+    }
+    fixWaiting = true;
+    later(() => { fixWaiting = false; advanceFix(); }, calm.matches ? 0 : 700);
+  }
+
+  function playFix() {
+    const before = form(example.comparison.right.form);
+    const after = form(example.comparison.fix);
+    tray(el("trayFix"), before.right, N.perForm);
+    put("countFix", `${before.right} of ${N.perForm} right`);
+    put("tokensBefore", before.tokensPerRight);
+    put("tokensAfter", after.tokensPerRight);
+    put("caveat", `Not solved: ${N.perForm - after.right} of ${N.perForm} still come back wrong. I also wrote the word list after seeing these questions, so the rules alone, ${N.rulesOnlyRight} of ${N.perForm}, are the safer guide to new text.`);
+    fixStep = 0;
+    showFixPieces(0);
+    renderFix();
+    fixWaiting = true;
+    later(() => { fixWaiting = false; advanceFix(); }, calm.matches ? 0 : 450);
+  }
+
+  function callsText(rewrite) {
+    if (!rewrite.model_calls) return "No model call";
+    return `${rewrite.model_calls} model call${rewrite.model_calls > 1 ? "s" : ""}`;
+  }
+
+  function rewriteNote(rewrite) {
+    if (rewrite.model_calls) return `${callsText(rewrite)} · ${rewrite.tokens} tokens`;
+    const ms = rewrite.seconds * 1000;
+    return `No model call · 0 tokens · ${ms < 1 ? "under 1 ms" : `${Math.round(ms)} ms`}`;
+  }
+
+  function rewriteText(run) {
+    const { rewrite } = run;
+    if (rewrite.rejected) return `Rewrite rejected (${rewrite.rejected}), so the model gets the cleaned question`;
+    if (rewrite.rewritten || rewrite.prompt !== run.question) return rewrite.prompt;
+    return "Not needed";
+  }
+
+  function liveSummary(run) {
+    if (run.error) return run.error;
+    if (!run.spent || !run.direct) return "";
+    if (run.direct.same_call) {
+      return `Same call either way: ${spentText(run.spent)}. Halala only steps in when it can save something.`;
+    }
+    const share = run.direct.compute ? ` Estimated compute: ${Math.round((run.spent.compute / run.direct.compute) * 100)}% of the direct call.` : "";
+    return `Halala: ${spentText(run.spent)}. Straight to ${modelLabel("large")}: ${spentText(run.direct)}.${share}`;
+  }
+
+  function liveNote() {
+    if (!server) {
+      return `Recorded run${livePick ? ` from ${livePick.source}` : ""}: no model is running. Start demo/server.py to ask your own question.`;
+    }
+    if (server.mock) return "Mock models: these replies are placeholders, not model answers.";
+    const instruction = server.instruction ? `“${server.instruction}”` : "none";
+    return `Real calls, made just now on my laptop. Seconds include loading a model if it had to be swapped in. Instruction sent to the model: ${instruction}`;
+  }
+
+  function setRow(id, state) {
+    el(id).className = state;
+  }
+
+  function renderLive() {
+    const run = liveRun;
+    const running = Boolean(server && run && !run.done);
+    const asking = (side) => Boolean(run && run.asking && run.asking.side === side);
+    el("question").disabled = !server;
+    el("askButton").disabled = !server || running;
+    el("picks").querySelectorAll("button").forEach((button) => { button.disabled = running; });
+
+    setRow("rowForm", !run ? "idle" : run.form ? "done" : "doing");
+    put("liveForm", run && run.form ? N.detected[run.form] || run.form : "");
+
+    const { rewrite } = run || {};
+    setRow("rowRewrite", !rewrite ? (run && run.form ? "doing" : "idle") : "done");
+    put("liveRewrite", rewrite ? rewriteText(run) : "");
+    put("liveRewriteNote", rewrite ? rewriteNote(rewrite) : "");
+    el("liveRewriteNote").className = rewrite && !rewrite.model_calls ? "why free" : "why";
+
+    const { route } = run || {};
+    setRow("rowRoute", route ? "done" : "idle");
+    put("liveRoute", route ? `${modelName(route.model)}, ${route.params_b} billion parameters` : "");
+    put("liveRouteWhy", route ? fill(N.routeReasons[route.route] || "") : "");
+
+    const answerNode = el("liveAnswer");
+    if (asking("halala")) {
+      setRow("rowAnswer", "doing");
+      answerNode.className = "answer waiting";
+      answerNode.textContent = `Asking ${modelName(run.asking.model)}…`;
+      put("liveAnswerNote", "");
+    } else if (run && run.answer) {
+      setRow("rowAnswer", "done");
+      const { text, correct } = run.answer;
+      answerNode.className = `answer${text ? "" : " empty"}${text.length > 60 ? " long" : ""}`;
+      answerNode.textContent = text || "The model returned no text.";
+      put("liveAnswerNote", correct === null ? "No answer key for this question: read it yourself." : correct ? "✓ Right" : "✗ Wrong");
+    } else {
+      setRow("rowAnswer", "idle");
+      answerNode.className = "answer";
+      answerNode.textContent = "";
+      put("liveAnswerNote", "");
+    }
+
+    setRow("rowSpent", run && run.spent ? "done" : "idle");
+    put("liveSpent", run && run.spent ? spentText(run.spent) : "");
+
+    const card = el("directCard");
+    card.className = "direct";
+    put("directHead", `The same raw question, straight to ${modelLabel("large")}`);
+    put("directQuestion", run ? run.question : "");
+    if (asking("direct")) {
+      put("directSaid", "");
+      showWaiting("direct", `Asking ${modelName(run.asking.model)}…`, false);
+    } else if (run && run.direct) {
+      const { direct } = run;
+      put("directSaid", direct.same_call ? "The same call Halala made: no rewrite and no smaller model here." : `${modelLabel("large")} replied`);
+      const node = el("directReply");
+      node.className = `reply${direct.text ? "" : " empty"}${direct.text.length > 60 ? " long" : ""}`;
+      node.textContent = direct.text || "The model returned no text.";
+      showVerdict("directVerdict", direct);
+      if (direct.correct !== null) card.classList.add(direct.correct ? "good" : "bad");
+    } else {
+      put("directSaid", "");
+      el("directReply").className = "reply";
+      el("directReply").textContent = "";
+      put("directVerdict", "");
+    }
+
+    const summary = el("liveSummary");
+    summary.className = run && run.error ? "summary problem" : "summary";
+    summary.textContent = run ? liveSummary(run) : "";
+    put("liveNote", liveNote());
+  }
+
+  function playRecorded(pick) {
+    clearTimers();
+    livePick = pick;
+    el("question").value = pick.question;
+    const run = newRun(pick.question, pick.answers);
+    liveRun = run;
+    renderLive();
+    pick.events.forEach((event, i) => {
+      later(() => { apply(run, event); renderLive(); }, calm.matches ? 0 : PACE * (i + 1));
+    });
+  }
+
+  function openLive() {
+    put("liveHead", server ? "Ask anything. Watch each step." : "A recorded run, step by step.");
+    el("question").placeholder = server ? "Type a question, in any form of Arabic or English" : "";
+    renderLive();
+    if (server) return;
+    playRecorded(livePick || DATA.picks[0]);
+    findServer().then((status) => { if (status && !server) connect(status); });
+  }
+
+  function choosePick(pick) {
+    el("question").value = pick.question;
+    if (server) el("asker").requestSubmit();
+    else playRecorded(pick);
+  }
+
+  function beats() {
+    return Object.keys(STEPS).map(Number).filter((n) => n !== 3 || example.comparison.fix);
+  }
+
+  function showSteps() {
+    const list = beats();
+    el("steps").querySelectorAll("button").forEach((button) => {
+      const n = Number(button.dataset.go);
+      button.hidden = !list.includes(n);
+      button.textContent = `${list.indexOf(n) + 1} ${STEPS[n]}`;
+      if (n === beat) button.setAttribute("aria-current", "step");
+      else button.removeAttribute("aria-current");
+    });
+    el("back").disabled = beat === list[0];
+    el("next").disabled = beat === list[list.length - 1];
+  }
+
+  function renderBeat() {
+    clearTimers();
+    if (beat === 1) renderQuestion();
+    if (beat === 2) renderCost();
+    if (beat === 3) playFix();
+    if (beat === 4) openLive();
+  }
+
+  function go(target) {
+    beat = beats().includes(target) ? target : 1;
+    document.querySelectorAll(".beat").forEach((section) => {
+      section.hidden = Number(section.dataset.beat) !== beat;
+    });
+    el("picker").hidden = beat !== 1 && beat !== 3;
+    showSteps();
+    renderBeat();
+  }
+
+  function move(delta) {
+    const list = beats();
+    const target = list[list.indexOf(beat) + delta];
+    if (target) go(target);
+  }
+
+  function pickExample(i) {
+    if (i >= examples.length || el("picker").hidden) return;
+    example = examples[i];
+    el("picker").querySelectorAll("button").forEach((button, j) => {
+      button.setAttribute("aria-pressed", String(j === i));
+    });
+    go(beats().includes(beat) ? beat : 1);
+  }
+
+  function table(id, head, body) {
+    const headRow = document.createElement("tr");
+    head.forEach((text) => {
+      const th = document.createElement("th");
+      th.textContent = text;
+      th.scope = "col";
+      headRow.append(th);
+    });
+    el(id).replaceChildren(headRow);
+    body.forEach(({ cells, tone }) => {
+      const tr = document.createElement("tr");
+      if (tone) tr.className = tone;
+      cells.forEach((text) => {
+        const td = document.createElement("td");
+        td.textContent = text;
+        tr.append(td);
+      });
+      el(id).append(tr);
+    });
+  }
+
+  function staticCopy() {
+    el("stage").classList.toggle("many", examples.length > 3);   // more chips than fit beside a full-size heading
+    examples.forEach((ex, i) => {
+      const button = document.createElement("button");
+      button.textContent = ex.label;
+      button.setAttribute("aria-pressed", String(i === 0));
+      button.addEventListener("click", () => pickExample(i));
+      el("picker").append(button);
+    });
+    DATA.picks.forEach((pick) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.textContent = pick.label;
+      button.addEventListener("click", () => choosePick(pick));
+      el("picks").append(button);
+    });
+    Object.keys(STEPS).forEach((n) => {
+      const button = document.createElement("button");
+      button.dataset.go = n;
+      button.addEventListener("click", () => go(Number(n)));
+      el("steps").append(button);
+    });
+
+    put("legend", `Filled coins are right answers. Crossed coins are wrong answers, paid for anyway. Each coin is one question, not a real price. ${N.perForm} development questions per form, all answered by ALLaM 7B on my laptop.`);
+
+    const english = form("en");
+    const strong = N.forms.filter((row) => row.strong).map((row) => `${row.right} on ${row.shortName}`);
+    put("resultHead", `Each right answer now takes about ${100 - halala.costPct}% less compute.`);
+    [always, halala].forEach((row) => {
+      const wrap = document.createElement("div");
+      wrap.className = `bar-row${row === halala ? " win" : ""}`;
+      const head = document.createElement("div");
+      head.className = "head";
+      const name = document.createElement("b");
+      name.textContent = row.name;
+      const score = document.createElement("span");
+      score.textContent = `${row.right} of ${N.questionsTotal} right`;
+      head.append(name, score);
+      const track = document.createElement("div");
+      track.className = "track";
+      const bar = document.createElement("div");
+      bar.className = "fill";
+      bar.style.width = `${row.costPct}%`;
+      bar.textContent = `${row.costPct}%`;
+      track.append(bar);
+      wrap.append(head, track);
+      el("bars").append(wrap);
+    });
+    const line = (id, lead, rest) => {
+      const bold = document.createElement("b");
+      bold.textContent = lead;
+      el(id).replaceChildren(bold, rest);
+    };
+    line("routeEnglish", "English", ` goes to a smaller model, Gemma 3 4B. It did as well as ALLaM here: ${N.gemmaEnglishRight} against ${english.right} of ${N.perForm}.`);
+    line("routeArabizi", "Arabizi", " gets rewritten first, with no model call.");
+    line("routeRest", "Everything else", ` goes straight to ALLaM, which was already strong: ${strong.slice(0, -1).join(", ")} and ${strong[strong.length - 1]}, of ${N.perForm} each.`);
+    put("resultNote", `Bars show estimated compute for each right answer. ${N.questionsTotal} development questions across five ways of writing.`);
+
+    put("formsTitle", `ALLaM 7B by form, ${N.perForm} questions each`);
+    table("formsTable", ["Written in", "Right", "Tokens per right answer"], N.forms.map((row) => ({
+      cells: [row.name, row.right, row.tokensPerRight],
+      tone: row.tone || "",
+    })));
+    put("designsTitle", `All ${N.questionsTotal} development questions`);
+    table("designsTable", ["Design", "Right", "Cost"], N.designs.map((row) => ({
+      cells: [row.name, row.right, `${row.costPct}%`],
+      tone: row === halala ? "win" : "",
+    })));
+
+    const testing = [
+      `The same ${N.questions} questions in five forms: English, formal Arabic, Najdi, Arabizi and mixed. A native speaker checked them.`,
+      `${N.devQuestions} of them were for building. That is every table here.`,
+      `${N.lockedQuestions} were locked away before I started, so I can't have tuned on them.`,
+      N.sealedResult || "I haven't opened those yet. They get one final run.",
+      "Every model call behind these tables is recorded, so the numbers replay without running a model.",
+    ];
+    if (N.auditResult) testing.push(N.auditResult);
+    testing.forEach((text) => {
+      const li = document.createElement("li");
+      li.textContent = text;
+      el("testing").append(li);
+    });
+
+    const dropped = N.thrownOut;
+    put("thrownOut", `I built the complex version first: repeated sampling, a trained model to pick the model, and separate safety thresholds per dialect. Then I measured it. On ${dropped.questions} development questions held back for testing, both designs got ${dropped.simple.rightPct}% right at about the same cost (${dropped.full.costPct}% and ${dropped.simple.costPct}%), and the slowest replies took ${dropped.full.slowSeconds}s against ${dropped.simple.slowSeconds}s for the simple one. So I kept the simple one.`);
+    put("alternatives", `I compared ${N.rewriteArms} ways of handling Arabizi on the same ${N.perForm} questions. Rules and the word list reached ${form("arabizi-rewritten").right}. ALLaM rewriting it for itself reached ${N.allamRewriteRight}, or ${N.allamRewriteExamplesRight} with examples, at far higher cost.`);
+  }
+
+  function setPanel(open) {
+    const panel = el("numbers");
+    if (open === !panel.hidden) return;
+    panel.hidden = !open;
+    document.querySelector("main").inert = open;
+    document.querySelector(".bottom").inert = open;
+    if (open) {
+      returnFocus = document.activeElement;
+      panel.scrollTop = 0;
+      el("closeNumbers").focus();
+    } else if (returnFocus && !returnFocus.disabled) {
+      returnFocus.focus();
+    }
+  }
+
+  document.addEventListener("keydown", (event) => {
+    if (event.altKey || event.ctrlKey || event.metaKey) return;
+    const typing = event.target.tagName === "INPUT";
+    const open = !el("numbers").hidden;
+    const key = event.key.toLowerCase();
+    if (key === "escape") {
+      setPanel(false);
+      if (typing) event.target.blur();
+      return;
+    }
+    if (typing) return;
+    if (key === "n") setPanel(!open);
+    if (open) return;
+    const onButton = event.target.closest && event.target.closest("button");
+    if (key === "arrowright" || (!onButton && (key === " " || key === "enter"))) {
+      event.preventDefault();
+      move(1);
+    } else if (key === "arrowleft") {
+      event.preventDefault();
+      move(-1);
+    } else if (key === "home") {
+      go(beats()[0]);
+    } else if (/^[1-9]$/.test(key)) {
+      pickExample(Number(key) - 1);
+    }
+  });
+
+  el("asker").addEventListener("submit", (event) => {
+    event.preventDefault();
+    const question = el("question").value.trim();
+    if (!server || !question) return;
+    el("question").blur();
+    const run = newRun(question, answerKey.get(question) || []);
+    liveRun = run;
+    renderLive();
+    ask(run, ["halala", "direct"], () => { if (run === liveRun) renderLive(); });
+  });
+
+  el("next").addEventListener("click", () => move(1));
+  el("back").addEventListener("click", () => move(-1));
+  el("openNumbers").addEventListener("click", () => setPanel(true));
+  el("openNumbers2").addEventListener("click", () => setPanel(true));
+  el("closeNumbers").addEventListener("click", () => setPanel(false));
+
+  async function start() {
+    staticCopy();
+    server = await findServer();
+    showMode();
+    const target = location.hash.slice(1);
+    go(Number(target) || 1);
+    if (target === "numbers") setPanel(true);
+  }
+
+  start();
+})();
+</script>
+</body>
+</html>

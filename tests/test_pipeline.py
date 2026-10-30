@@ -57,6 +57,17 @@ class SuccessTest(unittest.TestCase):
         self.assertEqual(direct["cost"], always_large["cost"])
         self.assertGreater(escalated["cost"]["flops"], direct["cost"]["flops"])
 
+    def test_split_sends_english_to_small_and_the_rest_to_large_with_the_rewrite(self):
+        cfg = load_config()
+        english = {**self._record(1.0), "detected_variant": "en"}
+        arabizi = {**self._record(1.0), "detected_variant": "arabizi", "large_text": "wrong", "large_rescued_text": "42"}
+        refused = {**english, "greedy_text": "عذرا، لا أستطيع المساعدة"}
+        small, large, fallback = simulate([english, arabizi, refused], cfg, "split")
+        self.assertEqual((small["tier"], large["tier"], fallback["tier"]), ("small", "large", "large"))
+        self.assertTrue(large["correct"])      # the large model got the rewrite
+        self.assertTrue(fallback["correct"])   # a refusal falls back to the large model
+        self.assertGreater(fallback["cost"]["flops"], small["cost"]["flops"])
+
     def test_escalation_uses_the_rewrite_but_the_baseline_stays_raw(self):
         cfg = load_config()
         record = {**self._record(1.0), "large_text": "wrong", "large_rescued_text": "42"}

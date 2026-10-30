@@ -12,10 +12,10 @@ latency_limit_s = 0       # no limit: laptop latency says nothing about a served
 backend = "ollama"
 name = "allam-7b-q4-inst"  # built from configs/allam.Modelfile: ALLaM's real [INST] prompt format
 params_b = 7
-host = "http://localhost:11434"
+host = "http://127.0.0.1:11434"
 
 [models.large]
 backend = "ollama"
 name = "allam-7b-q4-inst"
 params_b = 7
-host = "http://localhost:11434"
+host = "http://127.0.0.1:11434"

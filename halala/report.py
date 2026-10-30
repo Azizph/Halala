@@ -18,7 +18,8 @@ from .config import ROOT  # noqa: E402
 VARIANT_LABELS = {"en": "English", "msa": "MSA", "najdi": "Najdi", "arabizi": "Arabizi", "mixed": "Mixed",
                   "dialect": "Dialect"}
 COST_LABELS = {"tokens": "tokens", "flops": "estimated FLOPs", "usd": "US dollars", "latency_s": "seconds"}
-TABLE_POLICIES = ("always_small", "always_large", "agreement_global", "router_global", "halala", "halala_cache")
+TABLE_POLICIES = ("always_small", "always_large", "agreement_global", "router_global", "halala_full", "halala",
+                  "halala_cache")
 
 # Reference palette (dataviz skill): light surface, ink tokens, categorical slots 1-3 in fixed order.
 SURFACE, INK, INK_2, GRID, AXIS = "#fcfcfb", "#0b0b0b", "#52514e", "#e6e5e1", "#b9b7b0"
@@ -47,7 +48,7 @@ def _times(value: float | None, base: float | None) -> str:
 
 
 def render_markdown(res: dict, image_prefix: str = "") -> str:
-    split = "sealed test set" if res.get("split") == "sealed" else "test split"
+    split = {"sealed": "sealed test set", "dev": "all dev questions"}.get(res.get("split"), "test split")
     lines = [f"### Run `{res['run']}`: {split}, {res['n_test']} items",
              "",
              f"Small model `{res['models']['small']}`, large model `{res['models']['large']}`. "
@@ -55,6 +56,9 @@ def render_markdown(res: dict, image_prefix: str = "") -> str:
              ""]
     if res["mock"]:
         lines += ["**Mock models.** These numbers only check that the pipeline works. They are not results.", ""]
+    if res.get("split") == "dev":
+        lines += ["The router and thresholds were fitted on most of these questions, so their rows are optimistic. "
+                  "Halala has no trained parts.", ""]
     floors = res.get("floors", {})
     lines += [f"Floors: every variant at {_pct(floors.get('min_variant_success', 0), 0)} success or better, and a task "
               f"only succeeds if answered within {floors.get('latency_limit_s') or 'any'} seconds.", "",
@@ -71,7 +75,8 @@ def render_markdown(res: dict, image_prefix: str = "") -> str:
                      f"{_pct(p['escalation_rate'], 0)} | {p['p95_latency_s']:.1f}s | "
                      f"{'yes' if p['meets_floors'] else 'no'} |")
 
-    shown = [k for k in ("always_small", "always_large", "router_global", "halala") if k in res["policies"]]
+    shown = [k for k in ("always_small", "always_large", "router_global", "halala_full", "halala")
+             if k in res["policies"]]
     lines += ["", "#### Accuracy by variant", "",
               "| Variant | " + " | ".join(res["policies"][k]["label"] for k in shown) + " | Halala: sent to large |",
               "|---|" + "---|" * (len(shown) + 1)]
@@ -90,8 +95,8 @@ def render_markdown(res: dict, image_prefix: str = "") -> str:
         cells = [_times(res["policies"][k]["per_variant"][v]["cost_per_success"], base) for k in shown]
         lines.append(f"| {VARIANT_LABELS.get(v, v)} | " + " | ".join(cells) + " |")
 
-    lines += ["", f"#### Guarantee check (epsilon = {res['epsilon']}, delta = {res['delta']})", "",
-              "Loss is the share of questions Halala got wrong that the large model got right. Thresholds are set "
+    lines += ["", f"#### Full pipeline guarantee check (epsilon = {res['epsilon']}, delta = {res['delta']})", "",
+              "Loss is the share of questions it got wrong that the large model got right. Thresholds are set "
               "per detected variant; this table groups by the dataset's variant labels.", "",
               "| Variant | Loss on test | Within epsilon |", "|---|---|---|"]
     for v, g in res["guarantee"].items():

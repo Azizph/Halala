@@ -3,6 +3,10 @@
 **Pitch:** failed runs still burn compute, so the real price of AI is cost per successful task, and that price
 isn't the same for everyone. Halala measures it per dialect, and brings it down without leaving any dialect behind.
 
+**Design, decided 2026-10-30:** English goes to Gemma 3 4B once, and everything else goes to ALLaM 7B, with Arabizi
+rewritten by rules and a word list first. The sampling, router and per-variant thresholds stay as a baseline
+(`halala_full`), because they didn't earn their place. Config: `configs/local_gemma.toml`.
+
 **What the dev data shows (ALLaM 7B Q4 with its correct prompt format, 45 questions per variant):** ALLaM gets 40 to
 45 of 45 on English, formal Arabic, Najdi and mixed, and 9 of 45 on Arabizi as typed. So the story is narrow and fair:
 ALLaM handles dialect well and has one measurable gap, and a rewrite with no model call takes Arabizi from 9 to 31.
@@ -13,9 +17,9 @@ Judges will read the project against these five points. Point 1 is what most tea
 
 | Brief | What Halala does | Status |
 |---|---|---|
-| 1. Model choice per task | Router sends easy questions to the small model, hard ones to the large | Built |
-| 2. Context that earns its tokens | Rewrite prompt and its examples only run on Arabizi. Trim the system prompt, send only the nearest examples | Partly built; H8 |
-| 3. Verification where it pays | Self-consistency samples and per-variant thresholds. Spend fewer samples on variants that have proved safe | Partly built; H7 |
+| 1. Model choice per task | English to the small model, the rest to ALLaM | Built |
+| 2. Context that earns its tokens | The Arabizi rewrite adds no prompt tokens; examples were measured and rejected on cost | Built |
+| 3. Verification where it pays | Sampling was measured and dropped; the one check left is free (empty answer or refusal) | Built |
 | 4. Cost per successful task | The headline metric: failed tasks count as spend, reported overall and per variant | Built |
 | 5. Accuracy and latency floors | A task only succeeds if right and within the time limit; every variant must clear the floor; the guarantee bounds accuracy loss | Built |
 
@@ -76,6 +80,36 @@ things they won't have:
   MSA 89, Najdi 75, mixed 90. **Arabizi: no correct answers at all from the plain model**, and 1,628 tokens per correct
   answer with cleanup and rewrite, about 20x English. That figure rests on one correct answer out of 8, so one more
   would halve it. Use it as a lead, and report the full-set number instead.
+- **2026-10-30, prompt trimming (H8)** (`runs/local_gemma/prompt_eval.md`, Halala's routing, 225 dev questions):
+
+  | Instruction | Correct | Tokens per question | Cost per correct | Seconds per question |
+  |---|---|---|---|---|
+  | Current | 203 | 46.6 | 76% | 3.6 |
+  | "Answer briefly." | 212 | 40.5 | 64% | 4.1 |
+  | None | 213 | 40.3 | 58% | 5.4 |
+  | None, first sentence only (estimated from saved answers, not run) | 209 | 30.8 | 47% | not measured |
+
+  - Forcing answer-only replies hurt accuracy: Najdi 40 to 45, Arabizi 31 to 35 with no instruction. The 13 answers that
+    flipped from wrong to right were read by hand and look truly right.
+  - Longer answers ate most of the token saving (tokens out rose from 4.5 to 24.7), and time per question rose because output
+    tokens are slower. The earlier claim of "roughly half" was too high without a limit on answer length.
+- **2026-10-30, the simple design beats the full pipeline on cost, and needs no unverified assumption.** All 225 dev
+  questions, estimated FLOPs, relative to always-ALLaM on the raw question (180 correct):
+
+  | Design | Correct of 225 | Cost per correct |
+  |---|---|---|
+  | ALLaM + rewrite, no routing | 202 | 85% |
+  | **English to Gemma 3 4B once, the rest ALLaM + rewrite** | **203** | **76%** |
+  | English to Qwen 1.5B once, the rest ALLaM + rewrite | 197 | 72% |
+
+  - The full pipeline (samples, classifier, thresholds) keeps only English on the small model anyway, with either model.
+    On the 30 dev-test items it reaches 27 correct at 75 to 77%, but only if samples share a prompt pass. Without that
+    unverified assumption it costs 86% (Qwen) or 94% (Gemma).
+  - So the rewrite gives most of the gain, a language split gives the rest, and the classifier and thresholds add little at
+    this data size. The savings estimate is FLOPs, not measured wall-clock time, and doesn't count model swaps.
+  - **Gemma 3 4B dev run** (`runs/local_gemma`): one answer each, English 43, formal 36, Najdi 31, Arabizi 20, mixed 32 of 45.
+    It reaches 80% at best (formal Arabic, 36 of 45) and calibration kept none of the Arabic forms on it, so it doesn't
+    unlock savings there.
 - **2026-10-30, Halala with the improved rewrite** (30 dev-test items, sealed set untouched): 27 correct vs 24 for
   always-ALLaM, at 75% of its cost per correct answer. Arabizi 4 of 6, and its cost per correct fell from 6.9x to 1.4x
   (English on always-large = 1.0x). Only English stays on Qwen. Arabizi still misses the 80% floor.
@@ -265,6 +299,8 @@ Keep this updated during the event; it feeds the Technical Judgment criterion.
 |---|---|---|---|
 | Collect every call once, replay policies offline | Run each policy live | Ablations and sweeps cost nothing and rerun identically | `collect.py`, `cache/calls.sqlite` |
 | Split by question group | Split by item | Variants of one question in different splits would leak answers | `data.py` |
+| Simple language split as the main design | Keep sampling, the router and certified thresholds | Same accuracy and cost on dev, half the latency, no trained parts, and no reliance on the unverified shared-prompt assumption. The complex version stays as a measured baseline | `policies.simulate`, mode `split` |
+| Gemma 3 4B as the small model | Qwen 1.5B | 6 more correct answers on all dev questions (203 vs 197) for 4 points of cost | `configs/local_gemma.toml` |
 | The always-large baseline gets the raw question, but Halala's escalations get the rewrite | Raw question on both | The baseline must be the unmodified system, and raw Arabizi is what the large model struggles with | `collect.py`, `large_rescued` |
 | Rule-based Arabizi rewrite by default | ALLaM with examples, or ArabiziKit | Lowest cost per correct answer and no model call; ALLaM with examples is more accurate but several times the cost | `[cascade] arabizi` |
 | Set ALLaM's prompt format explicitly | Trust Ollama's default | Ollama silently used a generic template; every earlier ALLaM number was wrong and is kept only as a comparison | `configs/allam.Modelfile` |

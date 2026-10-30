@@ -10,12 +10,12 @@ workers = 4
 backend = "openai"
 name = "qwen2.5:1.5b"
 params_b = 1.5
-base_url = "http://localhost:11434/v1"
+base_url = "http://127.0.0.1:11434/v1"
 api_key_env = "HALALA_API_KEY"
 
 [models.large]
 backend = "openai"
 name = "qwen2.5:7b"
 params_b = 7
-base_url = "http://localhost:11434/v1"
+base_url = "http://127.0.0.1:11434/v1"
 api_key_env = "HALALA_API_KEY"

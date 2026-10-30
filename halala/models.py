@@ -17,6 +17,8 @@ from .config import resolve
 from .features import ARABIC_LETTER, detect_variant
 from .normalize import arabizi_to_arabic
 
+SERVING_OPTIONS = ("num_ctx", "num_gpu")   # context size, and how many layers go on the GPU
+
 
 @dataclass
 class Completion:
@@ -24,6 +26,9 @@ class Completion:
     tokens_in: int
     tokens_out: int
     latency_s: float
+    cached_in: int = 0      # prompt tokens the server reused instead of evaluating
+    active_s: float = 0.0   # time the server spent evaluating, by its own clock
+    load_s: float = 0.0     # time the server spent loading the model for this call
 
 
 class CallCache:
@@ -67,6 +72,11 @@ class Model:
         key = None
         if self.cache is not None:
             parts = [self.cfg["backend"], self.name, system, user, temperature, sample, self.max_tokens]
+            if self.cfg.get("stop"):
+                parts.append(self.cfg["stop"])
+            serving = {k: self.cfg[k] for k in SERVING_OPTIONS if k in self.cfg}
+            if serving:   # where a model runs can change an answer's wording, so these calls are kept apart
+                parts.append(serving)
             key = hashlib.sha256(json.dumps(parts, ensure_ascii=False).encode("utf-8")).hexdigest()
             hit = self.cache.get(key)
             if hit is not None:
@@ -109,7 +119,7 @@ class MockModel(Model):
 
 class OllamaModel(Model):
     def _call(self, system, user, temperature, sample, hint):
-        host = self.cfg.get("host", "http://localhost:11434").rstrip("/")
+        host = self.cfg.get("host", "http://127.0.0.1:11434").rstrip("/")
         body = {
             "model": self.name,
             "stream": False,
@@ -118,18 +128,24 @@ class OllamaModel(Model):
         }
         if "think" in self.cfg:   # reasoning models spend the token limit on thinking unless this is off
             body["think"] = self.cfg["think"]
+        if self.cfg.get("stop"):
+            body["options"]["stop"] = self.cfg["stop"]
+        body["options"].update({k: self.cfg[k] for k in SERVING_OPTIONS if k in self.cfg})
         import requests
 
         start = time.perf_counter()
         r = requests.post(f"{host}/api/chat", json=body, timeout=300)
         r.raise_for_status()
         data = r.json()
-        # prompt_eval_count can drop when Ollama reuses its prompt cache; note that when comparing runs.
+        # prompt_eval_count includes tokens Ollama reused from its prompt cache, so cached_in is kept beside it.
         return Completion(
             data["message"]["content"].strip(),
             int(data.get("prompt_eval_count", 0)),
             int(data.get("eval_count", 0)),
             time.perf_counter() - start,
+            int(data.get("prompt_eval_cached_count", 0)),
+            (data.get("prompt_eval_duration", 0) + data.get("eval_duration", 0)) / 1e9,
+            data.get("load_duration", 0) / 1e9,
         )
 
 
@@ -147,6 +163,8 @@ class OpenAIModel(Model):
         }
         if self.cfg.get("send_seed", True):
             body["seed"] = sample
+        if self.cfg.get("stop"):
+            body["stop"] = self.cfg["stop"][:4]   # the API accepts at most four
         import requests
 
         start = time.perf_counter()

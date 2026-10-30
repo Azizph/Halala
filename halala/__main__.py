@@ -32,7 +32,7 @@ def main(argv: list[str] | None = None) -> int:
     with_config("train", "fit the router on train, calibrate thresholds on calib")
     e = with_config("evaluate", "replay every policy on test and write the report")
     e.add_argument("--readme", action="store_true", help="also write the results into README.md")
-    e.add_argument("--split", default="test", choices=["test", "sealed"])
+    e.add_argument("--split", default="test", choices=["test", "dev", "sealed"])
     r = with_config("run", "collect, train and evaluate in one go")
     r.add_argument("--readme", action="store_true")
     with_config("tokens", "token-tax baseline: input tokens per variant vs English")
@@ -49,6 +49,19 @@ def main(argv: list[str] | None = None) -> int:
     mc.add_argument("--csv", required=True)
     mc.add_argument("--out", required=True)
     mc.add_argument("--limit", type=int, default=0)
+    fd = sub.add_parser("fetch-dialects", help="sample the public dialect benchmark into a local file")
+    fd.add_argument("--out", default="data/external/dialectal_mmlu.jsonl")
+    fd.add_argument("--groups", type=int, default=100)
+    fd.add_argument("--seed", type=int, default=13)
+    da = with_config("dialect-audit", "the Dialect Tax per form and model on the public benchmark")
+    da.add_argument("--data", default="data/external/dialectal_mmlu.jsonl")
+    dr = with_config("dialect-rewrite", "one attempt at closing the Saudi gap with the word list")
+    dr.add_argument("--data", default="data/external/dialectal_mmlu.jsonl")
+    with_config("prompt-eval", "compare instructions on the dev questions with Halala's real routing (H8)")
+    ms = with_config("measure", "real server time per arm on a sample of dev questions, with no cache")
+    ms.add_argument("--arms", default=None, help="comma-separated; all arms by default")
+    ms.add_argument("--per-form", type=int, default=12)
+    ms.add_argument("--interleaved", action="store_true", help="questions in mixed order, so models really swap")
     rw = with_config("rewrite-eval", "compare ways of handling Arabizi on the dev questions (H5)")
     rw.add_argument("--examples", default="data/arabizi_examples.jsonl")
     a = with_config("ask", "send one question through the live cascade and print the trace")
@@ -73,6 +86,11 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     if args.cmd == "seal":
         pipeline.cmd_seal(args.data, args.test_fraction, args.seed, args.force)
+        return 0
+    if args.cmd == "fetch-dialects":
+        from .dialect_audit import cmd_fetch_dialects
+
+        cmd_fetch_dialects(args.out, args.groups, args.seed)
         return 0
     if args.cmd == "review":
         pipeline.cmd_review(args.data)
@@ -113,6 +131,23 @@ def main(argv: list[str] | None = None) -> int:
         pipeline.cmd_tokens(cfg)
     elif args.cmd == "profile":
         pipeline.cmd_profile(cfg, args.split)
+    elif args.cmd == "dialect-audit":
+        from .dialect_audit import cmd_dialect_audit
+
+        cmd_dialect_audit(cfg, args.data)
+    elif args.cmd == "dialect-rewrite":
+        from .dialect_audit import cmd_dialect_rewrite
+
+        cmd_dialect_rewrite(cfg, args.data)
+    elif args.cmd == "prompt-eval":
+        from .prompt_eval import cmd_prompt_eval
+
+        cmd_prompt_eval(cfg)
+    elif args.cmd == "measure":
+        from .measure import ALL_ARMS, cmd_measure
+
+        arms = args.arms.split(",") if args.arms else list(ALL_ARMS)
+        cmd_measure(cfg, arms, args.per_form, args.interleaved)
     elif args.cmd == "rewrite-eval":
         from .rewrite_eval import cmd_rewrite_eval
 

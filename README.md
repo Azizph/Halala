@@ -2,29 +2,29 @@
 
 Serve Arabic-first answers with a fraction of the compute, without any dialect paying for the savings.
 
-> **Status:** hackathon skeleton. The pipeline runs end to end on mock models; real results come from real
-> models at the event. The build plan is in [PLAN.md](PLAN.md).
+> **Status:** hackathon entry. Dev results are real, on local models; the sealed test hasn't been opened.
+> The build plan and findings are in [PLAN.md](PLAN.md). Run with `--config configs/local_gemma.toml`.
 
 ## The problem
 
-The cheap way to serve an LLM is to let a small model answer the easy questions and send only the hard ones to
-the big model. But a router tuned on formal Arabic treats Najdi, Arabizi and mixed Arabic-English questions as
-easy too, sends them to the small model, and they fail quietly. Formal-Arabic users get the savings; everyday
-Saudi users get the worse answers.
+Failed runs still burn compute, so what matters is the cost of a correct answer, and that isn't the same for
+everyone. ALLaM 7B gets 40 to 45 of 45 on English, formal Arabic, Najdi and mixed Arabic-English, but 9 of 45 on
+Arabizi (Arabic typed in Latin letters and digits), so an Arabizi speaker pays about 5.5 times as much per correct answer.
 
 ## How Halala works
 
-1. **Cheap cleanup:** strip diacritics and tatweel, convert Arabic-Indic digits, and rewrite Arabizi in Arabic
-   script, so the small model can handle more of the dialect traffic.
-2. **Small model, sampled k times:** sample 0 is greedy, the rest add a self-consistency signal.
-3. **Router:** a gradient-boosted classifier predicts whether the small model's majority answer is right, from
-   cheap signals only (script, Arabizi and dialect cues, sample agreement).
-4. **Per-variant thresholds:** each detected variant (English, MSA, dialect, Arabizi, mixed) gets its own
-   threshold. Each one is certified on a calibration split with a binomial test, so that variant's accuracy loss
-   compared with always using the large model stays under ε with probability at least 1 − δ. A variant with too
-   little calibration data always escalates.
-5. **Escalate** to the large model when the router's score is below that variant's threshold. The large model
-   always sees the raw question.
+1. **Clean up:** strip diacritics and tatweel, and convert Arabic-Indic digits.
+2. **Detect the form** from the script and a few marker words.
+3. **Rewrite Arabizi** in Arabic script with rules and a Najdi word list, with no model call.
+4. **Route:** English goes to the small model once. Everything else goes to the large model.
+5. **One cheap check:** if the small model returns nothing or refuses, the large model answers.
+
+On all 225 dev questions this gets 203 correct against 180 for always using ALLaM, at 76% of its cost per correct
+answer. That's estimated compute, and it leaves out model loading and swaps.
+
+**The full pipeline** is kept as a baseline (`halala_full`): small model sampled several times, a gradient-boosted
+router, and per-variant thresholds certified with a binomial test. It kept only English on the small model and
+didn't beat the simple design, and its savings rely on repeated samples sharing a prompt pass, which wasn't verified.
 
 Every model call is cached in `cache/calls.sqlite`. Each routing policy is replayed offline from one collection
 pass, so ablations and threshold sweeps cost nothing and rerun identically.

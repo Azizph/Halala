@@ -29,6 +29,12 @@ ARABIZI_WEAK = {
     "ay", "bi", "ana", "enta", "inta", "enti", "hatha", "hathi", "elly", "illi", "3ashan", "3shan",
     "yom", "sana", "shahar", "sa3a", "madina", "akbar", "awwal", "nos", "7ag", "7agg", "wala",
 }
+# Everyday English words. Two outweigh any Arabizi marker ("What is CO2?"), and with no marker one is enough.
+ENGLISH_WORDS = frozenset(
+    "a an the of in on at to for from by with and or not is are was were be do does did has have had can could will "
+    "would should what which who whom whose when where why how many much this that these those it its".split()
+)
+ENGLISH_DIGIT_WORD = re.compile(r"^\d+(?:st|nd|rd|th)$|[A-Z]\d|\d[A-Z]")   # 3rd, CO2, H2O, 5G
 
 
 def _cues(words: str) -> frozenset[str]:
@@ -62,10 +68,17 @@ def _script_word_counts(text: str) -> tuple[int, int]:
     return arabic, latin
 
 
+def _english_words(text: str) -> int:
+    return sum(w in ENGLISH_WORDS for w in re.findall(r"[a-z0-9']+", text.lower()))
+
+
 def _looks_arabizi(text: str) -> bool:
-    if ARABIZI_DIGIT_IN_WORD.search(text):
+    if _english_words(text) >= 2:
+        return False
+    tokens = re.findall(r"[A-Za-z0-9']+", text)
+    if any(ARABIZI_DIGIT_IN_WORD.search(t) and not ENGLISH_DIGIT_WORD.search(t) for t in tokens):
         return True
-    words = [w for w in re.findall(r"[a-z0-9']+", text.lower())]
+    words = [t.lower() for t in tokens]
     if any(w in ARABIZI_STRONG for w in words):
         return True
     return sum(w in ARABIZI_WEAK for w in words) >= 2
@@ -85,7 +98,10 @@ def detect_variant(text: str) -> str:
     if arabic_words and latin_words:
         return "mixed"
     if latin_words:
-        return "arabizi" if _looks_arabizi(text) else "en"
+        if _looks_arabizi(text):
+            return "arabizi"
+        # Unsure Latin text takes the mixed path, as typed to the large model: doubt costs compute, never accuracy.
+        return "en" if _english_words(text) else "mixed"
     if arabic_words:
         gulf, other, msa = dialect_scores(text)
         return "dialect" if gulf + other > msa else "msa"

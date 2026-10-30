@@ -3,7 +3,7 @@ import unittest
 from halala.config import ROOT
 from halala.data import load_jsonl, make_synthetic_arith
 from halala.features import detect_variant  # noqa: F401  (used by DetectVariantTest and VariantTest)
-from halala.normalize import arabizi_kit, arabizi_to_arabic, for_match, for_model
+from halala.normalize import arabizi_kit, arabizi_to_arabic, dialect_to_formal, for_match, for_model
 from halala.collect import check_rewrite, summarize_samples
 from halala.models import Completion
 from halala.scoring import answer_key, cluster_answers, extract_choice, is_correct, is_refusal, score
@@ -51,6 +51,21 @@ class NormalizeTest(unittest.TestCase):
         self.assertEqual(arabizi_to_arabic("bi ay shahar?"), "بأي شهر؟")
 
 
+class DialectToFormalTest(unittest.TestCase):
+    def test_swaps_dialect_words_and_keeps_the_rest(self):
+        self.assertEqual(dialect_to_formal("وش البحر اللي على الساحل؟"), "ما البحر الذي على الساحل؟")
+
+    def test_keeps_an_attached_conjunction(self):
+        self.assertEqual(dialect_to_formal("وليش فاللي"), "ولماذا فالذي")
+
+    def test_phrases_go_first(self):
+        self.assertEqual(dialect_to_formal("عشان كذا كم يطلع ٥"), "لذلك كم يساوي ٥")
+
+    def test_leaves_formal_arabic_and_latin_alone(self):
+        for text in ("ما عاصمة السعودية؟", "بكرة في الفيزياء", "وفصل الربيع", "Which city is it?"):
+            self.assertEqual(dialect_to_formal(text), text)
+
+
 class DetectVariantTest(unittest.TestCase):
     def test_one_english_word_in_an_arabic_sentence_is_mixed(self):
         # Only ~7% of the letters are Latin, so a letter-ratio rule called this pure dialect.
@@ -65,6 +80,18 @@ class DetectVariantTest(unittest.TestCase):
     def test_plain_english_is_not_arabizi(self):
         self.assertEqual(detect_variant("What is the capital of Saudi Arabia?"), "en")
         self.assertEqual(detect_variant("Set the min value to 3."), "en")    # one weak marker is not enough
+
+    def test_english_with_digits_or_marker_words_stays_english(self):
+        for text in ("What is CO2?", "Who was the 3rd president?", "What does H2O stand for?",
+                     "Name the 2nd largest city in the UK.", "I wish to know the capital of France.",
+                     "Who founded Zain and when?"):
+            with self.subTest(text=text):
+                self.assertEqual(detect_variant(text), "en")
+
+    def test_unsure_latin_text_goes_to_the_large_model_as_typed(self):
+        self.assertEqual(detect_variant("mata yabda ramadan"), "mixed")
+        self.assertEqual(detect_variant("Define entropy"), "mixed")
+        self.assertEqual(detect_variant("H2O formula"), "mixed")
 
     def test_arabic_only(self):
         self.assertEqual(detect_variant("ما هي عاصمة المملكة العربية السعودية؟"), "msa")
