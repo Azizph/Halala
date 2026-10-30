@@ -23,10 +23,10 @@ INF = math.inf
 # What each mismatch costs when lining a typed word up with a real one.
 SECOND = 0.5    # a letter's less likely reading: s for ص
 SHORT = 0.3     # a vowel typed but not written, which is what a short vowel is
-LONG = 1.0      # a long vowel or a w or y typed but not written
+LONG = 1.0      # a long vowel, w, y or 2 typed but not written, or a vowel typed for ع, as in majmoa
 MISSING = 0.7   # a long vowel written but not typed
-SILENT = 0.0    # a hamza written but not typed, or a final t or h written as ة
-COMMON = 0.4    # what ten times the frequency is worth
+SILENT = 0.1    # a hamza written but not typed
+COMMON = 0.5    # what ten times the frequency is worth
 MAX_FIT = 0.25  # per typed unit: a worse fit than this isn't the same word, so the rules take over
 TOP = 200       # real words kept per set of consonants, most common first
 
@@ -40,26 +40,29 @@ def _unit(first: str, second: str = "", skip: float = INF) -> Unit:
     return Unit(dict.fromkeys(first, 0.0) | dict.fromkeys(second, SECOND), skip)
 
 
+def _vowel(first: str, second: str = "", skip: float = SHORT) -> Unit:
+    return _unit(first, second, skip)._replace(letters=_unit(first, second).letters | {"ع": LONG})
+
+
 _A, _E, _I, _U = "اأآإىءة", "يىئةإ", "يىئإ", "وؤ"
 _LATIN = {
     "3'": _unit("غ"), "7'": _unit("خ"), "6'": _unit("ظ"), "9'": _unit("ض"), "sh": _unit("ش"), "kh": _unit("خ"),
     "gh": _unit("غ"), "th": _unit("ث", "ذ"), "dh": _unit("ذ", "ضظ"), "ch": _unit("ك", "شج"),
-    "3": _unit("ع"), "5": _unit("خ"), "6": _unit("ط"), "7": _unit("ح"), "8": _unit("ق", "غ"), "9": _unit("ص"),
+    "3": _unit("ع", "غ"), "5": _unit("خ"), "6": _unit("ط", "ظ"), "7": _unit("ح", "خ"), "8": _unit("ق", "غ"), "9": _unit("ص", "ض"),
     "b": _unit("ب"), "p": _unit("ب"), "t": _unit("ت", "ط"), "j": _unit("ج"), "d": _unit("د", "ضذ"), "r": _unit("ر"),
-    "z": _unit("ز", "ظذ"), "s": _unit("س", "ص"), "f": _unit("ف"), "v": _unit("ف"), "q": _unit("ق", "ك"),
+    "z": _unit("ز", "ظذ"), "s": _unit("س", "صز"), "f": _unit("ف"), "v": _unit("ف"), "q": _unit("ق", "ك"),
     "g": _unit("ق", "جغ"), "k": _unit("ك", "ق"), "c": _unit("ك"), "l": _unit("ل"), "m": _unit("م"), "n": _unit("ن"),
-    "h": _unit("ه", "ح"), "2": _unit("ءأإآؤئا", skip=0.0),
-    "aa": _unit(_A, "ع", LONG), "ee": _unit(_I, "ع", LONG), "ii": _unit(_I, "ع", LONG), "oo": _unit(_U, "عأ", LONG),
-    "uu": _unit(_U, "عأ", LONG), "ou": _unit(_U, "عأ", LONG), "a": _unit(_A, "ع", SHORT), "e": _unit(_E, "ع", SHORT),
-    "i": _unit(_I, "ع", SHORT), "o": _unit(_U, "عأ", SHORT), "u": _unit(_U, "عأ", SHORT), "w": _unit(_U, skip=LONG),
-    "y": _unit(_I, skip=LONG),
+    "h": _unit("ه", "ح"), "2": _unit("ءأإآؤئ", skip=LONG),
+    "aa": _vowel(_A, skip=LONG), "ee": _vowel(_I, skip=LONG), "ii": _vowel(_I, skip=LONG), "oo": _vowel(_U, "أ", LONG),
+    "uu": _vowel(_U, "أ", LONG), "ou": _vowel(_U, "أ", LONG), "a": _vowel(_A), "e": _vowel(_E), "i": _vowel(_I),
+    "o": _vowel(_U, "أ"), "u": _vowel(_U, "أ"), "w": _unit(_U, skip=LONG), "y": _unit("يىئ", skip=LONG),
 }
-_NOT_TYPED = dict.fromkeys("اوىيعة", MISSING) | dict.fromkeys("ءأآإؤئ", SILENT)
+_NOT_TYPED = dict.fromkeys("اوىيعة", MISSING) | dict.fromkeys("أآإؤئ", SILENT) | {"ء": 0.0}
 _WEAK = set(_NOT_TYPED) - {"ع"}         # letters with no consonant to match: vowels, hamzas and ة
 _STARTS = dict.fromkeys("اأإآ", 0.0)    # any vowel that starts a word is written on an alef
 _DIGIT_LETTERS = {"3": "ع", "5": "خ", "6": "ط", "7": "ح", "8": "ق", "9": "ص"}
 _REPEAT = re.compile(r"(.)\1+")
-_LETTER_THEN_HA = re.compile(r"([td])h(?=(?:a|um|om)$)")   # 3asmetha: ت then ها, not ث
+_LETTER_THEN_HA = re.compile(r"([td])h(?=(?:a|um|om)?$)")   # 3asmetha: ت then ها, not ث
 
 
 def _skeleton(word: str) -> str:
@@ -86,7 +89,7 @@ def _units(word: str, digits: str) -> list[Unit]:
         for size in (2, 1):
             unit = _LATIN.get(word[i:i + size])
             if unit and units and unit is units[-1] and unit.skip == INF:     # doubled, so the vowel before it is short
-                if len(units) > 1 and units[-2].skip == SHORT:
+                if len(units) > 1 and units[-2].skip == SHORT and (len(units) < 3 or units[-3].skip == INF):
                     units[-2] = units[-2]._replace(letters={})
                 i += size
                 break
@@ -98,14 +101,16 @@ def _units(word: str, digits: str) -> list[Unit]:
             i += 1
     if not units:
         return units
-    if units[0].skip == SHORT:      # a word can't open on an unwritten vowel
+    if units[0].skip == SHORT or word[0] == "2":    # a word can't open on an unwritten vowel
         units[0] = Unit({**units[0].letters, **_STARTS}, LONG)
     elif units[0].skip == LONG and word[0] in "wy":     # nor can a w or y that opens one go unwritten
         units[0] = units[0]._replace(skip=INF)
     if units[-1].skip == SHORT:     # and a final vowel that's typed is meant
         units[-1] = units[-1]._replace(skip=LONG)
-    if len(units) > 1 and units[-2] in (_LATIN["a"], _LATIN["e"]) and units[-1] in (_LATIN["t"], _LATIN["h"]):
-        units[-1] = units[-1]._replace(letters={**units[-1].letters, "ة": SILENT})   # 3asmat, 7alqah
+    before = units[-2] if len(units) > 1 else None
+    after_vowel_or_consonant = before and (before in (_LATIN["a"], _LATIN["e"]) or before.skip == INF)
+    if after_vowel_or_consonant and units[-1] in (_LATIN["t"], _LATIN["h"]) and not word.endswith("'h"):
+        units[-1] = units[-1]._replace(letters={**units[-1].letters, "ة": 0.0})   # 3asmat, 7alqah, 3asmt
     # A writer who types 7 for ح rarely types h for it too, and the same goes for the other digits.
     unlikely = {_DIGIT_LETTERS[d] for d in digits}
     return [u._replace(letters={k: LONG if v and k in unlikely else v for k, v in u.letters.items()}) for u in units]

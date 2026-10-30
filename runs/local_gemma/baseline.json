@@ -2,31 +2,31 @@
   "en": {
     "correct": 42,
     "n": 45,
-    "seconds_per_correct": 0.424,
+    "seconds_per_correct": 0.445,
     "tax": 1.0
   },
   "msa": {
     "correct": 44,
     "n": 45,
-    "seconds_per_correct": 0.38,
-    "tax": 0.9
+    "seconds_per_correct": 0.392,
+    "tax": 0.88
   },
   "najdi": {
     "correct": 40,
     "n": 45,
-    "seconds_per_correct": 0.439,
-    "tax": 1.03
+    "seconds_per_correct": 0.454,
+    "tax": 1.02
   },
   "arabizi": {
-    "correct": 37,
+    "correct": 38,
     "n": 45,
-    "seconds_per_correct": 0.344,
-    "tax": 0.81
+    "seconds_per_correct": 0.339,
+    "tax": 0.76
   },
   "mixed": {
     "correct": 44,
     "n": 45,
-    "seconds_per_correct": 0.394,
-    "tax": 0.93
+    "seconds_per_correct": 0.399,
+    "tax": 0.9
   }
 }

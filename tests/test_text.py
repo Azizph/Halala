@@ -68,6 +68,34 @@ class SpellingTest(unittest.TestCase):
         self.assertEqual(spell("albhar"), "البحر")
         self.assertNotEqual(spell("albhar", "7"), "البحر")
 
+    def test_a_final_t_or_h_is_ta_marbuta_even_with_no_vowel_before_it(self):
+        self.assertEqual(arabizi_to_arabic("3asmt"), "عاصمة")
+
+    def test_a_final_dh_can_be_a_letter_then_the_pronoun(self):
+        self.assertEqual(arabizi_to_arabic("3ndh"), "عنده")
+        self.assertEqual(arabizi_to_arabic("el riyadh"), "الرياض")   # but never د then ة
+
+    def test_a_typed_2_is_a_hamza_the_writer_meant(self):
+        self.assertEqual(arabizi_to_arabic("sa7ra2"), "صحراء")
+
+    def test_a_digit_can_lose_its_apostrophe(self):
+        self.assertEqual(arabizi_to_arabic("elbali3"), "البالغ")
+
+    def test_an_untyped_hamza_still_costs_something(self):
+        self.assertEqual(arabizi_to_arabic("awal"), "أول")           # not أوائل
+        self.assertEqual(arabizi_to_arabic("elqamar"), "القمر")      # not الأقمار
+
+    def test_a_typed_y_is_never_an_alef(self):
+        self.assertTrue(arabizi_to_arabic("ysamoha").startswith("ي"))
+
+    def test_foreign_names(self):
+        self.assertEqual(arabizi_to_arabic("eiffel"), "إيفل")
+        self.assertEqual(arabizi_to_arabic("el monalisa"), "الموناليزا")
+
+    def test_saudi_arabia_with_no_digits(self):
+        self.assertEqual(arabizi_to_arabic("alsaudia"), "السعودية")
+        self.assertEqual(arabizi_to_arabic("el saudia"), "السعودية")
+
     def test_with_no_good_fit_the_rules_take_over(self):
         self.assertIsNone(spell("y7tonh"))
         self.assertEqual(arabizi_to_arabic("y7tonh"), "يحتنه")
@@ -89,6 +117,7 @@ class DetectVariantTest(unittest.TestCase):
         self.assertEqual(detect_variant("wesh akbar kawkab?"), "arabizi")    # one strong marker
         self.assertEqual(detect_variant("el ba7r el a7mar"), "arabizi")      # digits inside words
         self.assertEqual(detect_variant("meen ektashaf al jazibiya?"), "arabizi")
+        self.assertEqual(detect_variant("alzbeeb yjy mn ay fakiha?"), "arabizi")
 
     def test_plain_english_is_not_arabizi(self):
         self.assertEqual(detect_variant("What is the capital of Saudi Arabia?"), "en")

@@ -1,3 +1,5 @@
+Run with the rewrite at commit `0c3e64a`, when these questions were unseen. The final rewrite was built after seeing them, so `arabizi_fresh3.md` is the unseen result for it.
+
 30 fresh Arabizi questions, written by a separate agent from published examples. Read by Halala as Arabizi: 29 of 30. Identical runs vary by up to about 20%, so small differences mean little.
 
 | Design | Correct | Seconds per correct |

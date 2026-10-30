@@ -20,7 +20,7 @@ ARABIZI_STRONG = {
 ARABIZI_WEAK = {
     "el", "al", "il", "bil", "lil", "fi", "fee", "min", "ma3", "3ala", "3la", "ila", "law", "kam",
     "ay", "bi", "ana", "enta", "inta", "enti", "hatha", "hathi", "elly", "illi", "3ashan", "3shan",
-    "yom", "sana", "shahar", "sa3a", "madina", "akbar", "awwal", "nos", "7ag", "7agg", "wala",
+    "yom", "sana", "shahar", "sa3a", "madina", "akbar", "awwal", "nos", "7ag", "7agg", "wala", "mn", "fe", "fy", "km", "hal",
 }
 # Everyday English words. Two outweigh any Arabizi marker ("What is CO2?"), and with no marker one is enough.
 ENGLISH_WORDS = frozenset(

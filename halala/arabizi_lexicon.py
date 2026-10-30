@@ -24,7 +24,9 @@ LEXICON = {
     "3ashaan": "عشان", "3chan": "عشان", "3shn": "عشان", "lo": "لو", "wla": "ولا", "bs": "بس", "mu": "مو", "moo": "مو",
     "maa": "ما", "aby": "أبي", "abee": "أبي", "aba": "أبي", "abga": "أبغى", "taby": "تبي", "tbi": "تبي", "tby": "تبي",
     "ey": "أي", "eyy": "أي", "hal": "هل", "hl": "هل", "huwa": "هو", "howa": "هو", "hiya": "هي", "heya": "هي",
-    "bin": "بن", "ben": "بن", "ibn": "ابن", "ali": "علي", "saudi": "سعودي", "saudia": "السعودية",
+    "bin": "بن", "ben": "بن", "ibn": "ابن", "ali": "علي", "saudi": "سعودي", "saudia": "سعودية", "saudiya": "سعودية",
+    "alsaudia": "السعودية", "alsaudiya": "السعودية", "elsaudia": "السعودية", "elsaudiya": "السعودية", "ish": "ايش",
+    "mnu": "منو", "mno": "منو", "mnoo": "منو", "minu": "منو", "minoo": "منو",
     # verbs
     "abi": "أبي", "abgha": "أبغى", "tabi": "تبي", "yabi": "يبي", "ytla3": "يطلع", "yetla3": "يطلع",
     "tetla3": "تطلع", "yseer": "يصير", "tseer": "تصير", "aroo7": "أروح", "troo7": "تروح", "agool": "أقول",
@@ -40,7 +42,7 @@ LEXICON = {
     "esm": "اسم", "ism": "اسم", "lugha": "لغة", "3adad": "عدد", "riyal": "ريال", "halala": "هللة",
     "3omla": "عملة", "3omlat": "عملة", "sayyara": "سيارة", "moya": "موية", "koora": "كورة", "salah": "صلاة",
     "salat": "صلاة", "shams": "شمس", "gamar": "قمر", "7ayawan": "حيوان", "akl": "أكل", "bait": "بيت",
-    "beit": "بيت", "nas": "ناس",
+    "beit": "بيت", "nas": "ناس", "lon": "لون", "loon": "لون",
     # adjectives and comparatives
     "zain": "زين", "mara": "مرة", "7eil": "حيل", "kabeer": "كبير", "sagheer": "صغير", "akbar": "أكبر",
     "asghar": "أصغر", "awwal": "أول", "akher": "آخر", "a3la": "أعلى", "asra3": "أسرع", "a7ar": "أحر",
