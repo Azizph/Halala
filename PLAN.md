@@ -30,8 +30,9 @@ both. A free check catches empty or refused answers, and every answer's real cos
 before it, because the previous rewrite got 23 here and 18 there, so the sealed test may differ. Without its list of real words,
 this rewrite gets 14 (`runs/local_gemma/arabizi_parts.md`). On the development questions, which the rewrite was built on, Arabizi
 goes from 8 to 38 of 45 correct, and its tax from 8.4 times English to 0.8 times. Across all 225, right answers rise from 179 to
-208. Real compute per correct answer fell 15% on the last run and 27% on the one before, because timing varies between runs
-(`runs/local_gemma/dialect_tax.md`). Keeping Arabic on ALLaM avoids the cheap-model cost. The Arabizi gap is smaller, not closed.
+208 (`runs/local_gemma/dialect_tax.md`). Real compute per correct answer is about 28% lower once the machine's speed changes between
+the two arms are taken out: 27%, 28% and 28.5% on the last three runs, where the raw figures ran from 27% lower to 4% higher
+(`runs/local_gemma/compute_drift.md`). Keeping Arabic on ALLaM avoids the cheap-model cost. The Arabizi gap is smaller, not closed.
 The Saudi gap is still open, and the sealed test is still to run.
 
 ## The demo
@@ -85,8 +86,8 @@ doesn't need to be technically exhaustive. Work top to bottom. Tick each item wi
 | [x] | Repair the Arabizi rules and add word-frequency spelling correction (01:30) | Lead | 08:00 |
 | [x] | Write a second fresh batch, by an agent kept away from the code, and run it once when the fix was final. The fix stays: 13 to 18 of 30 blind, 32 to 37 of 45 on development questions, and no form lost (01:35) | Lead, agent | 08:00 |
 | [x] | Second rewrite round: fix the general misses, then run it once on a new blind batch. It stays: 23 to 24 of 30 blind, 74% to 80% of the target words, 37 to 38 of 45 on development questions, and no form lost (02:10) | Lead, agent | 08:00 |
-| [ ] | Check the 60 blind questions, the 15 fresh ones and the console's Arabic, and say whether the dataset was hand-checked and whether pre-written code is allowed | Builder | 09:00 |
-| [ ] | Freeze: commit, check that a fresh clone gives the same numbers | Lead, builder approves | 10:00 |
+| [x] | Check the 60 blind questions, the 15 fresh ones and the console's Arabic, and say whether the dataset was hand-checked and whether pre-written code is allowed: all passed, the dataset was hand-checked, and earlier code is allowed (02:25) | Builder | 09:00 |
+| [x] | Freeze: commit, check that a fresh clone gives the same numbers: every form's correct answers match, and so do all 30 unseen rewrites and results, at `f9d07d1` (02:35) | Lead, builder approves | 10:00 |
 | [ ] | Run the sealed test once | Lead | 10:30 |
 | [ ] | Put the final numbers in `PROJECT_PAGE.md` and the console | Lead | 11:00 |
 | [ ] | Build 8 to 10 slides | Lead | 12:30 |
