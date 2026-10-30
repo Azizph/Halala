@@ -162,6 +162,13 @@ class HttpTest(ServerCase):
         self.assertEqual(status["instruction"], SYSTEM_ANSWER)
         self.assertEqual(status["models"]["large"], "mock-large")
 
+    def test_questions_carry_their_answers_for_the_receipts(self):
+        code, body = self.request("GET", "/api/questions")
+        questions = json.loads(body)["questions"]
+        self.assertEqual(code, 200)
+        self.assertEqual(len(questions), 40)
+        self.assertEqual(set(questions[0]), {"id", "group", "form", "question", "answers"})
+
     def test_ask_streams_events(self):
         code, body = self.ask({"question": ARABIZI})
         self.assertEqual(code, 200)
@@ -196,8 +203,16 @@ class HttpTest(ServerCase):
         self.assertIn("model is down", events[-1]["message"])
         self.assertEqual(self.ask({"question": ARABIZI})[0], 200)
 
+    def test_a_pause_warms_the_model_before_the_question(self):
+        self.server.demo.large = spy = Spy("large")
+        self.assertEqual(self.ask({"question": FORMAL})[0], 200)
+        self.assertEqual(len(spy.seen), 2)   # the warm-up, then the question
+        self.assertEqual(self.ask({"question": ENGLISH, "paths": ["direct"]})[0], 200)
+        self.assertEqual(len(spy.seen), 3)   # no pause, so no warm-up
+
     def test_each_step_arrives_before_the_slow_call_finishes(self):
         self.server.demo.large = Spy("large", delay=0.5)
+        self.server.demo.last_call = time.monotonic()   # no pause, so no warm-up
         connection = http.client.HTTPConnection("127.0.0.1", self.port, timeout=10)
         self.addCleanup(connection.close)
         connection.request("POST", "/api/ask", json.dumps({"question": ARABIZI, "paths": ["halala"]}),

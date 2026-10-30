@@ -20,7 +20,7 @@ it isn't endorsed by Humain.
 
 Every AI answer costs compute, right or wrong, so the real price is the cost of a correct answer. That price depends on how you
 write. Ask ALLaM in English and a correct answer costs 1. Type the same question in Arabizi, Arabic in Latin letters and numbers
-like `wesh 3asmat el sa3odiya?`, and it costs about 5.5 times as much. Hard questions in Saudi dialect cost about 1.2 times.
+like `wesh 3asmat el sa3odiya?`, and it costs about 8 times as much. Hard questions in Saudi dialect cost about 1.2 times.
 
 That's the **Dialect Tax**, and average scores hide it. The usual way to save compute, sending work to a cheaper model, adds to
 it: Gemma 3 4B pays 1.5 to 1.9 times its English cost on Arabic, while ALLaM pays 1.0 to 1.2 times.
@@ -35,15 +35,20 @@ Halala is a thin layer in front of the model. It does three things:
 
 ### Results
 
-The Dialect Tax before and after Halala, in real seconds per correct answer, as a multiple of English:
+The Dialect Tax before and after Halala, on all 225 development questions. Each cell shows correct answers out of 45, then real
+seconds per correct answer as a multiple of English:
 
 | Way of writing | ALLaM alone | With Halala |
 |---|---|---|
-| English | 1.0x | 1.0x |
-| Formal Arabic | `[RESULT]` | `[RESULT]` |
-| Najdi | `[RESULT]` | `[RESULT]` |
-| Arabizi | `[RESULT]` | `[RESULT]` |
-| Mixed Arabic-English | `[RESULT]` | `[RESULT]` |
+| English | 42, 1.0x | 42, 1.0x |
+| Formal Arabic | 44, 0.9x | 44, 0.9x |
+| Najdi | 40, 1.0x | 40, 1.0x |
+| Arabizi | 8, **8.2x** | 32, **1.1x** |
+| Mixed Arabic-English | 45, 0.9x | 44, 0.9x |
+| **All 225** | **179 correct, 0.54 seconds each** | **202 correct, 0.42 seconds each** |
+
+Those development numbers overstate the Arabizi fix. On 15 fresh questions, written by a separate agent that never saw the word
+list, ALLaM got 1 right as typed and 2 after the rewrite, against 14 of 15 in proper Arabic.
 
 On unseen questions, sealed before development began: `[RESULT]`.
 
@@ -94,7 +99,8 @@ router was tested and didn't earn its place.
 still open.
 
 **How do you know the numbers aren't overfitted?** The test questions were sealed before development, and their hash shows they
-didn't change. The questions were written by the same person as the rules, so fresh Arabizi was tested too: `[RESULT]`.
+didn't change. The questions were written by the same person as the rules, so fresh Arabizi was tested too, and that test showed
+the rewrite doesn't yet carry over to unseen text.
 
 **What was the biggest mistake?** Ollama silently ran ALLaM with the wrong prompt format, which invalidated the early numbers. Later,
 real measurement overturned a token estimate that made one design look cheapest.

@@ -22,6 +22,8 @@ def main(argv: list[str] | None = None) -> int:
     a = with_config("ask", "send one question through Halala and print each step")
     a.add_argument("question")
     with_config("dialect-tax", "real seconds per correct answer by form, before and after each fix")
+    f = with_config("fresh", "Arabizi on unseen text, from questions nobody tuned on")
+    f.add_argument("--data", default="data/arabizi_fresh.jsonl")
     k = with_config("check", "regression gate on the dialect-tax table")
     k.add_argument("--save", action="store_true", help="save the current table as the baseline")
     m = with_config("measure", "Halala on mixed traffic, in real seconds")
@@ -53,6 +55,8 @@ def main(argv: list[str] | None = None) -> int:
             pipeline.cmd_ask(cfg, args.question)
         elif args.cmd == "dialect-tax":
             measure.cmd_tax(cfg)
+        elif args.cmd == "fresh":
+            measure.cmd_fresh(cfg, args.data)
         elif args.cmd == "check":
             return measure.cmd_check(cfg, args.save)
         elif args.cmd == "measure":

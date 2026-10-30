@@ -1,6 +1,457 @@
 <!doctype html>
 <html lang="en">
+<head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Halala console</title>
-<p>The Halala console goes here: see the demo section of PLAN.md.</p>
+<style>
+:root {
+  --counter: #efe7d8; --paper: #fffdf7; --ink: #1d1b18; --muted: #675f50; --line: #d6ccb8;
+  --right: #0d6a4f; --wrong: #b23327; --coin: #a4602a; --alone: #8d8676; --panel: #f8f3e8;
+  --mono: "Cascadia Mono", Consolas, "Courier New", monospace;
+  --sans: "Segoe UI", Tahoma, system-ui, sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body { margin: 0; background: var(--counter); color: var(--ink); font: 17px/1.45 var(--sans); display: flex; flex-direction: column; }
+button, input { font: inherit; color: inherit; }
+button { cursor: pointer; border: 1px solid var(--line); background: var(--paper); border-radius: 8px; padding: 8px 14px; }
+button:hover:not(:disabled) { border-color: var(--ink); }
+button:disabled { opacity: .55; cursor: default; }
+:focus-visible { outline: 3px solid var(--coin); outline-offset: 2px; }
+[dir=auto] { unicode-bidi: plaintext; }
+
+header { display: flex; align-items: center; gap: 28px; padding: 12px 28px; background: var(--ink); color: var(--paper); flex-wrap: wrap; }
+.brand { display: flex; align-items: center; gap: 12px; }
+.coin { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: var(--coin); color: var(--paper); font-weight: 700; font-size: 20px; }
+.brand b { font-size: 22px; }
+.brand span.line { color: #cfc6b4; }
+nav { display: flex; gap: 6px; margin-inline-start: auto; }
+nav button { background: transparent; color: var(--paper); border-color: #5c564b; }
+nav button[aria-selected=true] { background: var(--paper); color: var(--ink); border-color: var(--paper); }
+#status { font-size: 15px; padding: 6px 12px; border-radius: 999px; background: #3a362f; }
+#status.live { background: var(--right); }
+#status.bad { background: var(--wrong); }
+
+main { flex: 1; min-height: 0; }
+#one { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr) minmax(0, .95fr); }
+section { min-width: 0; padding: 22px 26px; display: flex; flex-direction: column; min-height: 0; }
+h2 { margin: 0 0 14px; font-size: 15px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+
+#thread { flex: 1; overflow: auto; display: flex; flex-direction: column; gap: 12px; padding-bottom: 12px; min-height: 120px; }
+.bubble { max-width: 92%; padding: 12px 16px; border-radius: 14px; background: var(--paper); border: 1px solid var(--line); overflow-wrap: anywhere; font-size: 20px; }
+.bubble.you { align-self: flex-end; background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.empty { color: var(--muted); margin: auto; text-align: center; max-width: 30ch; }
+#picks { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+#picks button { font-size: 15px; padding: 6px 12px; max-width: 100%; overflow-wrap: anywhere; text-align: start; }
+#picks .label { width: 100%; font-size: 14px; color: var(--muted); }
+form { display: flex; gap: 8px; }
+form input { flex: 1; min-width: 0; padding: 12px 14px; border-radius: 8px; border: 1px solid var(--line); background: var(--paper); }
+form button { background: var(--ink); color: var(--paper); border-color: var(--ink); padding: 12px 20px; }
+
+#trace { background: var(--panel); border-inline: 1px solid var(--line); overflow: auto; }
+#steps { list-style: none; margin: 0; padding: 0; }
+#steps li { position: relative; padding: 0 0 22px 34px; color: var(--muted); }
+#steps li::before { content: ""; position: absolute; left: 4px; top: 6px; width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--line); background: var(--panel); }
+#steps li::after { content: ""; position: absolute; left: 10px; top: 24px; bottom: 0; width: 2px; background: var(--line); }
+#steps li:last-child::after { display: none; }
+#steps li.now { color: var(--ink); }
+#steps li.now::before { border-color: var(--coin); background: var(--coin); animation: pulse 1s infinite; }
+#steps li.done { color: var(--ink); }
+#steps li.done::before { border-color: var(--right); background: var(--right); }
+#steps li.fail::before { border-color: var(--wrong); background: var(--wrong); }
+#steps b { display: block; font-weight: 600; }
+#steps .detail { font-size: 21px; overflow-wrap: anywhere; }
+#steps .why { font-size: 15px; color: var(--muted); }
+@keyframes pulse { 50% { opacity: .35; } }
+
+#till { align-items: center; overflow: auto; }
+#receipt { width: min(100%, 430px); background: var(--paper); padding: 22px 22px 14px; font: 16px/1.5 var(--mono); position: relative; box-shadow: 0 6px 18px rgba(29, 27, 24, .16); margin-bottom: 14px; }
+#receipt::after { content: ""; position: absolute; left: 0; right: 0; bottom: -10px; height: 10px; background: linear-gradient(-45deg, transparent 7px, var(--paper) 0), linear-gradient(45deg, transparent 7px, var(--paper) 0); background-size: 14px 14px; background-repeat: repeat-x; }
+.r-title { text-align: center; font-weight: 700; font-size: 20px; letter-spacing: .12em; }
+.r-sub { text-align: center; color: var(--muted); font-size: 14px; }
+.r-rule { border-top: 1px dashed var(--muted); margin: 9px 0; }
+.r-row { display: flex; justify-content: space-between; gap: 14px; }
+.r-text { overflow-wrap: anywhere; font-family: var(--sans); }
+.r-wrong { color: var(--wrong); font-weight: 700; }
+.r-right { color: var(--right); font-weight: 700; }
+.r-total { font-weight: 700; font-size: 19px; }
+.r-note { color: var(--muted); font-size: 13px; line-height: 1.35; }
+.print { animation: print .18s ease-out both; }
+@keyframes print { from { opacity: 0; transform: translateY(-5px); } }
+
+#all { display: flex; flex-direction: column; padding: 22px 34px; gap: 14px; overflow: auto; }
+#all[hidden], #one[hidden] { display: none; }
+.top { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.top h1 { font-size: 27px; margin: 0; }
+.top p { margin: 0; color: var(--muted); }
+#go { background: var(--ink); color: var(--paper); border-color: var(--ink); padding: 10px 20px; margin-inline-start: auto; }
+#now { min-height: 28px; color: var(--muted); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+#meter { height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; }
+#meter i { display: block; height: 100%; width: 0; background: var(--coin); transition: width .2s; }
+.key { display: flex; gap: 22px; color: var(--muted); font-size: 15px; }
+.key i { display: inline-block; width: 14px; height: 14px; border-radius: 3px; margin-inline-end: 6px; vertical-align: -2px; }
+.row { display: grid; grid-template-columns: 200px minmax(0, 1fr) 150px; gap: 18px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--line); }
+.row .name b { display: block; font-size: 19px; }
+.bar { display: flex; align-items: center; gap: 10px; height: 25px; margin: 3px 0; }
+.bar i { display: block; height: 100%; width: 0; min-width: 2px; border-radius: 3px; transition: width .35s ease; }
+.bar.alone i { background: var(--alone); }
+.bar.mine i { background: var(--right); }
+.bar span { font: 600 17px var(--mono); white-space: nowrap; }
+.score { font: 600 18px var(--mono); text-align: end; }
+.score small { display: block; font: 13px var(--sans); color: var(--muted); }
+#sums { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+#sums div { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; }
+#sums b { display: block; font: 700 23px var(--mono); }
+#sums span { color: var(--muted); font-size: 15px; }
+#failed { background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 12px 16px; }
+#failed h2 { margin-bottom: 6px; }
+#failed ul { margin: 0; padding-inline-start: 20px; font-size: 16px; }
+footer { padding: 7px 28px; font-size: 14px; color: var(--muted); border-top: 1px solid var(--line); background: var(--panel); }
+
+@media (max-width: 1100px) {
+  body { height: auto; }
+  #one { grid-template-columns: minmax(0, 1fr); }
+  #trace { border-inline: 0; border-block: 1px solid var(--line); }
+  .row { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+  .score { text-align: start; }
+  #sums { grid-template-columns: minmax(0, 1fr); }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><span class="coin" aria-hidden="true">هـ</span><b>Halala</b><span class="line">What a correct answer really costs</span></div>
+  <nav role="tablist" aria-label="Views">
+    <button role="tab" id="tabOne" aria-selected="true" aria-controls="one">One question</button>
+    <button role="tab" id="tabAll" aria-selected="false" aria-controls="all">All traffic</button>
+  </nav>
+  <div id="status" role="status">Connecting</div>
+</header>
+
+<main id="one" role="tabpanel" aria-labelledby="tabOne">
+  <section aria-label="Ask">
+    <h2>Ask the way you type</h2>
+    <div id="thread" aria-live="polite"><p class="empty">Ask anything, in any form of Arabic or English.</p></div>
+    <div id="picks"></div>
+    <form id="ask"><label class="sr" hidden for="q">Question</label>
+      <input id="q" dir="auto" maxlength="400" autocomplete="off" placeholder="wesh ..." aria-label="Question">
+      <button id="send">Ask</button></form>
+  </section>
+  <section id="trace" aria-label="What Halala did">
+    <h2>What Halala did</h2>
+    <ol id="steps"></ol>
+  </section>
+  <section id="till" aria-label="Receipt">
+    <h2>Receipt</h2>
+    <div id="receipt"><div class="r-title">HALALA</div><div class="r-sub">Your receipt prints here</div></div>
+  </section>
+</main>
+
+<main id="all" role="tabpanel" aria-labelledby="tabAll" hidden>
+  <div class="top">
+    <div><h1>The Dialect Tax, live</h1><p>What one correct answer costs, in halalas, for each way of writing</p></div>
+    <button id="go">Run all questions</button>
+  </div>
+  <div id="meter"><i></i></div>
+  <div id="now" dir="auto">Every question goes through ALLaM alone and through Halala, on real model calls.</div>
+  <div class="key"><span><i style="background:var(--alone)"></i>ALLaM alone</span><span><i style="background:var(--right)"></i>With Halala</span></div>
+  <div id="rows"></div>
+  <div id="sums"></div>
+  <div id="failed" hidden>
+    <h2>What didn't work</h2>
+    <ul>
+      <li>A word list for Saudi dialect: 45 to 48 of 100, short of the mark set beforehand, so it was dropped. Saudi is still open.</li>
+      <li>A learned router with repeated sampling: no better than the simple design, and slower.</li>
+      <li>Asking a model to rewrite Arabizi: every version lost to the free rules.</li>
+    </ul>
+  </div>
+</main>
+
+<footer>1 halala = the compute of one correct English answer on ALLaM alone. It's a unit of compute, not a real price. Development questions, on a community build of ALLaM 7B.</footer>
+
+<script>
+const $ = id => document.getElementById(id);
+const NAMES = { en: "English", msa: "Formal Arabic", dialect: "Saudi dialect", najdi: "Najdi", arabizi: "Arabizi", mixed: "Mixed Arabic and English" };
+const ORDER = ["en", "msa", "najdi", "mixed", "arabizi"];
+const MODELS = { "allam-7b-q4-inst": "ALLaM 7B", "gemma3:4b": "Gemma 3 4B" };
+const modelName = name => MODELS[name] || name;
+const PICKS = ["sa-001", "sa-008", "sa-044"];
+const STEPS = [["form", "Form detected"], ["rewrite", "Rewrite"], ["route", "Model chosen"], ["answer", "Answer"]];
+let info = null, questions = [], number = 0, busy = false, stopping = false;
+
+function el(tag, className, text) {
+  const node = document.createElement(tag);
+  if (className) node.className = className;
+  if (text !== undefined) node.textContent = text;
+  return node;
+}
+const halalas = seconds => seconds / (info && info.halala_seconds || 1);
+const money = value => value.toFixed(1);
+
+async function* ask(body) {
+  const response = await fetch("api/ask", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+  if (!response.ok) throw new Error((await response.json()).error || "The server refused the question");
+  const reader = response.body.getReader(), decoder = new TextDecoder();
+  let held = "";
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) return;
+    held += decoder.decode(value, { stream: true });
+    const lines = held.split("\n");
+    held = lines.pop();
+    for (const line of lines) {
+      if (!line.trim()) continue;
+      const event = JSON.parse(line);
+      if (event.step === "error") throw new Error(event.message);
+      yield event;
+    }
+  }
+}
+
+/* One question: the trace fills in as it happens, then the receipt prints. */
+function resetTrace() {
+  const list = $("steps");
+  list.replaceChildren();
+  for (const [key, title] of STEPS) {
+    const item = el("li");
+    item.id = "s-" + key;
+    item.append(el("b", "", title));
+    list.append(item);
+  }
+}
+function step(key, detail, why, state = "done") {
+  const item = $("s-" + key);
+  item.className = state;
+  item.querySelector("b").nextSibling?.remove();
+  item.querySelector(".why")?.remove();
+  if (detail) { const d = el("div", "detail", detail); d.dir = "auto"; item.append(d); }
+  if (why) item.append(el("div", "why", why));
+}
+function why(event, form) {
+  if (event.route === "small") return "English goes to the smaller model";
+  if (event.route === "fallback") return "The smaller model gave no usable answer, so ALLaM answers";
+  if (form === "en") return "English stays on ALLaM: this hardware has no room for both models";
+  return "Arabic stays on the model built for it";
+}
+function line(parts, className) {
+  const row = el("div", "r-row " + (className || ""));
+  for (const part of parts) { const s = el("span", "", part); s.dir = "auto"; row.append(s); }
+  return row;
+}
+function text(value, className) {
+  const row = el("div", "r-text " + (className || ""), value);
+  row.dir = "auto";
+  return row;
+}
+const verdict = correct => correct === null ? line(["Not checked"]) : correct ? line(["RIGHT"], "r-right") : line(["WRONG"], "r-wrong");
+
+function receiptLines(question, form, rewritten, mine, spent, alone) {
+  number += 1;
+  const lines = [el("div", "r-title", "HALALA"), el("div", "r-sub", "Receipt " + String(number).padStart(4, "0")), el("div", "r-rule"),
+                 text(question), line(["Form", NAMES[form]]), el("div", "r-rule")];
+  if (alone.same_call) {
+    lines.push(line(["Nothing to fix here"]), text(mine.text), verdict(mine.correct), line(["ALLaM", money(halalas(spent.active_s))]),
+               el("div", "r-rule"), line(["TOTAL", money(halalas(spent.active_s))], "r-total"));
+  } else {
+    const before = halalas(alone.active_s), after = halalas(spent.active_s);
+    lines.push(line(["WITHOUT HALALA"]), text(alone.text || "(no answer)"), verdict(alone.correct), line([alone.correct === false ? "Wasted" : "ALLaM", money(before)]), el("div", "r-rule"),
+               line(["WITH HALALA"]));
+    if (rewritten) lines.push(line(["Rewrite, no model", "0.0"]));
+    lines.push(text(mine.text || "(no answer)"), verdict(mine.correct), line([modelName(mine.model), money(after)]), el("div", "r-rule"), line(["TOTAL", money(after)], "r-total"));
+    if (alone.correct === false && mine.correct) lines.push(line(["You kept a right answer"], "r-right"));
+    else if (after < before) lines.push(line(["Saved", money(before - after)], "r-right"));
+  }
+  lines.push(el("div", "r-rule"), el("div", "r-note", "Amounts are in halalas: 1 halala is the compute of one correct English answer."));
+  return lines;
+}
+async function print(lines) {
+  const paper = $("receipt");
+  paper.replaceChildren();
+  const calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  for (const node of lines) {
+    node.classList.add("print");
+    paper.append(node);
+    if (!calm) await new Promise(done => setTimeout(done, 90));
+  }
+}
+function bubble(kind, value) {
+  const thread = $("thread");
+  thread.querySelector(".empty")?.remove();
+  const node = el("div", "bubble " + kind, value);
+  node.dir = "auto";
+  thread.append(node);
+  thread.scrollTop = thread.scrollHeight;
+  return node;
+}
+function lock(on) {
+  busy = on;
+  $("send").disabled = on;
+  $("go").disabled = on;
+  document.querySelectorAll("#picks button").forEach(b => { b.disabled = on; });
+}
+async function askOne(question, answers = []) {
+  if (busy || !question.trim()) return;
+  lock(true);
+  resetTrace();
+  bubble("you", question);
+  const reply = bubble("mine", "...");
+  let form, rewritten, mine, spent, alone;
+  try {
+    for await (const e of ask({ question, answers, paths: ["halala", "direct"] })) {
+      if (e.step === "form") { form = e.form; step("form", NAMES[e.form]); step("rewrite", "", "Working", "now"); }
+      else if (e.step === "rewrite") { rewritten = e.rewritten; step("rewrite", e.rewritten ? e.prompt : "Nothing to rewrite", e.rewritten ? "Rules and a word list, with no model call" : ""); step("route", "", "Choosing", "now"); }
+      else if (e.step === "route") { step("route", modelName(e.model), why(e, form)); step("answer", "", "Thinking", "now"); }
+      else if (e.step === "answer") { mine = e; reply.textContent = e.text || "(no answer)"; step("answer", e.text || "(no answer)", `${e.tokens} tokens, ${e.active_s.toFixed(1)} seconds of compute`); }
+      else if (e.step === "spent") spent = e;
+      else if (e.step === "direct") alone = e;
+    }
+    await print(receiptLines(question, form, rewritten, mine, spent, alone));
+  } catch (error) {
+    reply.textContent = "The model didn't answer.";
+    step("answer", "", error.message, "fail");
+  }
+  lock(false);
+}
+
+/* All traffic: every question, both ways, with the bars building up as they go. */
+function shuffled(items) {
+  let seed = 13;
+  const random = () => { seed = (seed * 1664525 + 1013904223) % 4294967296; return seed / 4294967296; };
+  const out = [...items];
+  for (let i = out.length - 1; i > 0; i--) { const j = Math.floor(random() * (i + 1)); [out[i], out[j]] = [out[j], out[i]]; }
+  return out;
+}
+function fresh() { return { spent: 0, right: 0, seen: 0, wasted: 0 }; }
+function buildRows() {
+  $("rows").replaceChildren();
+  for (const form of ORDER) {
+    const row = el("div", "row");
+    row.id = "r-" + form;
+    const name = el("div", "name");
+    name.append(el("b", "", NAMES[form]));
+    const bars = el("div");
+    for (const kind of ["alone", "mine"]) {
+      const bar = el("div", "bar " + kind);
+      bar.append(el("i"), el("span", "", "-"));
+      bars.append(bar);
+    }
+    row.append(name, bars, el("div", "score", "-"));
+    $("rows").append(row);
+  }
+}
+function draw(tally) {
+  const english = tally.en.alone.right ? tally.en.alone.spent / tally.en.alone.right : (info && info.halala_seconds || 1);
+  const cost = side => side.spent / Math.max(1, side.right) / english;
+  const top = Math.max(1, ...ORDER.flatMap(f => [cost(tally[f].alone), cost(tally[f].mine)]));
+  for (const form of ORDER) {
+    const row = $("r-" + form), sides = tally[form];
+    ["alone", "mine"].forEach((kind, i) => {
+      const bar = row.querySelectorAll(".bar")[i], side = sides[kind];
+      bar.querySelector("i").style.width = (cost(side) / top * 86) + "%";
+      bar.querySelector("span").textContent = side.seen ? money(cost(side)) : "-";
+    });
+    const score = row.querySelector(".score");
+    score.textContent = `${sides.alone.right} → ${sides.mine.right}`;
+    score.append(el("small", "", `right, of ${sides.mine.seen}`));
+  }
+  const add = (kind, key) => ORDER.reduce((sum, f) => sum + tally[f][kind][key], 0);
+  const box = (a, b, label) => { const d = el("div"); d.append(el("b", "", `${a} → ${b}`), el("span", "", label)); return d; };
+  $("sums").replaceChildren(
+    box(add("alone", "right"), add("mine", "right"), "right answers"),
+    box(money(add("alone", "spent") / english), money(add("mine", "spent") / english), "halalas spent"),
+    box(money(add("alone", "wasted") / english), money(add("mine", "wasted") / english), "halalas wasted on wrong answers"));
+}
+async function runAll() {
+  if (busy) { stopping = true; return; }
+  if (!questions.length) { $("now").textContent = "No questions loaded. Is the server running?"; return; }
+  stopping = false;
+  $("failed").hidden = true;
+  $("go").textContent = "Stop";
+  buildRows();
+  const tally = Object.fromEntries(ORDER.map(f => [f, { alone: fresh(), mine: fresh() }]));
+  const order = shuffled(questions);
+  lock(true);
+  $("go").disabled = false;   // it's the Stop button while the stream runs
+  try {
+    for (let i = 0; i < order.length && !stopping; i++) {
+      const q = order[i], sides = tally[q.form];
+      $("now").textContent = q.question;
+      let mine, spent, alone;
+      for await (const e of ask({ question: q.question, answers: q.answers, paths: ["halala", "direct"] })) {
+        if (e.step === "answer") mine = e;
+        else if (e.step === "spent") spent = e;
+        else if (e.step === "direct") alone = e;
+      }
+      sides.alone.seen++; sides.mine.seen++;
+      sides.alone.spent += alone.active_s; sides.mine.spent += spent.active_s;
+      if (alone.correct) sides.alone.right++; else sides.alone.wasted += alone.active_s;
+      if (mine.correct) sides.mine.right++; else sides.mine.wasted += spent.active_s;
+      $("meter").firstElementChild.style.width = ((i + 1) / order.length * 100) + "%";
+      draw(tally);
+    }
+    $("now").textContent = stopping ? "Stopped." : `All ${order.length} questions done.`;
+    if (!stopping) $("failed").hidden = false;
+  } catch (error) {
+    $("now").textContent = "The model didn't answer: " + error.message;
+  }
+  $("go").textContent = "Run all questions";
+  lock(false);
+}
+
+function show(view) {
+  const one = view === "one";
+  $("one").hidden = !one;
+  $("all").hidden = one;
+  $("tabOne").setAttribute("aria-selected", one);
+  $("tabAll").setAttribute("aria-selected", !one);
+}
+function pickButtons() {
+  const box = $("picks");
+  box.replaceChildren(el("span", "label", "Try one the way people type it"));
+  for (const group of PICKS) {
+    const q = questions.find(x => x.group === group && x.form === "arabizi");
+    if (!q) continue;
+    const button = el("button", "", q.question);
+    button.type = "button";
+    button.dir = "auto";
+    button.onclick = () => askOne(q.question, q.answers);
+    box.append(button);
+  }
+  const other = el("span", "label", "The same question, written another way");
+  box.append(other);
+  for (const form of ["en", "msa", "najdi", "mixed"]) {
+    const q = questions.find(x => x.group === PICKS[0] && x.form === form);
+    if (!q) continue;
+    const button = el("button", "", NAMES[form]);
+    button.type = "button";
+    button.onclick = () => askOne(q.question, q.answers);
+    box.append(button);
+  }
+}
+async function start() {
+  resetTrace();
+  buildRows();
+  $("tabOne").onclick = () => show("one");
+  $("tabAll").onclick = () => show("all");
+  $("go").onclick = runAll;
+  $("ask").onsubmit = event => { event.preventDefault(); const value = $("q").value; $("q").value = ""; askOne(value); };
+  try {
+    info = await (await fetch("api/status")).json();
+    questions = (await (await fetch("api/questions")).json()).questions;
+    const badge = $("status");
+    if (info.mock) { badge.textContent = "Mock models: don't record this"; badge.className = "bad"; }
+    else { badge.textContent = `Live: ${modelName(info.models.large)}`; badge.className = "live"; }
+    pickButtons();
+  } catch {
+    $("status").textContent = "Start demo/server.py first";
+    $("status").className = "bad";
+  }
+}
+start();
+</script>
+</body>
 </html>

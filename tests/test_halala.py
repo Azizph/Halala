@@ -8,7 +8,7 @@ from pathlib import Path
 from halala.config import ROOT, load_config
 from halala.data import Item, load_jsonl, seal, write_jsonl
 from halala.dialect_audit import cmd_dialect_audit, wilson
-from halala.measure import cmd_check, cmd_measure, cmd_sealed, cmd_tax
+from halala.measure import cmd_check, cmd_fresh, cmd_measure, cmd_sealed, cmd_tax
 from halala.models import Completion
 from halala.pipeline import SYSTEM_ANSWER, answer, load_dev, prepare, steps, usable_answer
 
@@ -137,7 +137,7 @@ class MeasureTest(unittest.TestCase):
 
     def test_tax_reports_every_design_by_form(self):
         md = quietly(cmd_tax, self.cfg)
-        for text in ("ALLaM alone", "Arabizi rewrite", "no instruction for dialect", "| arabizi |"):
+        for text in ("ALLaM alone", "With Halala", "| arabizi |"):
             self.assertIn(text, md)
 
     def test_check_passes_on_its_baseline_and_fails_on_a_fall(self):
@@ -149,6 +149,15 @@ class MeasureTest(unittest.TestCase):
         baseline["en"]["correct"] += 5
         (out / "baseline.json").write_text(json.dumps(baseline), encoding="utf-8")
         self.assertEqual(quietly(cmd_check, self.cfg, False), 1)
+
+    def test_fresh_reports_each_question_and_the_detection(self):
+        data = Path(self.tmp.name) / "fresh.jsonl"
+        write_jsonl(data, [Item(id="f1", group_id="f1", variant="arabizi", question=ARABIZI, answers=["الرياض"],
+                                meta={"arabic": "وش عاصمة السعودية؟"})])
+        md = quietly(cmd_fresh, self.cfg, str(data))
+        self.assertIn("Read by Halala as Arabizi: 1 of 1", md)
+        self.assertIn("in proper Arabic", md)
+        self.assertIn(ARABIZI, md)
 
     def test_measure_compares_mixed_traffic(self):
         md = quietly(cmd_measure, self.cfg, 4)

@@ -30,10 +30,11 @@ sys.path.insert(0, str(HERE.parent))
 
 from halala.config import load_config, resolve
 from halala.models import Model, build_models
-from halala.pipeline import SYSTEM_ANSWER, steps
+from halala.pipeline import SYSTEM_ANSWER, load_dev, steps
 from halala.scoring import score
 
 DEFAULT_PORT = 8770
+PAUSE_S = 2.0
 PATHS = ("halala", "direct")
 TIERS = ("small", "large")
 MAX_QUESTION = 400
@@ -94,6 +95,14 @@ def run_question(question: str, answers: list[str], paths: tuple[str, ...] | lis
     yield {"step": "done"}
 
 
+def halala_seconds(cfg: dict) -> float | None:
+    """The receipt's unit: real seconds for one correct English answer on ALLaM alone, from the last dialect-tax run."""
+    path = resolve(cfg["run"]["out_dir"]) / cfg["run"]["name"] / "dialect_tax.json"
+    if not path.exists():
+        return None
+    return json.loads(path.read_text(encoding="utf-8"))["ALLaM alone"]["forms"]["en"]["seconds_per_correct"]
+
+
 class Demo:
     """What the request handlers share. One GPU, so one question at a time."""
 
@@ -101,6 +110,16 @@ class Demo:
         self.cfg = cfg
         self.small, self.large = live_models(cfg)
         self.lock = threading.Lock()
+        self.last_call = 0.0
+
+    def warm_up(self) -> None:
+        """Load the large model and its prompt first, so the first receipt isn't charged for them."""
+        self.large.complete(SYSTEM_ANSWER, "مرحبا", 0.0, 0, {})
+
+    def questions(self) -> list[dict]:
+        """The development questions with their answers, for the picks and the traffic stream. Never the sealed ones."""
+        return [{"id": it.id, "group": it.group_id, "form": it.variant, "question": it.question, "answers": it.answers}
+                for it in load_dev(self.cfg)]
 
     def status(self) -> dict:
         models = self.cfg["models"]
@@ -110,11 +129,15 @@ class Demo:
             "models": {tier: models[tier]["name"] for tier in TIERS},
             "route_english": self.cfg["cascade"]["route_english"],
             "instruction": SYSTEM_ANSWER,
+            "halala_seconds": halala_seconds(self.cfg),
         }
 
     def run(self, question: str, answers: list[str], paths: list[str]) -> Iterator[dict]:
         with self.lock:
+            if time.monotonic() - self.last_call > PAUSE_S:   # a first call after a pause runs ten times slower
+                self.warm_up()                                # and that shouldn't land on either side of the receipt
             yield from run_question(question, answers, paths, self.small, self.large, self.cfg)
+            self.last_call = time.monotonic()
 
 
 def read_request(raw: bytes) -> tuple[str, list[str], list[str]]:
@@ -159,6 +182,8 @@ class Handler(BaseHTTPRequestHandler):
         path = urlsplit(self.path).path
         if path == "/api/status":
             self._send_json(200, self.server.demo.status())
+        elif path == "/api/questions":
+            self._send_json(200, {"questions": self.server.demo.questions()})
         elif path in PAGE_FILES:
             name, kind = PAGE_FILES[path]
             self._send(200, kind, (HERE / name).read_bytes())
@@ -225,6 +250,7 @@ def main(argv: list[str] | None = None) -> int:
         return 1
     if server.demo.status()["mock"]:
         print("mock models: answers are placeholders. Use --config configs/local_gemma.toml for real ones.")
+    server.demo.warm_up()
     print(f"Open http://127.0.0.1:{server.server_port}/   Ctrl+C stops the server.", flush=True)
     try:
         server.serve_forever()

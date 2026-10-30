@@ -5,7 +5,7 @@ This is the only plan. If anything else disagrees with it, this file wins. The r
 ## The problem
 
 Every AI answer costs compute, right or wrong, so the real price is the cost of a correct answer. That price depends on how
-you write. Ask ALLaM in English and a correct answer costs 1. Type the same question in Arabizi and it costs about 5.5 times
+you write. Ask ALLaM in English and a correct answer costs 1. Type the same question in Arabizi and it costs about 8 times
 as much. Hard questions in Saudi dialect cost about 1.2 times.
 
 That's the **Dialect Tax**, and average scores hide it. The usual way to save compute, sending work to a cheaper model, adds to
@@ -25,8 +25,11 @@ A question comes in and is cleaned up, then Halala detects its form. Arabizi is 
 list, with no model call. Arabic goes to ALLaM. English can go to a smaller model when the hardware has room for both. A free
 check catches empty or refused answers, and every answer's real cost is recorded.
 
-**Where that leaves the tax:** the Arabizi fix works, taking it from 17 to 35 of 45 correct. Keeping Arabic on ALLaM avoids the
-cheap-model cost. The Saudi gap is still open, and the sealed test is still to run.
+**Where that leaves the tax:** on the development questions, the Arabizi fix takes it from 8 to 32 of 45 correct, and its tax from
+8.2 times English to 1.1 times. Across all 225, right answers rise from 179 to 202, at 22% less real compute per correct answer
+(`runs/local_gemma/dialect_tax.md`). **On text it hasn't seen, the fix doesn't hold yet:** 15 fresh questions went from 1 to 2 of
+15 correct, against 14 of 15 in proper Arabic (`runs/local_gemma/arabizi_fresh.md`). Keeping Arabic on ALLaM avoids the cheap-model
+cost. The Saudi gap is still open, and the sealed test is still to run.
 
 ## The demo
 
@@ -58,7 +61,7 @@ mock models so far.
 
 ## Checklist to 8pm
 
-Deadline: **20:00 Saudi time, Saturday 2026-10-31**, not yet confirmed. Aim to submit by 17:00 and keep the rest as a buffer. This
+Deadline: **20:00 Saudi time, Saturday 2026-10-31**. Aim to submit by 17:00 and keep the rest as a buffer. This
 doesn't need to be technically exhaustive. Work top to bottom. Tick each item with the time it finished.
 
 **Status: running, resumed by the builder at 00:15.**
@@ -67,15 +70,16 @@ doesn't need to be technically exhaustive. Work top to bottom. Tick each item wi
 |---|---|---|---|
 | [x] | Remove what's off plan, keep one code path, write this file (00:20) | Lead | 00:30 |
 | [x] | Commit and push the cleanup (00:15) | Lead | 00:30 |
-| [ ] | Confirm the deadline | Builder | Now |
-| [ ] | Run `dialect-tax`, choose the instruction by its effect on the tax, build it in, trim the table to before and after | Lead | 01:00 |
-| [ ] | Save the regression baseline with `check --save` | Lead | 01:00 |
-| [ ] | Build the console: chat box, live trace, receipts | Lead | 03:00 |
-| [ ] | Build the traffic stream and live bars | Lead | 04:00 |
-| [ ] | Run the console on the real models | Lead | 04:30 |
-| [ ] | Write 15 fresh Arabizi questions | Builder | 09:00 |
-| [ ] | Check the demo's Arabic, and say whether the dataset was hand-checked and whether pre-written code is allowed | Builder | 09:00 |
-| [ ] | Run the fresh Arabizi questions, and test a failing small model | Lead | 09:30 |
+| [x] | Confirm the deadline (00:20) | Builder | Now |
+| [x] | Run `dialect-tax` and choose the instruction by its effect on the tax: the original stays (00:35) | Lead | 01:00 |
+| [x] | Save the regression baseline with `check --save` (00:35) | Lead | 01:00 |
+| [x] | Build the console: chat box, live trace, receipts (00:30) | Lead | 03:00 |
+| [x] | Build the traffic stream and live bars (00:30) | Lead | 04:00 |
+| [x] | Run the console on the real models: 225 questions in about 2.5 minutes (00:40) | Lead | 04:30 |
+| [x] | Write 15 fresh Arabizi questions, by an agent kept away from the word list (00:40) | Agent | 09:00 |
+| [x] | Run the fresh Arabizi questions: 1 to 2 of 15, against 14 in proper Arabic (00:45) | Lead | 09:30 |
+| [ ] | Decide whether to build a rewrite that holds on unseen Arabizi | Builder | Now |
+| [ ] | Check the 15 fresh questions and the console's Arabic, and say whether the dataset was hand-checked and whether pre-written code is allowed | Builder | 09:00 |
 | [ ] | Freeze: commit, check that a fresh clone gives the same numbers | Lead, builder approves | 10:00 |
 | [ ] | Run the sealed test once | Lead | 10:30 |
 | [ ] | Put the final numbers in `PROJECT_PAGE.md` and the console | Lead | 11:00 |
@@ -98,6 +102,7 @@ Say what didn't work. The evidence is in `runs/`, and the code is in git at `f9a
 | Learned router, thresholds and repeated sampling | No better than the simple design, and slower | `runs/local_gemma/dev/results.md` |
 | Model rewrites of Arabizi, with and without examples | All worse than the rules | `runs/rewrite_eval_final.md` |
 | English to Gemma on one 4 GB GPU | 169% of ALLaM alone in mixed traffic, 85% with room for both | `runs/local_gemma/measure_interleaved.md`, `runs/local_gemma_roomy/measure.md` |
+| Freer replies for dialect and Arabizi | 7 more right answers, but Najdi's tax rose to 2.5 times and Arabizi's to 3.4 | `runs/local_gemma/dialect_tax_instructions.md` |
 | Capping answer length | Saved nothing at 24 tokens, and lost accuracy at 16 or fewer | Run on 2026-10-30, 225 dev questions |
 | Answer cache for repeated questions | No repeats in the data to reuse | Consultant's review, 2026-10-30 |
 
