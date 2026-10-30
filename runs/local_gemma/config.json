@@ -1,0 +1,77 @@
+{
+  "run": {
+    "data": "data/saudi_parallel.dev.jsonl",
+    "out_dir": "runs",
+    "cache_path": "cache/calls.sqlite",
+    "seed": 13,
+    "workers": 2,
+    "limit_groups": 0,
+    "sealed": "data/sealed/saudi_parallel.test.jsonl",
+    "split_fractions": {
+      "train": 0.3,
+      "calib": 0.5,
+      "test": 0.2
+    },
+    "name": "local_gemma"
+  },
+  "cost": {
+    "primary": "flops"
+  },
+  "floors": {
+    "min_variant_success": 0.8,
+    "latency_limit_s": 0
+  },
+  "models": {
+    "small": {
+      "backend": "ollama",
+      "name": "gemma3:4b",
+      "params_b": 4,
+      "max_tokens": 64,
+      "usd_per_mtok_in": 0.0,
+      "usd_per_mtok_out": 0.0,
+      "mock_accuracy": {
+        "en": 0.92,
+        "msa": 0.88,
+        "dialect": 0.72,
+        "arabizi": 0.45,
+        "mixed": 0.62
+      },
+      "host": "http://localhost:11434"
+    },
+    "large": {
+      "backend": "ollama",
+      "name": "allam-7b-q4-inst",
+      "params_b": 7,
+      "max_tokens": 64,
+      "usd_per_mtok_in": 0.0,
+      "usd_per_mtok_out": 0.0,
+      "mock_accuracy": {
+        "en": 0.97,
+        "msa": 0.97,
+        "dialect": 0.95,
+        "arabizi": 0.9,
+        "mixed": 0.93
+      },
+      "host": "http://localhost:11434"
+    }
+  },
+  "cascade": {
+    "samples": 3,
+    "temperature": 0.7,
+    "shared_prefill": true,
+    "normalize": true,
+    "arabizi": "rules",
+    "arabizi_examples": "",
+    "cache": true,
+    "cache_similarity": 0.92
+  },
+  "router": {
+    "model": "hgb"
+  },
+  "calibrate": {
+    "epsilon": 0.1,
+    "delta": 0.1,
+    "min_group_size": 22,
+    "small_group_policy": "escalate"
+  }
+}

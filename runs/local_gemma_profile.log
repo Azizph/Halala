@@ -1,0 +1,21 @@
+﻿Model `gemma3:4b`, 30 items. The small tier sees the cleaned and rewritten prompt; the large tier sees the raw question.
+
+| Variant | n | Small, greedy | Small, majority of samples | Large, raw question | Mean agreement | Agreement when majority right | Agreement when wrong |
+|---|---|---|---|---|---|---|---|
+| en | 6 | 100% | 100% | 100% | 1.00 | 1.00 | n/a |
+| msa | 6 | 83% | 67% | 100% | 0.83 | 1.00 | 0.50 |
+| najdi | 6 | 50% | 50% | 83% | 0.89 | 1.00 | 0.78 |
+| arabizi | 6 | 0% | 0% | 17% | 0.72 | n/a | 0.72 |
+| mixed | 6 | 83% | 83% | 100% | 0.72 | 0.73 | 0.67 |
+
+Tokens per correct answer (multiple of English in brackets). Failed runs count as spend.
+
+| Variant | Plain: one call, raw question | Cleanup and rewrite, one call | Cleanup and rewrite, majority of samples |
+|---|---|---|---|
+| en | 48 (1.0x) | 42 (1.0x) | 47 (1.0x) |
+| msa | 47 (1.0x) | 56 (1.3x) | 83 (1.8x) |
+| najdi | 55 (1.1x) | 90 (2.1x) | 107 (2.3x) |
+| arabizi | 334 (6.9x) | no correct answers | no correct answers |
+| mixed | 47 (1.0x) | 54 (1.3x) | 63 (1.3x) |
+
+read every answer: C:\Users\theda\Humain-Hackathon\halala\runs\local_gemma\profile.html
