@@ -1,7 +1,5 @@
 # Halala: project page draft
 
-`[RESULT]` marks a number still to come. Fill each one from the final runs, and delete anything that doesn't hold up.
-
 ---
 
 ## About
@@ -35,39 +33,48 @@ Halala is a thin layer in front of the model. It does three things:
 
 ### Results
 
-The Dialect Tax before and after Halala, on all 225 development questions. Each cell shows correct answers out of 45, then real
-seconds per correct answer as a multiple of English:
+The Dialect Tax before and after Halala, on 55 sealed questions that nobody saw until one logged run. Each cell shows correct
+answers out of 11, then real seconds per correct answer as a multiple of English:
 
 | Way of writing | ALLaM alone | With Halala |
 |---|---|---|
-| English | 42, 1.0x | 42, 1.0x |
-| Formal Arabic | 44, 0.9x | 44, 0.9x |
-| Najdi | 40, 1.0x | 40, 1.0x |
-| Arabizi | 8, **8.2x** | 32, **1.1x** |
-| Mixed Arabic-English | 45, 0.9x | 44, 0.9x |
-| **All 225** | **179 correct, 0.54 seconds each** | **202 correct, 0.42 seconds each** |
+| English | 11, 1.0x | 11, 1.0x |
+| Formal Arabic | 10, 1.1x | 11, 1.0x |
+| Najdi | 10, 1.1x | 10, 1.1x |
+| Arabizi | 2, **8.1x** | 8, **1.5x** |
+| Mixed Arabic-English | 11, 1.0x | 11, 1.1x |
+| **All 55** | **44 correct, 0.37 seconds each** | **51 correct, 0.30 seconds each** |
 
-Those development numbers overstate the Arabizi fix. On 15 fresh questions, written by a separate agent that never saw the word
-list, ALLaM got 1 right as typed and 2 after the rewrite, against 14 of 15 in proper Arabic.
+That's 18.5% less real compute per correct answer. With 11 questions in each form, one question moves a form by 9%, so the form
+figures are rough.
 
-On unseen questions, sealed before development began: `[RESULT]`.
+On 30 more Arabizi questions, written blind by a separate agent that never saw the code, ALLaM got 1 right as typed and Halala got
+24, against 28 in proper Arabic. Without its list of real Arabic words, Halala got 14. That batch looks easier than the one before
+it, because the previous version of the rewrite got 23 there and 18 on the earlier one.
+
+On the 225 development questions, right answers rise from 179 to 208, and Arabizi from 8 to 38 of 45. The rewrite was built on those
+questions, so they overstate it.
 
 ---
 
 ## How it works
 
-A question comes in and is cleaned up, then Halala detects its form. Arabizi is rewritten into Arabic script by rules and a word
-list, with no model call. Arabic goes to ALLaM. English can go to a smaller model when the hardware has room for both. A free
-check catches empty or refused answers, and every answer's real cost is recorded.
+A question comes in and is cleaned up, then Halala detects its form. Arabizi is rewritten into Arabic script by rules and a list
+of real Arabic words, with no model call. Arabic goes to ALLaM. English can go to a smaller model when the hardware has room for
+both. A free check catches empty or refused answers, and every answer's real cost is recorded.
 
 **How it was tested**
 
-- **Unseen questions:** the same 56 questions in five forms, with 11 of them sealed before development. A hash proves they didn't
-  change, and every opening is logged.
+- **Unseen questions:** the same 56 hand-checked questions in five forms, with 11 of them sealed before development. A hash proves
+  they didn't change, and every opening is logged. They were opened once.
+- **Blind Arabizi:** 60 questions in two batches, written by a separate agent that never saw the code. Each batch ran once on a
+  frozen rewrite, under a keep-or-drop rule set beforehand.
 - **Outside benchmark:** 100 hard questions from MBZUAI's Dialectal Arabic MMLU, in 7 forms, on both models. Nobody on this project
   wrote them.
-- **Real measurements:** seconds come from the server's own clock, and failed attempts count as spend.
-- **Tests and checks:** unit tests on mock models, and a regression check on the tax table.
+- **Real measurements:** seconds come from the server's own clock, and failed attempts count as spend. The machine's speed drifts
+  between runs, and the sealed run replays identical prompts from a cache, which keeps that drift out of most of its comparison.
+- **Tests and checks:** unit tests on mock models, a regression check on the tax table, and a fresh clone that reproduced every
+  correct-answer count.
 
 **What didn't work**
 
@@ -76,6 +83,7 @@ check catches empty or refused answers, and every answer's real cost is recorded
 | A word list to turn Saudi dialect into formal Arabic | Took Saudi from 45 to 48 of 100, short of the net gain of 5 set beforehand, so it was dropped |
 | A learned router with certified thresholds and repeated sampling | No better than the simple design, and slower |
 | Asking a model to rewrite Arabizi | Every version lost to the rules |
+| The first Arabizi rewrite | 2 of 15 on its first unseen test, against 14 in proper Arabic, so it was rebuilt around real Arabic words |
 | English to the small model on one 4 GB GPU | 169% of ALLaM alone in mixed traffic, against 85% with room for both, so it's a setting |
 
 ---
@@ -95,15 +103,16 @@ check catches empty or refused answers, and every answer's real cost is recorded
 **Isn't this just a router?** Barely. The contribution is measuring the tax by form, and a free fix for the biggest gap. A learned
 router was tested and didn't earn its place.
 
-**Is the Dialect Tax fixed?** No. The Arabizi gap is much smaller, keeping Arabic on ALLaM avoids the cheap-model cost, and Saudi is
-still open.
+**Is the Dialect Tax fixed?** No. Arabizi still costs 1.5 times English on the sealed test, keeping Arabic on ALLaM avoids the
+cheap-model cost, and Saudi is still open.
 
 **How do you know the numbers aren't overfitted?** The test questions were sealed before development, and their hash shows they
-didn't change. The questions were written by the same person as the rules, so fresh Arabizi was tested too, and that test showed
-the rewrite doesn't yet carry over to unseen text.
+didn't change. The questions were written by the same person as the rules, so blind Arabizi was tested too. The first test showed
+the rewrite didn't carry over to unseen text, so it was rebuilt, and each new version had to beat the last one on questions it
+hadn't seen.
 
 **What was the biggest mistake?** Ollama silently ran ALLaM with the wrong prompt format, which invalidated the early numbers. Later,
 real measurement overturned a token estimate that made one design look cheapest.
 
 **What doesn't this show?** These results use a community build of ALLaM 7B, not Humain's served models. The test sets are small, so
-a difference of a few points can be noise. Arabizi may do worse on topics the word list has never seen.
+a difference of a few points can be noise. Arabizi may do worse on words the lists don't hold.

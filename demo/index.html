@@ -106,6 +106,7 @@ form button { background: var(--ink); color: var(--paper); border-color: var(--i
 #sums span { color: var(--muted); font-size: 15px; }
 #failed { background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 12px 16px; }
 #failed h2 { margin-bottom: 6px; }
+#failed p { margin: 0 0 14px; font-size: 16px; }
 #failed ul { margin: 0; padding-inline-start: 20px; font-size: 16px; }
 footer { padding: 7px 28px; font-size: 14px; color: var(--muted); border-top: 1px solid var(--line); background: var(--panel); }
 
@@ -162,11 +163,14 @@ footer { padding: 7px 28px; font-size: 14px; color: var(--muted); border-top: 1p
   <div id="rows"></div>
   <div id="sums"></div>
   <div id="failed" hidden>
+    <h2>On questions nobody saw</h2>
+    <p>One logged run on 55 sealed questions: right answers rose from 44 to 51, and real compute per correct answer fell 18.5%. Arabizi went from 2 to 8 of 11, and its tax from 8.1 to 1.5 times English. The gap is smaller, not closed.</p>
     <h2>What didn't work</h2>
     <ul>
       <li>A word list for Saudi dialect: 45 to 48 of 100, short of the mark set beforehand, so it was dropped. Saudi is still open.</li>
       <li>A learned router with repeated sampling: no better than the simple design, and slower.</li>
       <li>Asking a model to rewrite Arabizi: every version lost to the free rules.</li>
+      <li>The first Arabizi rewrite: 2 of 15 on its first unseen test, so it was rebuilt around real Arabic words.</li>
     </ul>
   </div>
 </main>
@@ -303,7 +307,7 @@ async function askOne(question, answers = []) {
   try {
     for await (const e of ask({ question, answers, paths: ["halala", "direct"] })) {
       if (e.step === "form") { form = e.form; step("form", NAMES[e.form]); step("rewrite", "", "Working", "now"); }
-      else if (e.step === "rewrite") { rewritten = e.rewritten; step("rewrite", e.rewritten ? e.prompt : "Nothing to rewrite", e.rewritten ? "Rules and a word list, with no model call" : ""); step("route", "", "Choosing", "now"); }
+      else if (e.step === "rewrite") { rewritten = e.rewritten; step("rewrite", e.rewritten ? e.prompt : "Nothing to rewrite", e.rewritten ? "Rules and real Arabic words, with no model call" : ""); step("route", "", "Choosing", "now"); }
       else if (e.step === "route") { step("route", modelName(e.model), why(e, form)); step("answer", "", "Thinking", "now"); }
       else if (e.step === "answer") { mine = e; reply.textContent = e.text || "(no answer)"; step("answer", e.text || "(no answer)", `${e.tokens} tokens, ${e.active_s.toFixed(1)} seconds of compute`); }
       else if (e.step === "spent") spent = e;

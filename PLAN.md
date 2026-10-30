@@ -90,7 +90,7 @@ doesn't need to be technically exhaustive. Work top to bottom. Tick each item wi
 | [x] | Check the 60 blind questions, the 15 fresh ones and the console's Arabic, and say whether the dataset was hand-checked and whether pre-written code is allowed: all passed, the dataset was hand-checked, and earlier code is allowed (02:25) | Builder | 09:00 |
 | [x] | Freeze: commit, check that a fresh clone gives the same numbers: every form's correct answers match, and so do all 30 unseen rewrites and results, at `f9d07d1` (02:35) | Lead, builder approves | 10:00 |
 | [x] | Run the sealed test once: 44 to 51 of 55, Arabizi 2 to 8 of 11, 18.5% less real compute per correct answer (02:40) | Lead | 10:30 |
-| [ ] | Put the final numbers in `PROJECT_PAGE.md` and the console | Lead | 11:00 |
+| [x] | Put the final numbers in `PROJECT_PAGE.md` and the console (02:50) | Lead | 11:00 |
 | [ ] | Build 8 to 10 slides | Lead | 12:30 |
 | [ ] | Record the video | Builder | 15:00 |
 | [ ] | Final check, commit and push | Lead, builder approves | 16:00 |
