@@ -1,0 +1,76 @@
+{
+  "ALLaM alone": {
+    "correct": 44,
+    "n": 55,
+    "seconds_per_correct": 0.368,
+    "forms": {
+      "en": {
+        "correct": 11,
+        "n": 11,
+        "seconds_per_correct": 0.268,
+        "tax": 1.0
+      },
+      "msa": {
+        "correct": 10,
+        "n": 11,
+        "seconds_per_correct": 0.297,
+        "tax": 1.11
+      },
+      "najdi": {
+        "correct": 10,
+        "n": 11,
+        "seconds_per_correct": 0.298,
+        "tax": 1.11
+      },
+      "arabizi": {
+        "correct": 2,
+        "n": 11,
+        "seconds_per_correct": 2.177,
+        "tax": 8.12
+      },
+      "mixed": {
+        "correct": 11,
+        "n": 11,
+        "seconds_per_correct": 0.27,
+        "tax": 1.01
+      }
+    }
+  },
+  "With Halala": {
+    "correct": 51,
+    "n": 55,
+    "seconds_per_correct": 0.3,
+    "forms": {
+      "en": {
+        "correct": 11,
+        "n": 11,
+        "seconds_per_correct": 0.268,
+        "tax": 1.0
+      },
+      "msa": {
+        "correct": 11,
+        "n": 11,
+        "seconds_per_correct": 0.272,
+        "tax": 1.01
+      },
+      "najdi": {
+        "correct": 10,
+        "n": 11,
+        "seconds_per_correct": 0.303,
+        "tax": 1.13
+      },
+      "arabizi": {
+        "correct": 8,
+        "n": 11,
+        "seconds_per_correct": 0.397,
+        "tax": 1.48
+      },
+      "mixed": {
+        "correct": 11,
+        "n": 11,
+        "seconds_per_correct": 0.287,
+        "tax": 1.07
+      }
+    }
+  }
+}

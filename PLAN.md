@@ -25,15 +25,16 @@ A question comes in and is cleaned up, then Halala detects its form. Arabizi is 
 of real Arabic words, with no model call. Arabic goes to ALLaM. English can go to a smaller model when the hardware has room for
 both. A free check catches empty or refused answers, and every answer's real cost is recorded.
 
-**Where that leaves the tax:** on 30 Arabizi questions nobody had seen, ALLaM alone gets 1 right and Halala gets 24, against 28 of
-30 when the same questions are written in proper Arabic (`runs/local_gemma/arabizi_fresh3.md`). That batch looks easier than the one
-before it, because the previous rewrite got 23 here and 18 there, so the sealed test may differ. Without its list of real words,
-this rewrite gets 14 (`runs/local_gemma/arabizi_parts.md`). On the development questions, which the rewrite was built on, Arabizi
-goes from 8 to 38 of 45 correct, and its tax from 8.4 times English to 0.8 times. Across all 225, right answers rise from 179 to
-208 (`runs/local_gemma/dialect_tax.md`). Real compute per correct answer is about 28% lower once the machine's speed changes between
-the two arms are taken out: 27%, 28% and 28.5% on the last three runs, where the raw figures ran from 27% lower to 4% higher
-(`runs/local_gemma/compute_drift.md`). Keeping Arabic on ALLaM avoids the cheap-model cost. The Arabizi gap is smaller, not closed.
-The Saudi gap is still open, and the sealed test is still to run.
+**Where that leaves the tax:** on the sealed test, 55 questions nobody saw until one logged run, right answers rise from 44 to 51,
+at 18.5% less real compute per correct answer. Arabizi goes from 2 to 8 of 11 correct, and its tax from 8.1 times English to 1.5
+times (`runs/local_gemma/sealed.md`). Each form has only 11 questions there, so the form figures are rough. On 30 other Arabizi
+questions nobody had seen, ALLaM alone gets 1 right and Halala gets 24, against 28 of 30 when the same questions are written in
+proper Arabic (`runs/local_gemma/arabizi_fresh3.md`). That batch looks easier than the one before it, because the previous rewrite
+got 23 there and 18 on the earlier one. Without its list of real words, this rewrite gets 14 (`runs/local_gemma/arabizi_parts.md`).
+On the development questions, which the rewrite was built on, Arabizi goes from 8 to 38 of 45 correct, and right answers across all
+225 rise from 179 to 208 (`runs/local_gemma/dialect_tax.md`), at about 28% less real compute per correct answer once the machine's
+speed changes are taken out (`runs/local_gemma/compute_drift.md`). Lead with the sealed figures. Keeping Arabic on ALLaM avoids the
+cheap-model cost. The Arabizi gap is smaller, not closed, and the Saudi gap is still open.
 
 ## The demo
 
@@ -88,7 +89,7 @@ doesn't need to be technically exhaustive. Work top to bottom. Tick each item wi
 | [x] | Second rewrite round: fix the general misses, then run it once on a new blind batch. It stays: 23 to 24 of 30 blind, 74% to 80% of the target words, 37 to 38 of 45 on development questions, and no form lost (02:10) | Lead, agent | 08:00 |
 | [x] | Check the 60 blind questions, the 15 fresh ones and the console's Arabic, and say whether the dataset was hand-checked and whether pre-written code is allowed: all passed, the dataset was hand-checked, and earlier code is allowed (02:25) | Builder | 09:00 |
 | [x] | Freeze: commit, check that a fresh clone gives the same numbers: every form's correct answers match, and so do all 30 unseen rewrites and results, at `f9d07d1` (02:35) | Lead, builder approves | 10:00 |
-| [ ] | Run the sealed test once | Lead | 10:30 |
+| [x] | Run the sealed test once: 44 to 51 of 55, Arabizi 2 to 8 of 11, 18.5% less real compute per correct answer (02:40) | Lead | 10:30 |
 | [ ] | Put the final numbers in `PROJECT_PAGE.md` and the console | Lead | 11:00 |
 | [ ] | Build 8 to 10 slides | Lead | 12:30 |
 | [ ] | Record the video | Builder | 15:00 |
