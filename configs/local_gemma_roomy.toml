@@ -1,0 +1,21 @@
+# configs/local_gemma.toml with each model given the GPU to itself, as on a server with room for both.
+
+[run]
+data = "data/saudi_parallel.dev.jsonl"
+sealed = "data/sealed/saudi_parallel.test.jsonl"
+
+[cascade]
+route_english = true      # with room for both, English on Gemma cost 85% of ALLaM alone (runs/local_gemma_roomy/measure.md)
+
+[models.small]
+backend = "ollama"
+name = "gemma3:4b"
+host = "http://127.0.0.1:11434"
+num_gpu = 99               # all of its layers
+
+[models.large]
+backend = "ollama"
+name = "allam-7b-q4-inst"
+host = "http://127.0.0.1:11434"
+num_ctx = 512
+num_gpu = 28

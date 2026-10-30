@@ -17,12 +17,11 @@ import unittest
 from pathlib import Path
 from unittest import mock
 
-import build_examples
 import server
 
-from halala.collect import SYSTEM_ANSWER
 from halala.config import load_config
 from halala.models import Completion, OllamaModel
+from halala.pipeline import SYSTEM_ANSWER
 
 DEMO = Path(__file__).resolve().parent
 ARABIZI = "wesh 3asmat el sa3odiya?"
@@ -49,17 +48,11 @@ def steps(events: list[dict]) -> list[str]:
     return [event["step"] for event in events]
 
 
-def rules_config() -> dict:
-    cfg = load_config()
-    cfg["cascade"]["arabizi"] = "rules"
-    return cfg
-
-
 class RouteTest(unittest.TestCase):
     def run_question(self, question, cfg=None, small=None, large=None, answers=(), paths=server.PATHS):
         self.small = small or Spy("small")
         self.large = large or Spy("large")
-        return list(server.run_question(question, list(answers), paths, self.small, self.large, cfg or rules_config()))
+        return list(server.run_question(question, list(answers), paths, self.small, self.large, cfg or load_config()))
 
     def test_english_goes_to_the_small_model_and_is_compared_with_the_large_one(self):
         events = self.run_question(ENGLISH)
@@ -75,20 +68,8 @@ class RouteTest(unittest.TestCase):
         events = self.run_question(ARABIZI)
         rewrite = next(e for e in events if e["step"] == "rewrite")
         self.assertTrue(rewrite["rewritten"])
-        self.assertEqual((rewrite["model_calls"], rewrite["tokens"]), (0, 0))
         self.assertEqual(self.small.seen, [])
         self.assertEqual([text for _, text in self.large.seen], [rewrite["prompt"], ARABIZI])
-
-    def test_a_model_rewrite_is_reported_as_a_model_call(self):
-        cfg = load_config()
-        self.assertEqual(cfg["cascade"]["arabizi"], "model")
-        small, large = server.live_models(cfg)
-        events = list(server.run_question(ARABIZI, [], server.PATHS, small, large, cfg))
-        rewrite = next(e for e in events if e["step"] == "rewrite")
-        self.assertEqual(rewrite["model_calls"], 1)
-        self.assertGreater(rewrite["tokens"], 0)
-        spent = next(e for e in events if e["step"] == "spent")
-        self.assertGreater(spent["tokens"], rewrite["tokens"])
 
     def test_the_same_call_is_not_made_twice(self):
         events = self.run_question(FORMAL)
@@ -109,9 +90,6 @@ class RouteTest(unittest.TestCase):
     def test_every_call_uses_the_pipeline_instruction(self):
         self.run_question(ENGLISH)
         self.assertEqual({system for system, _ in self.small.seen + self.large.seen}, {SYSTEM_ANSWER})
-        with mock.patch.object(server, "SYSTEM_ANSWER", "A later instruction."):
-            self.run_question(ENGLISH)
-        self.assertEqual({system for system, _ in self.small.seen + self.large.seen}, {"A later instruction."})
 
     def test_answers_are_only_marked_when_there_is_an_answer_key(self):
         typed = self.run_question(ARABIZI)
@@ -147,7 +125,7 @@ class NoCacheTest(unittest.TestCase):
 
 
 class ServerCase(unittest.TestCase):
-    cfg = staticmethod(rules_config)
+    cfg = staticmethod(load_config)
 
     def setUp(self):
         self.server = server.make_server(self.cfg(), 0)
@@ -171,9 +149,9 @@ class ServerCase(unittest.TestCase):
 
 class HttpTest(ServerCase):
     def test_serves_the_page_and_its_data_only(self):
-        for path in ("/", "/index.html", "/numbers.js", "/examples.js"):
+        for path in ("/", "/index.html"):
             self.assertEqual(self.request("GET", path)[0], 200, path)
-        for path in ("/server.py", "/comparisons.json", "/../configs/default.toml", "/..%2fconfigs%2fdefault.toml"):
+        for path in ("/server.py", "/../configs/default.toml", "/..%2fconfigs%2fdefault.toml"):
             self.assertEqual(self.request("GET", path)[0], 404, path)
 
     def test_status_says_mock_and_gives_the_pipeline_instruction(self):
@@ -182,7 +160,7 @@ class HttpTest(ServerCase):
         self.assertEqual(code, 200)
         self.assertTrue(status["mock"])
         self.assertEqual(status["instruction"], SYSTEM_ANSWER)
-        self.assertEqual(status["models"]["large"]["name"], "mock-large")
+        self.assertEqual(status["models"]["large"], "mock-large")
 
     def test_ask_streams_events(self):
         code, body = self.ask({"question": ARABIZI})
@@ -231,34 +209,6 @@ class HttpTest(ServerCase):
             arrivals[json.loads(line)["step"]] = time.perf_counter() - start
         self.assertLess(arrivals["asking"], 0.25)
         self.assertGreater(arrivals["answer"], 0.4)
-
-
-class ReplayTest(unittest.TestCase):
-    def test_recorded_runs_have_the_same_shape_as_live_runs(self):
-        cfg = rules_config()
-        small, large = server.live_models(cfg)
-        live = {}
-        for question in (ARABIZI, ENGLISH, FORMAL):
-            for event in server.run_question(question, ["Riyadh"], server.PATHS, small, large, cfg):
-                live.setdefault(event["step"], set(event))
-        text = (DEMO / "examples.js").read_text(encoding="utf-8")
-        data = json.loads(text.split("=", 1)[1].rsplit(";", 1)[0])
-        sides = [s for c in data["comparisons"] for e in c["examples"] for s in (e["left"], e["right"])] + data["picks"]
-        self.assertTrue(sides)
-        for side in sides:
-            for event in side["events"]:
-                self.assertEqual(set(event), live[event["step"]], event["step"])
-
-    def test_examples_stay_data(self):
-        spec = {"comparisons": [{"id": "other", "left": {"form": "msa"}, "right": {"form": "najdi"}, "fix": None,
-                                 "examples": [{"group": "sa-001", "label": "Capital city"}]}],
-                "picks": []}
-        run = DEMO.parent / build_examples.RUN
-        cfg = json.loads((run / "config.json").read_text(encoding="utf-8"))
-        data = build_examples.build(spec, cfg, build_examples.load_records(run))
-        example = data["comparisons"][0]["examples"][0]
-        self.assertEqual((example["left"]["form"], example["right"]["form"]), ("msa", "najdi"))
-        self.assertEqual(example["glosses"], {})
 
 
 if __name__ == "__main__":

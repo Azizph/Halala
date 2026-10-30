@@ -1,12 +1,10 @@
 import unittest
 
 from halala.config import ROOT
-from halala.data import load_jsonl, make_synthetic_arith
+from halala.data import load_jsonl
 from halala.features import detect_variant  # noqa: F401  (used by DetectVariantTest and VariantTest)
-from halala.normalize import arabizi_kit, arabizi_to_arabic, dialect_to_formal, for_match, for_model
-from halala.collect import check_rewrite, summarize_samples
-from halala.models import Completion
-from halala.scoring import answer_key, cluster_answers, extract_choice, is_correct, is_refusal, score
+from halala.normalize import arabizi_to_arabic, for_match, for_model
+from halala.scoring import extract_choice, is_correct, is_refusal, score
 
 EXPECTED = {"en": "en", "msa": "msa", "najdi": "dialect", "arabizi": "arabizi", "mixed": "mixed"}
 
@@ -20,13 +18,6 @@ class NormalizeTest(unittest.TestCase):
 
     def test_for_match_keeps_decimal_points(self):
         self.assertEqual(for_match("3.5."), "3.5")
-
-    def test_arabizi_kit_leaves_numbers_alone(self):
-        out = arabizi_kit("kam ytla3 15 zayed 27?")
-        self.assertIn("15", out)
-        self.assertIn("27", out)
-        self.assertTrue(out.endswith("؟"))
-        self.assertEqual(arabizi_kit("el sa3a 8"), arabizi_kit("el sa3a") + " 8")   # "8" alone isn't the letter غ
 
     def test_arabizi_rules(self):
         self.assertEqual(arabizi_to_arabic("wesh"), "وش")
@@ -49,21 +40,6 @@ class NormalizeTest(unittest.TestCase):
     def test_arabizi_word_list(self):
         self.assertEqual(arabizi_to_arabic("wesh 3asmat el sa3odiya?"), "وش عاصمة السعودية؟")
         self.assertEqual(arabizi_to_arabic("bi ay shahar?"), "بأي شهر؟")
-
-
-class DialectToFormalTest(unittest.TestCase):
-    def test_swaps_dialect_words_and_keeps_the_rest(self):
-        self.assertEqual(dialect_to_formal("وش البحر اللي على الساحل؟"), "ما البحر الذي على الساحل؟")
-
-    def test_keeps_an_attached_conjunction(self):
-        self.assertEqual(dialect_to_formal("وليش فاللي"), "ولماذا فالذي")
-
-    def test_phrases_go_first(self):
-        self.assertEqual(dialect_to_formal("عشان كذا كم يطلع ٥"), "لذلك كم يساوي ٥")
-
-    def test_leaves_formal_arabic_and_latin_alone(self):
-        for text in ("ما عاصمة السعودية؟", "بكرة في الفيزياء", "وفصل الربيع", "Which city is it?"):
-            self.assertEqual(dialect_to_formal(text), text)
 
 
 class DetectVariantTest(unittest.TestCase):
@@ -98,35 +74,9 @@ class DetectVariantTest(unittest.TestCase):
         self.assertEqual(detect_variant("وش عاصمة السعودية؟"), "dialect")
 
 
-class RewriteCheckTest(unittest.TestCase):
-    """Real ALLaM 7B rewrites from the 2026-10-30 profile run."""
-
-    def test_rejects_format_failures(self):
-        self.assertEqual(check_rewrite("wesh 3omlat el sa3odiya?",
-                                       "عذرا، لا أستطيع فهم ما تقصده. يرجى إعادة صياغة السؤال أو استخدام كلمات أكثر وضوحًا."),
-                         "refusal")
-        self.assertEqual(check_rewrite("wesh el ba7r elly 3ala el sa7el el gharbi lil sa3odiya?",
-                                       "ويش البحر اللي على الساحل الغربي للسعودية؟<|im|> البحر اللي على الساحل الغربي هو البحر الأحمر."),
-                         "chat token")
-        self.assertEqual(check_rewrite("kam 15?", ""), "empty")
-        self.assertEqual(check_rewrite("kam 15?", "kam 15?"), "not Arabic script")
-        self.assertEqual(check_rewrite("kam 15?", "كم 15؟ " + "وهذا شرح طويل جدا لا علاقة له بالسؤال " * 3), "too long")
-
-    def test_accepts_clean_rewrites(self):
-        self.assertEqual(check_rewrite("wesh akbar kawkab bil majmoo3a el shamsiya?",
-                                       "ويش أكبر كوكب في المجموعة الشمسية؟"), "")
-        # Wrong meaning but well formed: the check can't catch this one (that's H5's job).
-        self.assertEqual(check_rewrite("el osboo3 kam yom?", "الولد كم عمره؟"), "")
-
-
 class VariantTest(unittest.TestCase):
     def test_hand_written_smoke_set(self):
         for item in load_jsonl(ROOT / "data" / "smoke_parallel.jsonl"):
-            with self.subTest(question=item.question):
-                self.assertEqual(detect_variant(item.question), EXPECTED[item.variant])
-
-    def test_synthetic_set(self):
-        for item in make_synthetic_arith(50, seed=3):
             with self.subTest(question=item.question):
                 self.assertEqual(detect_variant(item.question), EXPECTED[item.variant])
 
@@ -143,24 +93,6 @@ class ScoringTest(unittest.TestCase):
         self.assertTrue(is_correct("بالرياض", ["الرياض"]))
         self.assertTrue(is_correct("الأخضر", ["أخضر"]))
         self.assertFalse(is_correct("Jeddah", ["Riyadh", "الرياض"]))
-
-    def test_same_answer_in_different_wording_votes_together(self):
-        # ALLaM's five answers to وش عاصمة السعودية؟ on 2026-10-30, all correct.
-        texts = ["الرياض", "هي الرياض.", "الرياض هي عاصمة السعودية.", "الرياض", "مدينة الرياض"]
-        self.assertEqual(len(set(cluster_answers(texts))), 1)
-        summary = summarize_samples([Completion(t, 1, 1, 0.0) for t in texts])
-        self.assertEqual(summary["agreement"], 1.0)
-        self.assertEqual(summary["majority_text"], "الرياض")
-
-    def test_different_answers_stay_apart(self):
-        ids = cluster_answers(["42", "The answer is 42.", "142", "Jeddah"])
-        self.assertEqual(ids[0], ids[1])
-        self.assertEqual(len({ids[0], ids[2], ids[3]}), 3)
-
-    def test_empty_answers_never_win(self):
-        summary = summarize_samples([Completion(t, 1, 1, 0.0) for t in ["", "", "", "الرياض", "Riyadh"]])
-        self.assertEqual(summary["majority_text"], "")
-        self.assertEqual(summary["agreement"], 0.0)
 
     def test_refusals(self):
         self.assertTrue(is_refusal("عذرا، لا أستطيع تقديم معلومات عن العائلة المالكة السعودية."))   # ALLaM, 2026-10-30
@@ -179,12 +111,6 @@ class ScoringTest(unittest.TestCase):
         self.assertEqual(extract_choice("Answer", choices), "")
         self.assertTrue(score("B", ["B"], choices))
         self.assertFalse(score("C", ["B"], choices))
-        self.assertEqual(cluster_answers(["A", "A.", "الخيار أ", "B"], choices), [0, 0, 0, 1])
-
-    def test_answer_key_for_voting(self):
-        self.assertEqual(answer_key("The answer is ٤٢."), "42")
-        self.assertEqual(answer_key("42"), "42")
-        self.assertEqual(answer_key("الرياض."), "الرياض")
 
 
 if __name__ == "__main__":

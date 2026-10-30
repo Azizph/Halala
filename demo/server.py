@@ -2,8 +2,8 @@
 
     python demo/server.py --config configs/local_gemma.toml
 
-`run_question` follows `cmd_ask` in halala/pipeline.py with one event per step, so the page can show each step as it
-happens. It leaves out the part of `cmd_ask` that writes ask.html into the run folder. Nothing here writes outside demo/.
+`run_question` streams `steps` from halala/pipeline.py, the same path the measurements use, so the page shows each step as
+it happens. Nothing here writes outside demo/.
 """
 
 from __future__ import annotations
@@ -28,24 +28,19 @@ from urllib.parse import urlsplit
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent))
 
-from halala.collect import SYSTEM_ANSWER, prepare_prompt
 from halala.config import load_config, resolve
-from halala.features import detect_variant
 from halala.models import Model, build_models
-from halala.policies import call_cost, usable_answer
+from halala.pipeline import SYSTEM_ANSWER, steps
 from halala.scoring import score
 
-DEFAULT_PORT = 8770   # index.html looks for the server here when it is opened from a file
+DEFAULT_PORT = 8770
 PATHS = ("halala", "direct")
 TIERS = ("small", "large")
 MAX_QUESTION = 400
 MAX_BODY = 8192
-JS = "text/javascript; charset=utf-8"
 PAGE_FILES = {
     "/": ("index.html", "text/html; charset=utf-8"),
     "/index.html": ("index.html", "text/html; charset=utf-8"),
-    "/numbers.js": ("numbers.js", JS),
-    "/examples.js": ("examples.js", JS),
 }
 
 
@@ -62,60 +57,21 @@ def live_models(cfg: dict) -> tuple[Model, Model]:
     return small, large
 
 
-def _ask(side: str, tier: str, model: Model, text: str, answers: list[str], cfg: dict) -> Iterator[dict]:
-    """One model call, as `ask` makes it in `cmd_ask`. Announces the call first, because it can take seconds."""
-    yield {"step": "asking", "side": side, "tier": tier, "model": model.name}
-    c = model.complete(SYSTEM_ANSWER, text, 0.0, 0, {})
-    return {
-        "tier": tier,
-        "model": model.name,
-        "prompt": text,
-        "text": c.text,
-        "tokens_in": c.tokens_in,
-        "tokens_out": c.tokens_out,
-        "tokens": c.tokens_in + c.tokens_out,
-        "seconds": c.latency_s,
-        "compute": call_cost(asdict(c), cfg["models"][tier])["flops"],
-        "correct": score(c.text, answers) if answers else None,
-    }
-
-
-def _route(route: str, tier: str, model: Model, cfg: dict) -> dict:
-    return {"step": "route", "route": route, "tier": tier, "model": model.name,
-            "params_b": cfg["models"][tier].get("params_b", 0)}
+def _marked(call: dict, answers: list[str]) -> dict:
+    return {**call, "tokens": call["tokens_in"] + call["tokens_out"],
+            "correct": score(call["text"], answers) if answers else None}
 
 
 def _halala(question: str, answers: list[str], small: Model, large: Model, cfg: dict) -> Iterator[dict]:
-    """The path through `cmd_ask`. Returns the call that produced the final answer."""
-    variant = detect_variant(question)
-    yield {"step": "form", "form": variant}
-
-    start = time.perf_counter()
-    prompt, rewrite_calls, rewrite = prepare_prompt(question, cfg["cascade"], small)
-    seconds = time.perf_counter() - start
-    tokens = sum(c["tokens_in"] + c["tokens_out"] for c in rewrite_calls)
-    compute = sum(call_cost(c, cfg["models"]["small"])["flops"] for c in rewrite_calls)
-    yield {"step": "rewrite", "rewritten": bool(rewrite.get("text")) and not rewrite.get("rejected"),
-           "rejected": rewrite.get("rejected", ""), "prompt": prompt, "model_calls": len(rewrite_calls),
-           "tokens": tokens, "seconds": seconds}
-
+    """Halala's path, event by event. Returns the call that produced the final answer."""
     calls = []
-    if variant != "en":
-        yield _route("large", "large", large, cfg)
-        calls.append((yield from _ask("halala", "large", large, prompt, answers, cfg)))
-        yield {"step": "answer", **calls[-1]}
-    else:
-        yield _route("small", "small", small, cfg)
-        calls.append((yield from _ask("halala", "small", small, prompt, answers, cfg)))
-        yield {"step": "answer", **calls[-1]}
-        if not usable_answer(calls[-1]["text"]):
-            yield _route("fallback", "large", large, cfg)
-            calls.append((yield from _ask("halala", "large", large, question, answers, cfg)))
-            yield {"step": "answer", **calls[-1]}
-
-    yield {"step": "spent", "tokens": tokens + sum(c["tokens"] for c in calls),
-           "seconds": seconds + sum(c["seconds"] for c in calls),
-           "compute": compute + sum(c["compute"] for c in calls)}
+    for event in steps(question, small, large, cfg):
+        if event["step"] == "answer":
+            event = _marked(event, answers)
+            calls.append(event)
+        yield event
+    yield {"step": "spent", "tokens": sum(c["tokens"] for c in calls), "seconds": sum(c["latency_s"] for c in calls),
+           "active_s": sum(c["active_s"] for c in calls)}
     return calls[-1]
 
 
@@ -129,10 +85,12 @@ def run_question(question: str, answers: list[str], paths: tuple[str, ...] | lis
         final = yield from _halala(question, answers, small, large, cfg)
     if "direct" in paths:
         if final is not None and final["tier"] == "large" and final["prompt"] == question:
-            yield {"step": "direct", "same_call": True, **final}   # asking again would only repeat the call
+            yield {**final, "step": "direct", "same_call": True}   # asking again would only repeat the call
         else:
-            call = yield from _ask("direct", "large", large, question, answers, cfg)
-            yield {"step": "direct", "same_call": False, **call}
+            yield {"step": "asking", "tier": "large", "model": large.name}
+            c = large.complete(SYSTEM_ANSWER, question, 0.0, 0, {})
+            call = _marked({"tier": "large", "model": large.name, "prompt": question, **asdict(c)}, answers)
+            yield {**call, "step": "direct", "same_call": False}
     yield {"step": "done"}
 
 
@@ -149,10 +107,9 @@ class Demo:
         return {
             "config": self.cfg["run"]["name"],
             "mock": any(models[tier]["backend"] == "mock" for tier in TIERS),
-            "models": {tier: {"name": models[tier]["name"], "params_b": models[tier].get("params_b", 0)}
-                       for tier in TIERS},
+            "models": {tier: models[tier]["name"] for tier in TIERS},
+            "route_english": self.cfg["cascade"]["route_english"],
             "instruction": SYSTEM_ANSWER,
-            "rewrite": self.cfg["cascade"].get("arabizi", "none"),
         }
 
     def run(self, question: str, answers: list[str], paths: list[str]) -> Iterator[dict]:

@@ -1,4 +1,0 @@
-# Ablation: same as default, but the small model gets the raw question (no cleanup, no Arabizi rewrite).
-[cascade]
-normalize = false
-arabizi = "none"

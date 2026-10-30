@@ -6,8 +6,8 @@ Source: MBZUAI/Dialectal-Arabic-MMLU (CC BY 4.0), sampled questions asked in eve
 |---|---|---|
 | English | 58 of 100 (48 to 67%) | 1.0x |
 | Formal Arabic | 58 of 100 (48 to 67%) | 1.0x |
-| Saudi | 45 of 100 (36 to 55%) | 1.2x |
-| Emirati | 50 of 100 (40 to 60%) | 1.1x |
+| Saudi | 46 of 100 (37 to 56%) | 1.2x |
+| Emirati | 51 of 100 (41 to 61%) | 1.1x |
 | Syrian | 53 of 100 (43 to 62%) | 1.1x |
 | Egyptian | 53 of 100 (43 to 62%) | 1.1x |
 | Moroccan | 54 of 100 (44 to 63%) | 1.1x |

@@ -1,8 +1,4 @@
-"""Cheap, model-free signals about a question: script, Arabizi, dialect cues.
-
-The cue lists are a v0 heuristic. If time allows, replace detect_variant with a small trained
-dialect classifier and keep the same labels.
-"""
+"""Detect how a question was written, with no model call: script, Arabizi markers and dialect cue words."""
 
 from __future__ import annotations
 
@@ -10,12 +6,8 @@ import re
 
 from .normalize import for_match
 
-DETECTED_VARIANTS = ("en", "msa", "dialect", "arabizi", "mixed")
-
 ARABIC_LETTER = re.compile(r"[ء-يٱ-ۓ]")
 LATIN_LETTER = re.compile(r"[A-Za-z]")
-ARABIC_INDIC_DIGIT = re.compile(r"[٠-٩۰-۹]")
-DIACRITIC = re.compile(r"[ً-ٰٟ]")
 ARABIZI_DIGIT_IN_WORD = re.compile(r"[A-Za-z][2356789]|[2356789][A-Za-z]")
 
 # Strong markers: one is enough, because they are not English words.
@@ -45,16 +37,6 @@ GULF_CUES = _cues("وش ايش ابي ابغى يبي تبي ودي زين مر�
 OTHER_DIALECT_CUES = _cues("ازاي عايز دلوقتي كده ايه شو هلق بدي هيك منيح")
 MSA_CUES = _cues("ماذا لماذا الذي التي هل سوف أريد الآن ناتج")
 MSA_PHRASES = tuple(for_match(p) for p in ("ما هو", "ما هي"))
-
-QUESTION_FEATURES = (
-    "len_chars", "n_words", "frac_arabic", "frac_latin", "arabic_words", "latin_words",
-    "arabizi_digit", "arabic_indic_digits", "diacritics", "cue_gulf", "cue_other", "cue_msa",
-) + tuple(f"is_{v}" for v in DETECTED_VARIANTS)
-
-
-def _letter_counts(text: str) -> tuple[int, int]:
-    return len(ARABIC_LETTER.findall(text)), len(LATIN_LETTER.findall(text))
-
 
 def _script_word_counts(text: str) -> tuple[int, int]:
     """Words written in each script. Counting words, not letters, is what catches code-switching:
@@ -106,28 +88,3 @@ def detect_variant(text: str) -> str:
         gulf, other, msa = dialect_scores(text)
         return "dialect" if gulf + other > msa else "msa"
     return "en"
-
-
-def question_features(text: str) -> dict[str, float]:
-    n_ar, n_lat = _letter_counts(text)
-    total = n_ar + n_lat
-    arabic_words, latin_words = _script_word_counts(text)
-    gulf, other, msa = dialect_scores(text)
-    variant = detect_variant(text)
-    feats = {
-        "len_chars": len(text),
-        "n_words": len(text.split()),
-        "frac_arabic": n_ar / total if total else 0.0,
-        "frac_latin": n_lat / total if total else 0.0,
-        "arabic_words": arabic_words,
-        "latin_words": latin_words,
-        "arabizi_digit": float(bool(ARABIZI_DIGIT_IN_WORD.search(text))),
-        "arabic_indic_digits": float(bool(ARABIC_INDIC_DIGIT.search(text))),
-        "diacritics": len(DIACRITIC.findall(text)),
-        "cue_gulf": gulf,
-        "cue_other": other,
-        "cue_msa": msa,
-    }
-    for v in DETECTED_VARIANTS:
-        feats[f"is_{v}"] = float(variant == v)
-    return {name: float(feats[name]) for name in QUESTION_FEATURES}

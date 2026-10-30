@@ -10,7 +10,6 @@ from __future__ import annotations
 import re
 
 from .arabizi_lexicon import LEXICON
-from .dialect_lexicon import PHRASES, SAUDI
 
 _DIACRITICS = re.compile("[ؐ-ًؚ-ٰٟۖ-ۭ]")
 _TATWEEL = "ـ"
@@ -95,38 +94,9 @@ def _translit_word(word: str, followed: bool = False, lexicon: bool = True) -> s
     return _letters(w)
 
 
-_STANDALONE_NUMBER = re.compile(r"(?<![A-Za-z0-9])(\d+)(?![A-Za-z0-9])")
-
-
-def arabizi_kit(text: str) -> str:
-    """ArabiziKit's Arabizi -> Arabic script: no model call, about 2ms a question, and it keeps the question
-    recognisable. Standalone numbers are kept away from it, because it reads them as letters ("15" -> "1خ")."""
-    from arabizikit import transliterate
-
-    parts = _STANDALONE_NUMBER.split(text)
-    out = [p if i % 2 else (transliterate(p).text if p.strip() else p) for i, p in enumerate(parts)]
-    return "".join(out).replace("?", "؟")
-
-
 def arabizi_to_arabic(text: str, lexicon: bool = True) -> str:
     words = list(_WORD.finditer(text))
     last = words[-1].start() if words else -1
     out = _WORD.sub(lambda m: _translit_word(m.group(), m.start() != last, lexicon), text)
     out = re.sub(r"(?<![ء-ي])(ال|بال|لل|ب|و)\s+(?=[ء-ي])", r"\1", out)   # attach prefixes to their word
     return out.replace("?", "؟")
-
-
-# Saudi dialect -> formal Arabic, by word list, so it needs no model call.
-_ARABIC_WORD = re.compile(r"[ء-ي]+")
-_PHRASE = re.compile(r"(?<![ء-ي])(" + "|".join(PHRASES) + r")(?![ء-ي])")
-
-
-def _formal_word(match: re.Match) -> str:
-    word = match.group()
-    if word in SAUDI:
-        return SAUDI[word]
-    return word[0] + SAUDI[word[1:]] if word[0] in "وف" and word[1:] in SAUDI else word   # keep an attached "and"
-
-
-def dialect_to_formal(text: str) -> str:
-    return _ARABIC_WORD.sub(_formal_word, _PHRASE.sub(lambda m: PHRASES[m.group()], text))

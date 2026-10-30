@@ -5,7 +5,6 @@ from __future__ import annotations
 import hashlib
 import json
 import math
-import os
 import random
 import sqlite3
 import threading
@@ -15,7 +14,6 @@ from pathlib import Path
 
 from .config import resolve
 from .features import ARABIC_LETTER, detect_variant
-from .normalize import arabizi_to_arabic
 
 SERVING_OPTIONS = ("num_ctx", "num_gpu")   # context size, and how many layers go on the GPU
 
@@ -32,8 +30,7 @@ class Completion:
 
 
 class CallCache:
-    """Every real model call, keyed by its inputs. Reruns and ablations replay instead of paying again.
-    Commit this file at the end of the event and anyone can reproduce your numbers without API access."""
+    """Every real model call, keyed by its inputs, so a rerun replays instead of paying again."""
 
     def __init__(self, path: Path):
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -62,7 +59,6 @@ class Model:
     def __init__(self, cfg: dict, cache: CallCache | None = None):
         self.cfg = cfg
         self.name = cfg["name"]
-        self.params_b = float(cfg.get("params_b", 0))
         self.max_tokens = int(cfg.get("max_tokens", 64))
         self.cache = cache
 
@@ -100,21 +96,17 @@ class MockModel(Model):
     """Deterministic stand-in so the whole pipeline runs with no model. Its numbers are not evidence."""
 
     def _call(self, system, user, temperature, sample, hint):
-        if hint.get("task") == "transliterate":
-            text = arabizi_to_arabic(user)
+        accuracy = float(self.cfg.get("mock_accuracy", {}).get(detect_variant(user), 0.5))
+        gold = str(hint.get("answer", ""))
+        rng = random.Random(f"{self.name}|{user}|{'greedy' if temperature == 0 else sample}")
+        if rng.random() < accuracy:
+            text = gold
+        elif gold.lstrip("-").isdigit():
+            text = str(int(gold) + rng.choice([-10, -2, -1, 1, 2, 10]))
         else:
-            accuracy = float(self.cfg.get("mock_accuracy", {}).get(detect_variant(user), 0.5))
-            gold = str(hint.get("answer", ""))
-            draw = "greedy" if temperature == 0 else sample
-            rng = random.Random(f"{self.name}|{user}|{draw}")
-            if rng.random() < accuracy:
-                text = gold
-            elif gold.lstrip("-").isdigit():
-                text = str(int(gold) + rng.choice([-10, -2, -1, 1, 2, 10]))
-            else:
-                text = "لا أعرف"
+            text = "لا أعرف"
         t_in, t_out = _mock_tokens(system + user), _mock_tokens(text)
-        return Completion(text, t_in, t_out, latency_s=round(self.params_b * (t_in + t_out) * 2e-4, 6))
+        return Completion(text, t_in, t_out, latency_s=0.0, active_s=(t_in + t_out) * 1e-3)
 
 
 class OllamaModel(Model):
@@ -149,39 +141,7 @@ class OllamaModel(Model):
         )
 
 
-class OpenAIModel(Model):
-    """Any OpenAI-compatible /chat/completions endpoint."""
-
-    def _call(self, system, user, temperature, sample, hint):
-        base = self.cfg["base_url"].rstrip("/")
-        key = os.environ.get(self.cfg.get("api_key_env", "HALALA_API_KEY"), "")
-        body = {
-            "model": self.name,
-            "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}],
-            "temperature": temperature,
-            "max_tokens": self.max_tokens,
-        }
-        if self.cfg.get("send_seed", True):
-            body["seed"] = sample
-        if self.cfg.get("stop"):
-            body["stop"] = self.cfg["stop"][:4]   # the API accepts at most four
-        import requests
-
-        start = time.perf_counter()
-        r = requests.post(f"{base}/chat/completions", headers={"Authorization": f"Bearer {key}"},
-                          json=body, timeout=300)
-        r.raise_for_status()
-        data = r.json()
-        usage = data.get("usage") or {}
-        return Completion(
-            (data["choices"][0]["message"]["content"] or "").strip(),
-            int(usage.get("prompt_tokens", 0)),
-            int(usage.get("completion_tokens", 0)),
-            time.perf_counter() - start,
-        )
-
-
-BACKENDS = {"mock": MockModel, "ollama": OllamaModel, "openai": OpenAIModel}
+BACKENDS = {"mock": MockModel, "ollama": OllamaModel}
 
 
 def build_models(cfg: dict) -> tuple[Model, Model, CallCache | None]:

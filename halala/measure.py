@@ -1,74 +1,167 @@
-"""What the hardware really did, beside the token estimate: fresh calls with no cache, timed by the server's own clock.
+"""What a correct answer really costs, by how the question was written: the Dialect Tax, in real seconds.
 
-Prompt-eval says how accurate each instruction is. This says what each one costs in real seconds, and with --interleaved
-what model swaps add when questions arrive in a mixed order. Dev data only: the sealed set is never read here.
+`dialect-tax` shows the tax in each form before and after each fix, and `check` guards that table against regressions.
+`measure` shows what Halala does to mixed traffic. `sealed` is the one run on unseen questions. Seconds are the server's own
+evaluation time, so failed attempts count as spend and nothing is estimated.
 """
 
 from __future__ import annotations
 
 import copy
+import json
 import random
+from collections.abc import Callable
 
-from .config import resolve, run_dir
-from .data import VARIANTS, load_jsonl
+from .config import run_dir
+from .data import VARIANTS
 from .features import detect_variant
 from .models import build_models
-from .prompt_eval import ARMS, BASELINES, FIRST_SENTENCE, LABELS, _run
+from .pipeline import SYSTEM_ANSWER, answer, load_dev, open_sealed
+from .scoring import score
 
-ALL_ARMS = (*BASELINES, *ARMS)
-
-
-def _sample(cfg: dict, per_form: int, interleaved: bool, seed: int) -> list:
-    items, rng, chosen = load_jsonl(resolve(cfg["run"]["data"])), random.Random(seed), []
-    for variant in VARIANTS:
-        group = [it for it in items if it.variant == variant]
-        chosen += rng.sample(group, min(per_form, len(group)))
-    if interleaved:
-        rng.shuffle(chosen)
-    else:
-        chosen.sort(key=lambda it: detect_variant(it.question) != "en")   # one model at a time, so nothing swaps
-    return chosen
+NOISE = "Identical runs vary by up to about 20%, so small differences mean little."
 
 
-def cmd_measure(cfg: dict, arms: list[str], per_form: int, interleaved: bool, seed: int = 13) -> str:
-    items = _sample(cfg, per_form, interleaved, seed)
+def _models(cfg: dict, cached: bool = False) -> tuple:
     small, large, cache = build_models(cfg)
-    stopping = copy.deepcopy(cfg)
-    for tier in ("small", "large"):
-        stopping["models"][tier]["stop"] = FIRST_SENTENCE
-    small_first, large_first, cache_first = build_models(stopping)
-    for model in (small, large, small_first, large_first):
-        model.cache = None   # every call must really run
-    results: dict[str, list[dict]] = {}
-    try:
-        for arm in arms:
-            print(f"arm {arm}: {len(items)} questions", flush=True)
-            system = BASELINES[arm] if arm in BASELINES else ARMS[arm]
-            pair = (small_first, large_first) if arm.endswith("_first") else (small, large)
-            results[arm] = [_run(it, system, *pair, cfg, arm in BASELINES) for it in items]
-    finally:
-        for open_cache in (cache, cache_first):
-            if open_cache is not None:
-                open_cache.close()
+    if not cached:   # a cached call replays its old seconds, and these numbers must be real calls
+        if cache is not None:
+            cache.close()
+        small.cache = large.cache = None
+    return small, large
 
-    def active_per_correct(rows: list[dict]) -> float:
-        wins = sum(r["correct"] for r in rows)
-        return sum(r["active_s"] for r in rows) / wins if wins else float("inf")
 
-    base, n = active_per_correct(results[arms[0]]) or 1.0, len(items)
-    order = "in mixed order, so models swap" if interleaved else "one model at a time"
-    lines = [f"{n} dev questions {order}, with no cache. Active seconds are the server's own evaluation time. Load seconds "
-             "are the time spent loading models. Wall seconds are what a user waits.", "",
-             "| Arm | Correct | Active seconds per correct | vs first arm | Active | Load | Wall | Tokens out | "
-             "Prompt tokens evaluated |", "|---|---|---|---|---|---|---|---|---|"]
-    for arm, rows in results.items():
-        evaluated = sum(r["tokens_in"] - r["tokens_cached"] for r in rows)
-        lines.append(f"| {LABELS[arm]} | {sum(r['correct'] for r in rows)} of {n} | {active_per_correct(rows):.2f} | "
-                     f"{active_per_correct(rows) / base * 100:.0f}% | {sum(r['active_s'] for r in rows):.0f} | "
-                     f"{sum(r['load_s'] for r in rows):.0f} | {sum(r['seconds'] for r in rows):.0f} | "
-                     f"{sum(r['tokens_out'] for r in rows)} | {evaluated} |")
-    md = "\n".join(lines)
-    name = "measure_interleaved.md" if interleaved else "measure.md"
-    (run_dir(cfg) / name).write_text(md, encoding="utf-8")
+def _row(item, small, large, cfg: dict, alone: bool, system: str = SYSTEM_ANSWER) -> dict:
+    """One question, either unaided on the large model or through Halala."""
+    hint = {"answer": item.answers[0]}
+    if alone:
+        c = large.complete(SYSTEM_ANSWER, item.question, 0.0, 0, hint)
+        result = {"text": c.text, "calls": [vars(c)]}
+    else:
+        result = answer(item.question, small, large, cfg, system, hint)
+    calls = result["calls"]
+    return {
+        "variant": item.variant,
+        "correct": score(result["text"], item.answers, item.choices),
+        "tokens_out": sum(c["tokens_out"] for c in calls),
+        "seconds": sum(c["latency_s"] for c in calls),
+        "active_s": sum(c["active_s"] for c in calls),
+        "load_s": sum(c["load_s"] for c in calls),
+    }
+
+
+def _per_correct(rows: list[dict]) -> float:
+    return sum(r["active_s"] for r in rows) / max(1, sum(r["correct"] for r in rows))
+
+
+def _by_form(rows: list[dict]) -> dict:
+    """Correct answers in each form, and the tax: real seconds per correct answer as a multiple of English."""
+    base = _per_correct([r for r in rows if r["variant"] == "en"]) or 1.0
+    forms = {}
+    for variant in VARIANTS:
+        group = [r for r in rows if r["variant"] == variant]
+        if group:
+            forms[variant] = {"correct": sum(r["correct"] for r in group), "n": len(group),
+                              "tax": round(_per_correct(group) / base, 2)}
+    return forms
+
+
+def _tax_table(results: dict[str, list[dict]], intro: str) -> tuple[str, dict]:
+    summary = {label: {"correct": sum(r["correct"] for r in rows), "n": len(rows),
+                       "seconds_per_correct": round(_per_correct(rows), 3), "forms": _by_form(rows)}
+               for label, rows in results.items()}
+    forms = list(next(iter(summary.values()))["forms"])
+    lines = [f"{intro} Each form shows correct answers, then the tax: real seconds per correct answer as a multiple of "
+             f"English on the same row. {NOISE}", "",
+             "| Design | Correct | Seconds per correct | " + " | ".join(forms) + " |", "|---|---|---|" + "---|" * len(forms)]
+    for label, row in summary.items():
+        cells = [f"{row['forms'][f]['correct']}, {row['forms'][f]['tax']:.2f}x" for f in forms]
+        lines.append(f"| {label} | {row['correct']} of {row['n']} | {row['seconds_per_correct']:.2f} | " + " | ".join(cells) + " |")
+    return "\n".join(lines), summary
+
+
+def _save(cfg: dict, name: str, md: str, summary: dict | None = None) -> str:
+    out = run_dir(cfg)
+    (out / f"{name}.md").write_text(md, encoding="utf-8")
+    if summary is not None:
+        (out / f"{name}.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
     print(md)
     return md
+
+
+def cmd_tax(cfg: dict) -> str:
+    """The Dialect Tax before and after each fix, on the large model only, so a form's tax comes from the form."""
+    items = load_dev(cfg)
+    one_model = copy.deepcopy(cfg)
+    one_model["cascade"]["route_english"] = False
+    small, large = _models(one_model)
+    large.complete("", "مرحبا", 0.0, 0, {})   # load the model first, so the first design isn't charged for it
+    room = ("dialect", "arabizi")   # the forms a strict instruction hurts
+    designs: list[tuple[str, bool, Callable[[str], str]]] = [
+        ("ALLaM alone", True, lambda form: SYSTEM_ANSWER),
+        ("+ Arabizi rewrite", False, lambda form: SYSTEM_ANSWER),
+        ('+ "Answer briefly." for Arabizi', False, lambda form: "Answer briefly." if form == "arabizi" else SYSTEM_ANSWER),
+        ('+ "Answer briefly." for dialect and Arabizi', False,
+         lambda form: "Answer briefly." if form in room else SYSTEM_ANSWER),
+        ("+ no instruction for dialect and Arabizi", False, lambda form: "" if form in room else SYSTEM_ANSWER),
+    ]
+    results = {}
+    for label, alone, choose in designs:
+        print(f"{label}: {len(items)} questions", flush=True)
+        results[label] = [_row(it, small, large, one_model, alone, choose(detect_variant(it.question))) for it in items]
+    md, summary = _tax_table(results, f"{len(items)} dev questions in mixed order, with no cache.")
+    return _save(cfg, "dialect_tax", md, summary)
+
+
+def cmd_check(cfg: dict, save: bool, tolerance: int = 1) -> int:
+    """Regression gate: no form's correct answers may fall below the saved baseline, on the last design measured."""
+    out = run_dir(cfg)
+    path, baseline = out / "dialect_tax.json", out / "baseline.json"
+    if not path.exists():
+        raise SystemExit("Nothing measured yet. Run: python -m halala dialect-tax")
+    current = list(json.loads(path.read_text(encoding="utf-8")).values())[-1]["forms"]
+    if save:
+        baseline.write_text(json.dumps(current, indent=2), encoding="utf-8")
+        print(f"saved baseline to {baseline}")
+        return 0
+    if not baseline.exists():
+        raise SystemExit("No baseline yet. Run: python -m halala check --save")
+    saved = json.loads(baseline.read_text(encoding="utf-8"))
+    problems = [f"{form}: {saved[form]['correct']} to {current[form]['correct']}" for form in saved
+                if current[form]["correct"] < saved[form]["correct"] - tolerance]
+    for problem in problems:
+        print(f"REGRESSION {problem}")
+    print("check failed" if problems else "check passed")
+    return 1 if problems else 0
+
+
+def cmd_measure(cfg: dict, per_form: int, seed: int = 13) -> str:
+    """Halala on mixed traffic, in the order questions really arrive, so any model swaps are paid for."""
+    items, rng = load_dev(cfg), random.Random(seed)
+    chosen = [q for variant in VARIANTS for q in rng.sample([it for it in items if it.variant == variant], per_form)]
+    rng.shuffle(chosen)
+    small, large = _models(cfg)
+    lines = [f"{len(chosen)} dev questions in mixed order, with no cache. English goes to the small model: "
+             f"{cfg['cascade']['route_english']}. Active seconds are evaluation time, load seconds are model loading, and "
+             f"wall seconds are what a user waits. {NOISE}", "",
+             "| Design | Correct | Active seconds per correct | Active | Load | Wall |", "|---|---|---|---|---|---|"]
+    for label, alone in (("ALLaM alone", True), ("Halala", False)):
+        print(f"{label}: {len(chosen)} questions", flush=True)
+        rows = [_row(it, small, large, cfg, alone) for it in chosen]
+        lines.append(f"| {label} | {sum(r['correct'] for r in rows)} of {len(rows)} | {_per_correct(rows):.2f} | "
+                     f"{sum(r['active_s'] for r in rows):.0f} | {sum(r['load_s'] for r in rows):.0f} | "
+                     f"{sum(r['seconds'] for r in rows):.0f} |")
+    return _save(cfg, "measure", "\n".join(lines))
+
+
+def cmd_sealed(cfg: dict, unseal: bool) -> str:
+    """The one run on unseen questions. Calls are cached, so a crash doesn't need a second opening to redo them."""
+    if not unseal:
+        raise SystemExit("The sealed test set is for the final evaluation only. Add --unseal if this is that run; each "
+                         "opening is logged.")
+    items = open_sealed(cfg)
+    small, large = _models(cfg, cached=True)
+    results = {label: [_row(it, small, large, cfg, alone) for it in items]
+               for label, alone in (("ALLaM alone", True), ("Halala", False))}
+    md, summary = _tax_table(results, f"{len(items)} sealed questions, seen by nobody until this run.")
+    return _save(cfg, "sealed", md, summary)

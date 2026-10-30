@@ -1,8 +1,0 @@
-﻿collect test: 40 items
-python :   40/40
-At line:1 char:355
-+ ... hon\halala; python -m halala collect --config configs/allam_profile.t ...
-+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    + CategoryInfo          : NotSpecified: (  40/40:String) [], RemoteException
-    + FullyQualifiedErrorId : NativeCommandError
- 
