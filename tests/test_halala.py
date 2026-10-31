@@ -9,6 +9,7 @@ from halala.config import ROOT, load_config
 from halala.data import Item, load_jsonl, seal, write_jsonl
 from halala.dialect_audit import cmd_dialect_audit, cmd_scorecard, wilson
 from halala.measure import cmd_check, cmd_fresh, cmd_measure, cmd_sealed, cmd_tax
+from halala.messy import TYPING, cmd_messy, holds_up, retype
 from halala.models import Completion
 from halala.pipeline import SYSTEM_ANSWER, answer, load_dev, prepare, steps, usable_answer
 
@@ -163,6 +164,30 @@ class MeasureTest(unittest.TestCase):
         md = quietly(cmd_measure, self.cfg, 4)
         self.assertIn("20 dev questions", md)
         self.assertIn("Halala", md)
+
+
+class MessyTest(unittest.TestCase):
+    def test_retyping_repeats_exactly_and_changes_the_text(self):
+        item = Item(id="m1", group_id="m1", variant="arabizi", question=ARABIZI, answers=["الرياض"])
+        self.assertEqual(retype(item, "as written"), ARABIZI)
+        for kind in TYPING:
+            self.assertEqual(retype(item, kind), retype(item, kind))
+        for kind in set(TYPING) - {"as written", "all lower case, no punctuation"}:
+            self.assertNotEqual(retype(item, kind), ARABIZI, kind)
+
+    def test_a_way_of_typing_must_keep_two_thirds_and_stay_above_alone(self):
+        self.assertTrue(holds_up(1, 16, 24))
+        self.assertFalse(holds_up(1, 15, 24))
+        self.assertFalse(holds_up(20, 16, 24))
+
+    def test_messy_reports_every_way_of_typing(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            cfg = load_config()
+            cfg["run"]["out_dir"] = tmp
+            md = quietly(cmd_messy, cfg)
+            for kind in TYPING:
+                self.assertIn(f"| {kind} |", md)
+            self.assertIn("75 Arabizi questions", md)
 
 
 class DialectAuditTest(unittest.TestCase):

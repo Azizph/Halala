@@ -26,6 +26,7 @@ build `allam-7b-q4-inst` from `configs/allam.Modelfile`. Then use these commands
 | `python -m halala measure` | ALLaM alone against Halala on mixed traffic |
 | `python -m halala dialect-audit` | The tax on a public benchmark, in 7 forms, on both models |
 | `python -m halala scorecard --models <names>` | The same audit across any models you have, to compare their Dialect Tax |
+| `python -m halala messy` | Arabizi questions retyped ten ways, under a rule set before the run |
 | `python -m halala sealed --unseal` | The one run on the sealed test set, which is logged |
 
 `python demo/server.py --config configs/local_gemma.toml` starts the demo.

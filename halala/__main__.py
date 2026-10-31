@@ -33,6 +33,7 @@ def main(argv: list[str] | None = None) -> int:
     sc = with_config("scorecard", "the same audit across several models")
     sc.add_argument("--data", default="data/external/dialectal_mmlu.jsonl")
     sc.add_argument("--models", nargs="+", required=True, help="model names, as Ollama lists them")
+    with_config("messy", "Arabizi questions retyped ten ways, under a rule set before the run")
     u = with_config("sealed", "the one run on the sealed test set")
     u.add_argument("--unseal", action="store_true", help="required; each opening is logged")
     fd = sub.add_parser("fetch-dialects", help="sample the public dialect benchmark into a local file")
@@ -46,7 +47,7 @@ def main(argv: list[str] | None = None) -> int:
     se.add_argument("--force", action="store_true", help="overwrite an existing sealed file")
     args = p.parse_args(argv)
 
-    from . import dialect_audit, measure, pipeline
+    from . import dialect_audit, measure, messy, pipeline
 
     if args.cmd == "seal":
         pipeline.cmd_seal(args.data, args.test_fraction, args.seed, args.force)
@@ -68,6 +69,8 @@ def main(argv: list[str] | None = None) -> int:
             dialect_audit.cmd_dialect_audit(cfg, args.data)
         elif args.cmd == "scorecard":
             dialect_audit.cmd_scorecard(cfg, args.data, args.models)
+        elif args.cmd == "messy":
+            messy.cmd_messy(cfg)
         elif args.cmd == "sealed":
             measure.cmd_sealed(cfg, args.unseal)
     return 0
