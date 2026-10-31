@@ -264,6 +264,10 @@ table.taxes button[aria-pressed=true] { background: var(--ink); border-color: va
 
 body > footer { padding: 6px 28px; font-size: 13.5px; color: var(--ink-soft); border-top: 1px solid var(--line); background: var(--sunk); }
 
+@media (max-width: 1600px) {
+  #formCards .who { font-size: 14px; }
+  #formCards .mark-chip { padding: 2px 5px; }
+}
 @media (max-width: 1500px) {
   #one { grid-template-columns: minmax(250px, 290px) minmax(0, 1fr) minmax(270px, 310px); gap: 12px; padding: 12px 14px; }
   #steps { grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr) minmax(0, 1.1fr) minmax(0, 1.2fr); gap: 8px; }
@@ -319,14 +323,14 @@ body > footer { padding: 6px 28px; font-size: 13.5px; color: var(--ink-soft); bo
     <span class="line">What a right answer really costs</span>
   </div>
   <nav role="tablist" aria-label="Views">
-    <button role="tab" id="tabOne" aria-selected="true" aria-controls="one">One question</button>
+    <button role="tab" id="tabDialects" aria-selected="true" aria-controls="dialects">Dialects</button>
+    <button role="tab" id="tabOne" aria-selected="false" aria-controls="one">One question</button>
     <button role="tab" id="tabAll" aria-selected="false" aria-controls="all">All traffic</button>
-    <button role="tab" id="tabDialects" aria-selected="false" aria-controls="dialects">Dialects</button>
   </nav>
   <div id="status" role="status">Connecting</div>
 </header>
 
-<main id="one" role="tabpanel" aria-labelledby="tabOne">
+<main id="one" role="tabpanel" aria-labelledby="tabOne" hidden>
   <section id="chat" class="card" aria-label="Ask">
     <h2 class="eyebrow">Ask the way you type</h2>
     <div id="thread" aria-live="polite"><p class="empty">Ask anything, in any form of Arabic or English.</p></div>
@@ -394,7 +398,7 @@ body > footer { padding: 6px 28px; font-size: 13.5px; color: var(--ink-soft); bo
   <div id="failed" hidden></div>
 </main>
 
-<main id="dialects" role="tabpanel" aria-labelledby="tabDialects" hidden>
+<main id="dialects" role="tabpanel" aria-labelledby="tabDialects">
   <div class="top">
     <div><h1>Same question, every dialect measured</h1><p>One question from a public benchmark, in seven forms, on real ALLaM calls. Halala has no fix for dialects yet, so each goes to ALLaM as the benchmark asks it.</p></div>
     <button id="goForms">Run this question</button>
@@ -418,7 +422,7 @@ body > footer { padding: 6px 28px; font-size: 13.5px; color: var(--ink-soft); bo
     <figure class="card">
       <figcaption>Where each leak stands</figcaption>
       <ul class="leaks">
-        <li class="first"><span class="chip">First</span><div><b>Arabizi</b>317 to 65 tokens for a right answer on the sealed test, against 50 in English. Smaller, not closed.</div></li>
+        <li class="first"><span class="chip">Use case</span><div><b>Arabizi</b>317 to 65 tokens for a right answer on the sealed test, against 50 in English. Smaller, not closed.</div></li>
         <li class="next"><span class="chip">Next</span><div><b>Saudi</b>Lowest of the five on ALLaM. A first word list missed its target, so it was dropped.</div></li>
         <li><span class="chip">Open</span><div><b>Emirati, Syrian, Egyptian, Moroccan</b>51 to 54 of 100 on ALLaM, against 58 in English.</div></li>
         <li class="blank"><span class="chip">Not measured</span><div><b>Niche dialects</b>Khuzestani, Cypriot Arabic and others aren't on this benchmark. Measuring comes first.</div></li>
@@ -461,7 +465,7 @@ const FORM_PICKS = [["dmmlu-astronomy-63", "Why Mars was wetter"], ["dmmlu-philo
 const FLIPS = { againstSaudi: 21, forSaudi: 9 };
 const NICHE = ["Khuzestani", "Cypriot Arabic"];
 const LETTERS = "ABCDE";
-const LEAKS = { en: "None, the baseline", msa: "None on the sealed test", mixed: "None on the sealed test", dialect: "Open", najdi: "Open, the next leak", arabizi: "First one, smaller, not closed" };
+const LEAKS = { en: "None, the baseline", msa: "None on the sealed test", mixed: "None on the sealed test", dialect: "Open", najdi: "Open, the next leak", arabizi: "Use case, smaller, not closed" };
 const FOOT_BENCHMARK = "Tokens are the pieces of text an AI reads and writes, and they're how AI is priced. These questions are from MBZUAI's Dialectal Arabic MMLU, on a community build of ALLaM 7B, and nobody on this project wrote them.";
 
 let info = null, questions = [], number = 0, busy = false, stopping = false;
@@ -1068,7 +1072,7 @@ function show(view) {
 }
 function pickButtons() {
   const box = $("picks");
-  box.replaceChildren(el("span", "label", "Try one in Arabizi"));
+  box.replaceChildren(el("span", "label", "One use case: Arabizi"));
   for (const group of PICKS) {
     const q = questions.find(x => x.group === group && x.form === "arabizi");
     if (!q) continue;
@@ -1105,6 +1109,7 @@ async function start() {
   $("tabOne").onclick = () => show("one");
   $("tabAll").onclick = () => show("all");
   $("tabDialects").onclick = () => show("dialects");
+  show("dialects");
   $("go").onclick = runAll;
   $("goForms").onclick = runForms;
   $("ask").onsubmit = event => { event.preventDefault(); const value = $("q").value; $("q").value = ""; askOne(value); };

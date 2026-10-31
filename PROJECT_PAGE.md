@@ -18,43 +18,46 @@ it isn't endorsed by Humain.
 ### The issue
 
 Arabic isn't one way of writing. It's many dialects, down to niche ones like Khuzestani in Iran, with no agreed spelling, and Cypriot
-Arabic in Cyprus, written in a Latin-based alphabet. It's Saudi, Moroccan and Syrian as people really speak them. And online it's
-Arabizi, typed in Latin letters and numbers: `el osboo3 kam yom?`
+Arabic in Cyprus, written in a Latin-based alphabet. AI doesn't treat them all the same.
+
+Ask ALLaM, Humain's Arabic model, the same question in English, formal Arabic and five dialects, and you can watch it happen. On a
+public benchmark question about Mars, it's right in English and formal Arabic and wrong in most of the dialects. That's one question,
+picked to show the gap, but the totals across all 100 lean the same way: ALLaM gets 58 right in both English and formal Arabic, and 46
+to 54 in Saudi, Emirati, Syrian, Egyptian and Moroccan, though with 100 questions a few points can be noise.
 
 A shop that charged more for your accent would be a scandal. With AI, it's just the bill. Every answer costs tokens, the pieces of
 text an AI reads and writes, right or wrong, so the real price is the cost of a right answer. When that price rises because of how
 you write, that's the **Dialect Tax**: the extra you pay, and the wrong answers you get, for writing the way you speak. Average
-scores hide it.
+scores hide it. ALLaM pays the smallest tax of the four models that ran properly, at 1.1 to 1.2 times its English cost by tokens, and
+the other three pay 1.5 to 2.2 times (`runs/local_gemma/scorecard.md`).
 
-All five dialects on a public benchmark come in below English. On 100 hard questions, ALLaM gets 58 right in English and 46 to 54 in
-Saudi, Emirati, Syrian, Egyptian and Moroccan, though with 100 questions a few points can be noise. ALLaM pays the smallest tax of
-the four models that ran properly, at 1.1 to 1.2 times its English cost by tokens, and the other three pay 1.5 to 2.2 times
-(`runs/local_gemma/scorecard.md`).
-
-Arabizi is where it gets steepest. It isn't on that benchmark, so it was tested on separate questions. On 11 sealed questions, a
-right answer in English takes ALLaM about 50 tokens, and in Arabizi it takes 317. Across 41 held-back Arabizi questions, ALLaM gets
-just 3 right.
-
-Niche dialects like Khuzestani and Cypriot Arabic aren't on the benchmark at all, so what they pay hasn't been measured here. A gap
-nobody measures is a gap nobody fixes.
+Niche dialects like Khuzestani and Cypriot Arabic aren't on the benchmark, so what they pay hasn't been measured here. A gap nobody
+measures is a gap nobody fixes.
 
 ### The solution
 
-Halala is a thin layer in front of the model, working toward AI that can read Arabic however it's written. Today it handles Arabizi.
-It works through the Dialect Tax one leak at a time:
+Halala measures the Dialect Tax: what each way of writing really pays for a right answer. Then it tests fixes, one leak at a time. A
+leak is any way of writing that pays the tax. Halala sits in front of the model as a thin layer:
 
-1. **Measures the tax** for each way of writing, so a gap can't hide in an average.
-2. **Fixes the worst leak first,** before the model runs, with no extra AI.
-3. **Tests the fix on held-back questions,** then moves to the next leak.
+1. **Measure.** Price a right answer for each way of writing, so a gap can't hide in an average.
+2. **Fix the worst leak,** before the model runs, with no extra AI.
+3. **Test it on held-back questions,** and keep it only if it wins.
 
-Arabizi is the first proof, not the point. It was the steepest tax measured, and small enough to test properly in a hackathon. Halala
-rewrites it into Arabic letters using rules and about 250,000 real Arabic words, so ALLaM goes from 3 to 32 of 41 held-back questions
-right. On the 11 sealed ones, a right answer falls from 317 tokens to 65, against 50 in English. That gap is smaller, not closed.
+**Arabizi is one use case.** It's Arabic typed in Latin letters and numbers, like `el osboo3 kam yom?`, how many days are in a week.
+ALLaM answers 30. Arabizi pays the steepest tax measured, and it was small enough to test properly in a hackathon. It isn't on the
+benchmark, so it was tested on separate, simpler questions. Halala rewrites it into Arabic letters using rules and about 250,000 real
+Arabic words, so ALLaM goes from 3 to 32 of 41 held-back questions right. On 11 of those, a right answer falls from 317 tokens to 65,
+against 50 in English. That gap is smaller, not closed. The saving so far is almost all on Arabizi and follows how much Arabizi is in
+the traffic. It's one tested example of what a fix can do, not the compute story: wasted compute sits unevenly, and Halala shows where.
 
-The real target is the dialects. Saudi is next, because it scores lowest on ALLaM on the benchmark. The first try, a word list, gained only 3
-of 100 overall, short of its target of 5, so it was dropped. Each dialect needs its own fix and its own test. After that come the
-niche dialects, starting by measuring what they pay. The goal is the same for all of them: a right answer back down to the halala,
-however you write.
+Halala hasn't fixed a dialect yet, and its own test is what says so. A word list for Saudi made a net gain of 3 of 100, short of the 5
+set beforehand, so the list was dropped. Arabizi is a way of writing, so a dictionary can reach most of it: the same 30 questions get
+1 right as typed and 28 in Arabic letters. What causes a dialect's gap hasn't been measured, and it may not be spelling, so each
+dialect needs its own fix and its own test.
+
+Saudi stays next, because it scores lowest on ALLaM on the benchmark. Emirati, Syrian, Egyptian and Moroccan stay open, and the niche
+dialects start with measuring what they pay. The goal is the same for all of them: a right answer back down to the halala, however
+you write.
 
 ### Results
 
@@ -137,12 +140,11 @@ recorded.
 
 ## Presentation
 
-1. A wrong answer anyone can spot: ALLaM says a week has 30 days when the question is typed in Arabizi.
-2. The same question in Arabic, where ALLaM gets it right.
-3. One question followed through the trace, with its receipt.
-4. The traffic stream, with the tax shrinking live, then the held-back results.
-5. One public benchmark question run live in seven forms, and what all 100 say.
-6. Where each leak stands: what didn't work, and the next leak.
+1. One public benchmark question run live in seven forms, and what all 100 say.
+2. The Dialect Tax across the dialects and four models.
+3. One use case, Arabizi: a wrong answer anyone can spot, the same question in Arabic, then one question through the trace to its receipt.
+4. The traffic stream, then the held-back results.
+5. Where each leak stands: what didn't work, and the next leak.
 
 ---
 
@@ -152,7 +154,7 @@ recorded.
 router was tested and didn't earn its place.
 
 **Why does Arabizi matter at all?** On its own it's a habit from the old internet. It matters as the clearest case of a wider tax: on
-a public benchmark, every dialect costs more per right answer than formal Arabic and gets fewer right. It's also the worst leak, and
+a public benchmark, every dialect costs ALLaM more per right answer than formal Arabic and gets fewer right. It's also the worst leak, and
 one small enough to work on and properly test in a hackathon.
 
 **Doesn't a bigger model already read Arabizi?** Often, yes. This challenge is about less compute, and a small model plus a free

@@ -17,6 +17,9 @@ halala, however you write. Arabizi is the first leak: a habit from the old inter
 in a hackathon. The tax is wider: on 100 hard questions, ALLaM gets 58 right in English and 46 in Saudi dialect. Say why it matters
 to non-technical judges: a shop that charged more for your accent would be a scandal.
 
+**How to tell it:** the mentor's advice on 2026-10-31. Show the dialect benchmark first, because that's what makes Halala clear, then
+present Arabizi as one use case. Never give the impression that Arabizi is the way to cut compute.
+
 ## The solution
 
 Halala is a thin layer in front of the model that works through the tax, leak by leak:
@@ -47,7 +50,7 @@ got 23 there and 18 on the earlier one. Without its list of real words, this rew
 On the development questions, which the rewrite was built on, Arabizi goes from 8 to 38 of 45 correct and from 327 to 55 tokens per
 right answer, and right answers across all 225 rise from 179 to 208 (`runs/local_gemma/dialect_tax.md`), with real compute per right
 answer about 28% lower on the same one-fifth mix once the machine's speed changes are taken out (`runs/local_gemma/compute_drift.md`).
-Lead with Arabizi's tokens on the sealed test, and only quote an overall saving with its traffic mix. Keeping Arabic on ALLaM avoids the cheap-model cost. The Arabizi gap is
+Lead with the dialect benchmark, quote Arabizi's tokens as a use case, and only quote an overall saving with its traffic mix. Keeping Arabic on ALLaM avoids the cheap-model cost. The Arabizi gap is
 smaller, not closed, and the Saudi gap is still open.
 
 ## The demo
@@ -60,24 +63,23 @@ The old one explained Halala like a slideshow. The new one lets you watch the ta
   it cost against the same question unaided, and wrong answers show up as tokens wasted. Anyone understands a receipt.
 - **The big moment:** press one button and a stream of mixed questions runs through ALLaM alone and Halala side by side. Bars for
   each form build up live, and Arabizi's bar visibly drops. It's scale you can see, not one hand-picked example.
-- **Dialects:** a third tab, so the demo itself shows this isn't only about Arabizi. One button asks one public benchmark question
+- **Dialects:** the first tab, so the demo opens on the issue, not on Arabizi. One button asks one public benchmark question
   in seven forms on real ALLaM calls. Under it sit the saved bars for all 100 questions, the tax on four models, and where each leak
   stands, with niche dialects marked not measured. Halala has no fix for dialects yet, and the tab says so. It uses the scorecard's
   own call, `ask_item`, rather than `steps`, because Halala plays no part in these answers.
 
 Receipts are in tokens, real counts from the server. Say on screen what a token is: the pieces of text an AI reads and writes. Each
-answer also says where its way of writing stands: first leak, next leak, or none on the test.
+answer also says where its way of writing stands: the use case, the next leak, or none on the test.
 
 ### The video
 
 The demo is its own video, separate from the slides, so everything in it happens on the console.
 
-1. Open on a wrong answer anyone can spot: typed in Arabizi, ALLaM says a week has 30 days.
-2. Ask the same question in Arabic, where ALLaM gets it right: it knows the answer, it just couldn't read the question.
-3. Follow one question through the trace, to its receipt.
+1. Open on the Dialects tab: run one question in every dialect measured, and show what the 100 questions say.
+2. Show the tax across dialects and models, and that niche dialects aren't on the benchmark.
+3. One use case, Arabizi: ALLaM says a week has 30 days, then gets it right in Arabic letters, then one question through the trace to its receipt.
 4. Run the traffic stream, then show the held-back results.
-5. Run one question in every dialect, and show what the 100 questions say.
-6. End on where each leak stands: what didn't work, and the next leak.
+5. End on where each leak stands: what didn't work, and the next leak.
 
 If time allows, add one more thing: show that any app can point at Halala with a one-line change, which would make it feel like
 a product a Humain engineer could use.
@@ -113,6 +115,7 @@ doesn't need to be technically exhaustive. Work top to bottom. Tick each item wi
 | [x] | Put the final numbers in `PROJECT_PAGE.md` and the console (02:50) | Lead | 11:00 |
 | [x] | Build 8 to 10 slides: 10 slides, at https://claude.ai/artifact/FgLv6W9gRVkkm28HAo48uQ, with the video link still to add on the last slide (03:50) | Lead | 12:30 |
 | [x] | Add to the console, at the builder's request: leak status on each answer, a Dialects tab, and one benchmark question run live in seven forms. Replay ALLaM's 700 benchmark calls to check it (17:35) | Lead | 18:00 |
+| [x] | Rebuild the console order, page, script, images and a 10-slide deck around the mentor's advice: benchmark first, Arabizi as a use case (18:55) | Lead | 19:00 |
 | [ ] | Record the video | Builder | 15:00 |
 | [ ] | Final check, commit and push | Lead, builder approves | 16:00 |
 | [ ] | Submit | Builder | 17:00 |
