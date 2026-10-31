@@ -7,7 +7,7 @@ from pathlib import Path
 
 from halala.config import ROOT, load_config
 from halala.data import Item, load_jsonl, seal, write_jsonl
-from halala.dialect_audit import cmd_dialect_audit, wilson
+from halala.dialect_audit import cmd_dialect_audit, cmd_scorecard, wilson
 from halala.measure import cmd_check, cmd_fresh, cmd_measure, cmd_sealed, cmd_tax
 from halala.models import Completion
 from halala.pipeline import SYSTEM_ANSWER, answer, load_dev, prepare, steps, usable_answer
@@ -176,6 +176,18 @@ class DialectAuditTest(unittest.TestCase):
             cfg["run"]["out_dir"] = tmp
             md = quietly(cmd_dialect_audit, cfg, str(data))
             for label in ("mock-small", "mock-large", "Moroccan"):
+                self.assertIn(label, md)
+
+    def test_scorecard_reports_every_model_named(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            data = Path(tmp) / "dialects.jsonl"
+            write_jsonl(data, [Item(id=f"q{i}-{f}", group_id=f"q{i}", variant=f, question="ما عاصمة البلد؟",
+                                    answers=["B"], choices=["جدة", "الرياض", "مكة", "الدمام"])
+                               for i in range(20) for f in ("ENG", "KSA")])
+            cfg = load_config()
+            cfg["run"]["out_dir"] = tmp
+            md = quietly(cmd_scorecard, cfg, str(data), ["mock-large", "mock-other"])
+            for label in ("mock-large", "mock-other", "Saudi", "Right answers out of 20"):
                 self.assertIn(label, md)
 
     def test_wilson_interval(self):

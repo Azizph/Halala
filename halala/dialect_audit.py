@@ -77,20 +77,56 @@ def wilson(wins: int, n: int, z: float = 1.96) -> tuple[float, float]:
     return max(0.0, centre - half), min(1.0, centre + half)
 
 
+def _audit(model, items: list[Item]) -> dict[str, list[dict]]:
+    """Every question through one model, grouped by form. One model at a time, so it never swaps."""
+    print(f"{model.name}: {len(items)} questions", flush=True)
+    per_form: dict[str, list[dict]] = defaultdict(list)
+    for item in items:
+        c = model.complete(SYSTEM_MC, format_mc(item.question, item.choices), 0.0, 0, {"answer": item.answers[0]})
+        per_form[item.variant].append({"correct": score(c.text, item.answers, item.choices),
+                                       "tokens": c.tokens_in + c.tokens_out})
+    return per_form
+
+
+def cmd_scorecard(cfg: dict, data: str, names: list[str]) -> str:
+    """The same audit across models, so anyone can read a model's Dialect Tax beside the others. Tokenizers differ between models,
+    so each tax is against that model's own English, and only right answers compare directly."""
+    items = load_jsonl(resolve(data))
+    small, large, cache = build_models(cfg)
+    known = {large.name: large, small.name: small}
+    results: dict[str, dict[str, list[dict]]] = {}
+    try:
+        for name in names:
+            spec = {**small.cfg, "name": name, **({"think": False} if name.startswith("qwen3") else {})}
+            results[name] = _audit(known.get(name) or type(small)(spec, cache), items)
+    finally:
+        if cache is not None:
+            cache.close()
+    forms = [f for f in FORMS if any(f in per for per in results.values())]
+    head, rule = " | ".join(FORM_NAMES.get(f, f) for f in forms), "|---|" + "---|" * len(forms)
+    n = len(next(iter(results.values()))[forms[0]])
+    right = [f"| {name} | " + " | ".join(str(sum(r["correct"] for r in per[f])) for f in forms) + " |" for name, per in results.items()]
+    taxes = []
+    for name, per in results.items():
+        cost = {f: sum(r["tokens"] for r in per[f]) / max(1, sum(r["correct"] for r in per[f])) for f in forms}
+        taxes.append(f"| {name} | " + " | ".join(f"{cost[f] / cost[forms[0]]:.1f}x" for f in forms) + " |")
+    md = "\n".join([f"Source: {SOURCE} (CC BY 4.0), {n} questions asked in every form, with the same instruction for every model. "
+                    "Chance is 25%. Run after the sealed test, and Halala's rewrite plays no part.",
+                    "", f"Right answers out of {n}:", "", f"| Model | {head} |", rule, *right, "",
+                    "The Dialect Tax: tokens per right answer, as a multiple of the same model on English:", "",
+                    f"| Model | {head} |", rule, *taxes])
+    (run_dir(cfg) / "scorecard.md").write_text(md, encoding="utf-8")
+    print(md)
+    return md
+
+
 def cmd_dialect_audit(cfg: dict, data: str) -> str:
     items = load_jsonl(resolve(data))
     small, large, cache = build_models(cfg)
     results: dict[str, dict[str, list[dict]]] = {}
     try:
-        for tier, model in (("large", large), ("small", small)):   # one model at a time, so it never swaps
-            print(f"{model.name}: {len(items)} questions", flush=True)
-            per_form: dict[str, list[dict]] = defaultdict(list)
-            for item in items:
-                c = model.complete(SYSTEM_MC, format_mc(item.question, item.choices), 0.0, 0,
-                                   {"answer": item.answers[0]})
-                per_form[item.variant].append({"correct": score(c.text, item.answers, item.choices),
-                                               "tokens": c.tokens_in + c.tokens_out})
-            results[model.name] = per_form
+        for model in (large, small):
+            results[model.name] = _audit(model, items)
     finally:
         if cache is not None:
             cache.close()

@@ -30,6 +30,9 @@ def main(argv: list[str] | None = None) -> int:
     m.add_argument("--per-form", type=int, default=12)
     da = with_config("dialect-audit", "the Dialect Tax per form and model on the public benchmark")
     da.add_argument("--data", default="data/external/dialectal_mmlu.jsonl")
+    sc = with_config("scorecard", "the same audit across several models")
+    sc.add_argument("--data", default="data/external/dialectal_mmlu.jsonl")
+    sc.add_argument("--models", nargs="+", required=True, help="model names, as Ollama lists them")
     u = with_config("sealed", "the one run on the sealed test set")
     u.add_argument("--unseal", action="store_true", help="required; each opening is logged")
     fd = sub.add_parser("fetch-dialects", help="sample the public dialect benchmark into a local file")
@@ -63,6 +66,8 @@ def main(argv: list[str] | None = None) -> int:
             measure.cmd_measure(cfg, args.per_form)
         elif args.cmd == "dialect-audit":
             dialect_audit.cmd_dialect_audit(cfg, args.data)
+        elif args.cmd == "scorecard":
+            dialect_audit.cmd_scorecard(cfg, args.data, args.models)
         elif args.cmd == "sealed":
             measure.cmd_sealed(cfg, args.unseal)
     return 0
