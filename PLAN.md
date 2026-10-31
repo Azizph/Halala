@@ -134,7 +134,8 @@ Ideas that aren't in the plan. They stay here unless the builder moves them onto
 
 - Open replies on the benchmark, to see if "reply with only the letter" causes part of the Saudi gap. It needs 100 fresh questions.
 - A retry of the Saudi word list on fresh questions, adding `ايش من الجاي` and `الي`.
-- A Dialect Tax scorecard across models: `dialect-audit` on more of the installed models, with no new data needed.
+- A Dialect Tax scorecard across models: done, in `runs/local_gemma/scorecard.md`. Of the four models that ran properly, ALLaM pays the least on the five dialects: 1.1 to 1.2 times English, against 1.5 to 2.2 for the others.
+- Messy typing, run at the builder's request on 2026-10-31. 75 Arabizi questions outside the sealed set, each retyped ten ways with fixed seeds: first capital, all capitals, no punctuation, an emoji, stretched letters, one typo, two typos, swapped letters, no number letters and no vowels. **Rule set before the run:** a way of typing holds up if Halala keeps at least two-thirds of the right answers it gets as written, and doesn't fall below ALLaM alone. All ten are reported, whichever way they fall, and the rewrite stays frozen.
 - A short test of telling the model which dialect it's reading, as a first step on the Saudi leak.
 - An answer memory shared across forms looks weak: rewritten Arabizi matches the proper Arabic exactly on only 6 of 30 unseen
   questions, and no other pair of forms matched.
