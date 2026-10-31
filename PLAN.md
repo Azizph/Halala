@@ -60,16 +60,24 @@ The old one explained Halala like a slideshow. The new one lets you watch the ta
   it cost against the same question unaided, and wrong answers show up as tokens wasted. Anyone understands a receipt.
 - **The big moment:** press one button and a stream of mixed questions runs through ALLaM alone and Halala side by side. Bars for
   each form build up live, and Arabizi's bar visibly drops. It's scale you can see, not one hand-picked example.
+- **Dialects:** a third tab, so the demo itself shows this isn't only about Arabizi. One button asks one public benchmark question
+  in seven forms on real ALLaM calls. Under it sit the saved bars for all 100 questions, the tax on four models, and where each leak
+  stands, with niche dialects marked not measured. Halala has no fix for dialects yet, and the tab says so. It uses the scorecard's
+  own call, `ask_item`, rather than `steps`, because Halala plays no part in these answers.
 
-Receipts are in tokens, real counts from the server. Say on screen what a token is: the pieces of text an AI reads and writes.
+Receipts are in tokens, real counts from the server. Say on screen what a token is: the pieces of text an AI reads and writes. Each
+answer also says where its way of writing stands: first leak, next leak, or none on the test.
 
 ### The video
+
+The demo is its own video, separate from the slides, so everything in it happens on the console.
 
 1. Open on a wrong answer anyone can spot: typed in Arabizi, ALLaM says a week has 30 days.
 2. Ask the same question in Arabic, where ALLaM gets it right: it knows the answer, it just couldn't read the question.
 3. Follow one question through the trace, to its receipt.
-4. Run the traffic stream.
-5. End on the results, what didn't work, and the next leak.
+4. Run the traffic stream, then show the held-back results.
+5. Run one question in every dialect, and show what the 100 questions say.
+6. End on where each leak stands: what didn't work, and the next leak.
 
 If time allows, add one more thing: show that any app can point at Halala with a one-line change, which would make it feel like
 a product a Humain engineer could use.
@@ -104,6 +112,7 @@ doesn't need to be technically exhaustive. Work top to bottom. Tick each item wi
 | [x] | Run the sealed test once: 44 to 51 of 55, Arabizi 2 to 8 of 11, 18.5% less real compute per correct answer on a one-fifth Arabizi mix (02:40). The builder had it reopened once to count tokens, replaying saved answers with new calls blocked, and it matched exactly (04:12) | Lead | 10:30 |
 | [x] | Put the final numbers in `PROJECT_PAGE.md` and the console (02:50) | Lead | 11:00 |
 | [x] | Build 8 to 10 slides: 10 slides, at https://claude.ai/artifact/FgLv6W9gRVkkm28HAo48uQ, with the video link still to add on the last slide (03:50) | Lead | 12:30 |
+| [x] | Add to the console, at the builder's request: leak status on each answer, a Dialects tab, and one benchmark question run live in seven forms. Replay ALLaM's 700 benchmark calls to check it (17:35) | Lead | 18:00 |
 | [ ] | Record the video | Builder | 15:00 |
 | [ ] | Final check, commit and push | Lead, builder approves | 16:00 |
 | [ ] | Submit | Builder | 17:00 |
@@ -137,6 +146,7 @@ Ideas that aren't in the plan. They stay here unless the builder moves them onto
 - Open replies on the benchmark, to see if "reply with only the letter" causes part of the Saudi gap. It needs 100 fresh questions.
 - A retry of the Saudi word list on fresh questions, adding `ايش من الجاي` and `الي`.
 - A Dialect Tax scorecard across models: done, in `runs/local_gemma/scorecard.md`. Of the four models that ran properly, ALLaM pays the least on the five dialects: 1.1 to 1.2 times English, against 1.5 to 2.2 for the others.
+- A live replay of ALLaM's 700 benchmark calls, run for the Dialects tab on 2026-10-31: done, in `runs/local_gemma/live_replay.md`. Every token count matched, and 5 right-or-wrong marks moved. The scorecard stays the saved run.
 - Messy typing, run at the builder's request on 2026-10-31. 75 Arabizi questions outside the sealed set, each retyped ten ways with fixed seeds: first capital, all capitals, no punctuation, an emoji, stretched letters, one typo, two typos, swapped letters, no number letters and no vowels. **Rule set before the run:** a way of typing holds up if Halala keeps at least two-thirds of the right answers it gets as written, and doesn't fall below ALLaM alone. All ten are reported, whichever way they fall, and the rewrite stays frozen. Done, in `runs/local_gemma/messy_typing.md`: six held up, four didn't, Halala never fell below ALLaM alone, and two full runs matched on every row.
 - All capitals: lower-casing first is a one-line fix, left out so the sealed result stays valid.
 - Ask ten real people to type five questions. No test question has come from a real message yet.

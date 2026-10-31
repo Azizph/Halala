@@ -3,7 +3,8 @@
     python demo/server.py --config configs/local_gemma.toml
 
 `run_question` streams `steps` from halala/pipeline.py, the same path the measurements use, so the page shows each step as
-it happens. Nothing here writes outside demo/.
+it happens. `Demo.run_forms` asks one public benchmark question in every form through `ask_item`, the call the scorecard
+made. Nothing here writes outside demo/.
 """
 
 from __future__ import annotations
@@ -29,10 +30,13 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent))
 
 from halala.config import load_config, resolve
+from halala.data import load_jsonl
+from halala.dialect_audit import FORM_NAMES, ask_item
 from halala.models import Model, build_models
 from halala.pipeline import SYSTEM_ANSWER, load_dev, steps
-from halala.scoring import score
+from halala.scoring import extract_choice, score
 
+BENCHMARK = "data/external/dialectal_mmlu.jsonl"
 DEFAULT_PORT = 8770
 PAUSE_S = 2.0
 PATHS = ("halala", "direct")
@@ -56,6 +60,14 @@ def live_models(cfg: dict) -> tuple[Model, Model]:
             cache.close()
     small.cache = large.cache = None
     return small, large
+
+
+def benchmark_groups() -> dict[str, list]:
+    """The public benchmark, question by question, each with its forms in the scorecard's order."""
+    groups: dict[str, list] = {}
+    for item in load_jsonl(resolve(BENCHMARK)):
+        groups.setdefault(item.group_id, []).append(item)
+    return groups
 
 
 def _marked(call: dict, answers: list[str]) -> dict:
@@ -101,6 +113,7 @@ class Demo:
     def __init__(self, cfg: dict):
         self.cfg = cfg
         self.small, self.large = live_models(cfg)
+        self.groups = benchmark_groups()
         self.lock = threading.Lock()
         self.last_call = 0.0
 
@@ -108,10 +121,21 @@ class Demo:
         """Load the large model and its prompt first, so the first receipt isn't charged for them."""
         self.large.complete(SYSTEM_ANSWER, "مرحبا", 0.0, 0, {})
 
+    def _ready(self) -> None:
+        if time.monotonic() - self.last_call > PAUSE_S:   # a first call after a pause runs ten times slower
+            self.warm_up()                                # and that shouldn't land on either side of the receipt
+
     def questions(self) -> list[dict]:
         """The development questions with their answers, for the picks and the traffic stream. Never the sealed ones."""
         return [{"id": it.id, "group": it.group_id, "form": it.variant, "question": it.question, "answers": it.answers}
                 for it in load_dev(self.cfg)]
+
+    def benchmark(self) -> list[dict]:
+        """The public benchmark for the Every dialect tab, one entry per question, in file order."""
+        return [{"group": group, "answer": items[0].answers[0],
+                 "forms": [{"form": it.variant, "name": FORM_NAMES[it.variant], "question": it.question, "choices": it.choices}
+                           for it in items]}
+                for group, items in self.groups.items()]
 
     def status(self) -> dict:
         models = self.cfg["models"]
@@ -125,10 +149,30 @@ class Demo:
 
     def run(self, question: str, answers: list[str], paths: list[str]) -> Iterator[dict]:
         with self.lock:
-            if time.monotonic() - self.last_call > PAUSE_S:   # a first call after a pause runs ten times slower
-                self.warm_up()                                # and that shouldn't land on either side of the receipt
+            self._ready()
             yield from run_question(question, answers, paths, self.small, self.large, self.cfg)
             self.last_call = time.monotonic()
+
+    def run_forms(self, group: str) -> Iterator[dict]:
+        """One benchmark question in every form, straight to the large model, the way the scorecard asked it."""
+        with self.lock:
+            self._ready()
+            for item in self.groups[group]:
+                yield {"step": "asking", "form": item.variant}
+                c, correct = ask_item(self.large, item)
+                yield {"step": "reply", "form": item.variant, "text": c.text, "picked": extract_choice(c.text, item.choices),
+                       "correct": correct, "tokens": c.tokens_in + c.tokens_out, "active_s": c.active_s}
+            yield {"step": "done"}
+            self.last_call = time.monotonic()
+
+
+def read_group(raw: bytes, groups: dict) -> str:
+    """Which benchmark question to run. Raises ValueError if it isn't one."""
+    body = json.loads(raw)
+    group = body.get("group") if isinstance(body, dict) else None
+    if not isinstance(group, str) or group not in groups:
+        raise ValueError("that isn't a benchmark question")
+    return group
 
 
 def read_request(raw: bytes) -> tuple[str, list[str], list[str]]:
@@ -175,6 +219,8 @@ class Handler(BaseHTTPRequestHandler):
             self._send_json(200, self.server.demo.status())
         elif path == "/api/questions":
             self._send_json(200, {"questions": self.server.demo.questions()})
+        elif path == "/api/benchmark":
+            self._send_json(200, {"groups": self.server.demo.benchmark()})
         elif path in PAGE_FILES:
             name, kind = PAGE_FILES[path]
             self._send(200, kind, (HERE / name).read_bytes())
@@ -185,7 +231,8 @@ class Handler(BaseHTTPRequestHandler):
         if not self._from_this_machine():
             self._send_json(403, {"error": "this server only answers on this machine"})
             return
-        if urlsplit(self.path).path != "/api/ask":
+        path = urlsplit(self.path).path
+        if path not in ("/api/ask", "/api/every-dialect"):
             self._send_json(404, {"error": "not found"})
             return
         if self.headers.get_content_type() != "application/json":
@@ -195,8 +242,10 @@ class Handler(BaseHTTPRequestHandler):
         if not 0 < length <= MAX_BODY:
             self._send_json(413, {"error": "the request is empty or too long"})
             return
+        demo = self.server.demo
         try:
-            question, answers, paths = read_request(self.rfile.read(length))
+            raw = self.rfile.read(length)
+            events = demo.run(*read_request(raw)) if path == "/api/ask" else demo.run_forms(read_group(raw, demo.groups))
         except ValueError as error:   # includes malformed JSON
             self._send_json(400, {"error": str(error)})
             return
@@ -206,7 +255,7 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("Cache-Control", "no-store")
         self.end_headers()
         try:
-            for event in self.server.demo.run(question, answers, paths):
+            for event in events:
                 self._write_event(event)
         except ConnectionError:   # the page went away; requests' own errors are not this class
             pass

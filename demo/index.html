@@ -150,8 +150,8 @@ i.mine { background: var(--bronze); }
 .top { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
 .top h1 { font-size: 27px; font-weight: 600; letter-spacing: -.02em; line-height: 1.2; }
 .top p { color: var(--ink-soft); }
-#go { background: var(--bronze); color: #FFFFFF; border-color: var(--bronze); font-weight: 500; padding: 10px 22px; margin-inline-start: auto; }
-#go:hover:not(:disabled) { background: var(--bronze-hover); border-color: var(--bronze-hover); }
+#go, #goForms { background: var(--bronze); color: #FFFFFF; border-color: var(--bronze); font-weight: 500; padding: 10px 22px; margin-inline-start: auto; }
+#go:hover:not(:disabled), #goForms:hover:not(:disabled) { background: var(--bronze-hover); border-color: var(--bronze-hover); }
 #meter { height: 6px; background: var(--sunk); border-radius: 3px; overflow: hidden; flex: none; }
 #meter i { display: block; height: 100%; width: 0; background: var(--bronze); transition: width .2s; }
 #now { min-height: 24px; color: var(--ink-soft); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; flex: none; }
@@ -212,6 +212,56 @@ details.numbers th:first-child, details.numbers td:first-child { text-align: sta
 .mtrack u { position: absolute; top: -2px; bottom: -2px; width: 2px; background: var(--ink); text-decoration: none; }
 .mrow span:last-child { font: 500 13.5px var(--mono); text-align: end; }
 
+#dialects { display: flex; flex-direction: column; padding: 14px 24px; gap: 10px; overflow: auto; }
+#formPicks { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; flex: none; color: var(--ink-soft); }
+#formPicks button { color: var(--ink); padding: 5px 12px; min-height: 36px; }
+#formPicks button.on { border-color: var(--bronze); box-shadow: inset 0 0 0 1px var(--bronze); }
+.stepper { display: flex; align-items: center; gap: 6px; margin-inline-start: auto; font: 500 14px var(--mono); white-space: nowrap; }
+#formPicks .stepper button { width: 36px; padding: 0; }
+#formQ { padding: 11px 18px; flex: none; display: flex; flex-direction: column; gap: 5px; }
+#formQ h2 { font-size: 19px; font-weight: 600; line-height: 1.3; }
+#formQ ol { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px 22px; font-size: 14.5px; line-height: 1.35; color: var(--ink-soft); }
+#formQ li.key { color: var(--right); font-weight: 500; }
+#formCards { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 10px; flex: none; }
+#formCards .side { padding: 10px 12px; gap: 4px; }
+#formCards .side.now { border-color: var(--bronze); box-shadow: inset 0 0 0 1px var(--bronze); }
+#formCards .who { font-size: 15.5px; flex-wrap: wrap; gap: 0 4px; }
+#formCards .who b { white-space: nowrap; }
+#formCards .mark-chip { font-size: 12px; padding: 2px 7px; }
+#formCards .ans { font-size: 36px; }
+#formCards .bill { font-size: 13.5px; min-height: 1.6em; }
+#formCards .bill b { font-size: 17px; }
+.fq { font-size: 14px; line-height: 1.35; height: 4.05em; color: var(--ink-soft); overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+#formSum { flex: none; padding: 9px 16px; border-radius: 12px; background: var(--sunk); font-size: clamp(17px, 1.2vw, 22px); font-weight: 600; line-height: 1.25; letter-spacing: -.01em; }
+#formNote { flex: none; }
+#formBoards { flex: 1 0 auto; display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr) minmax(0, .98fr); gap: 12px; }
+.frows { flex: 1; display: flex; flex-direction: column; justify-content: space-evenly; gap: 3px; }
+.frow { display: grid; grid-template-columns: 112px minmax(0, 1fr) 30px 46px; gap: 10px; align-items: center; font-size: 15px; line-height: 1.2; }
+.frow.low > span:first-child { font-weight: 600; }
+.frow.head { font-size: 12.5px; color: var(--ink-soft); }
+.frow.head span:nth-child(n+3), .frow b, .frow em { text-align: end; }
+.frow b { font: 600 15px var(--mono); }
+.frow em { font: 500 14px var(--mono); color: var(--ink-soft); }
+.ftrack { position: relative; height: 18px; background: var(--sunk); border-radius: 0 4px 4px 0; }
+.ftrack i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 0 4px 4px 0; background: var(--alone); transition: width .3s ease; }
+.frow.low .ftrack i { background: var(--ink-soft); }
+.ftrack u { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--ink); text-decoration: none; }
+.frow.none .ftrack { grid-column: 2 / -1; background: none; border: 1.5px dashed var(--line-strong); border-radius: 4px; display: grid; place-items: center; font-size: 13px; line-height: 1; color: var(--ink-soft); }
+table.taxes { width: 100%; border-collapse: separate; border-spacing: 2px; font: 500 14px var(--mono); }
+table.taxes th { font: 400 12.5px var(--sans); color: var(--ink-soft); text-align: center; padding: 2px 0; }
+table.taxes th:first-child { text-align: start; }
+table.taxes td { text-align: center; padding: 6px 0; border-radius: 4px; font-variant-numeric: tabular-nums; }
+table.taxes td:first-child { padding: 0; }
+table.taxes button { width: 100%; text-align: start; font: 500 14px var(--sans); padding: 4px 9px; min-height: 34px; }
+table.taxes button[aria-pressed=true] { background: var(--ink); border-color: var(--ink); color: var(--cream); }
+.leaks { list-style: none; margin: 0; padding: 0; flex: 1; display: flex; flex-direction: column; justify-content: space-evenly; gap: 7px; }
+.leaks li { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 10px; align-items: start; font-size: 14px; line-height: 1.35; color: var(--ink-soft); }
+.leaks b { display: block; font-weight: 600; color: var(--ink); }
+.chip { font: 600 12.5px var(--mono); text-align: center; padding: 3px 6px; border-radius: 999px; background: var(--sunk); color: var(--ink-soft); white-space: nowrap; }
+.first .chip { background: var(--bronze); color: #FFFFFF; }
+.next .chip { background: var(--ink); color: var(--cream); }
+.blank .chip { background: none; box-shadow: inset 0 0 0 1.5px var(--line-strong); }
+
 body > footer { padding: 6px 28px; font-size: 13.5px; color: var(--ink-soft); border-top: 1px solid var(--line); background: var(--sunk); }
 
 @media (max-width: 1500px) {
@@ -223,7 +273,7 @@ body > footer { padding: 6px 28px; font-size: 13.5px; color: var(--ink-soft); bo
   .hbar { grid-template-columns: minmax(0, 1fr); gap: 1px; }
 }
 @media (max-height: 850px) and (min-width: 1181px) {
-  #steps .why, #charts .note, .r-note { display: none; }
+  #steps li:not(#s-form) .why, #charts .note, .r-note { display: none; }
   #steps li { min-height: 0; }
   #verdict { min-height: 64px; }
 }
@@ -234,8 +284,9 @@ body > footer { padding: 6px 28px; font-size: 13.5px; color: var(--ink-soft); bo
   #thread { max-height: 240px; }
   #steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   #sums { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  #boards, #failed { grid-template-columns: minmax(0, 1fr); flex: none; }
-  #all { padding: 12px 16px; }
+  #boards, #failed, #formBoards { grid-template-columns: minmax(0, 1fr); flex: none; }
+  #formCards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  #all, #dialects { padding: 12px 16px; }
   body > header, body > footer { padding-inline: 16px; }
   .brand .line { display: none; }
 }
@@ -247,6 +298,9 @@ body > footer { padding: 6px 28px; font-size: 13.5px; color: var(--ink-soft); bo
   .row { grid-template-columns: minmax(0, 1fr) 84px; }
   .row .bars { grid-column: 1 / -1; grid-row: 2; }
   .mrow { grid-template-columns: 112px minmax(0, 1fr) 40px; }
+  #formQ ol { grid-template-columns: minmax(0, 1fr); }
+  .frow { grid-template-columns: 96px minmax(0, 1fr) 28px 42px; gap: 6px; }
+  .stepper { margin-inline-start: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
@@ -267,6 +321,7 @@ body > footer { padding: 6px 28px; font-size: 13.5px; color: var(--ink-soft); bo
   <nav role="tablist" aria-label="Views">
     <button role="tab" id="tabOne" aria-selected="true" aria-controls="one">One question</button>
     <button role="tab" id="tabAll" aria-selected="false" aria-controls="all">All traffic</button>
+    <button role="tab" id="tabDialects" aria-selected="false" aria-controls="dialects">Dialects</button>
   </nav>
   <div id="status" role="status">Connecting</div>
 </header>
@@ -339,7 +394,40 @@ body > footer { padding: 6px 28px; font-size: 13.5px; color: var(--ink-soft); bo
   <div id="failed" hidden></div>
 </main>
 
-<footer>Tokens are the pieces of text an AI reads and writes, and they're how AI is priced. The live questions here are development questions, which the rewrite was built on, on a community build of ALLaM 7B.</footer>
+<main id="dialects" role="tabpanel" aria-labelledby="tabDialects" hidden>
+  <div class="top">
+    <div><h1>Same question, every dialect measured</h1><p>One question from a public benchmark, in seven forms, on real ALLaM calls. Halala has no fix for dialects yet, so each goes to ALLaM as the benchmark asks it.</p></div>
+    <button id="goForms">Run this question</button>
+  </div>
+  <div id="formPicks"></div>
+  <section id="formQ" class="card" aria-label="The question in English"></section>
+  <div id="formCards"></div>
+  <div id="formSum" role="status"></div>
+  <p class="note" id="formNote"></p>
+  <div id="formBoards">
+    <figure class="card">
+      <figcaption id="benchTitle"></figcaption>
+      <div class="frows" id="formRows"></div>
+      <p class="note">Saved run of MBZUAI's Dialectal Arabic MMLU. Black line: English. With 100 questions, a few points can be noise. A live replay of ALLaM's 700 calls moved 5 marks and no token counts.</p>
+    </figure>
+    <figure class="card">
+      <figcaption>The Dialect Tax on each model</figcaption>
+      <div id="taxes"></div>
+      <p class="note">Tokens for one right answer, as a multiple of that model's own English. Darker means a bigger tax. Of the four that ran properly, ALLaM pays the least on the five dialects. Pick a model to see its bars.</p>
+    </figure>
+    <figure class="card">
+      <figcaption>Where each leak stands</figcaption>
+      <ul class="leaks">
+        <li class="first"><span class="chip">First</span><div><b>Arabizi</b>317 to 65 tokens for a right answer on the sealed test, against 50 in English. Smaller, not closed.</div></li>
+        <li class="next"><span class="chip">Next</span><div><b>Saudi</b>Lowest of the five on ALLaM. A first word list missed its target, so it was dropped.</div></li>
+        <li><span class="chip">Open</span><div><b>Emirati, Syrian, Egyptian, Moroccan</b>51 to 54 of 100 on ALLaM, against 58 in English.</div></li>
+        <li class="blank"><span class="chip">Not measured</span><div><b>Niche dialects</b>Khuzestani, Cypriot Arabic and others aren't on this benchmark. Measuring comes first.</div></li>
+      </ul>
+    </figure>
+  </div>
+</main>
+
+<footer id="foot">Tokens are the pieces of text an AI reads and writes, and they're how AI is priced. The live questions here are development questions, which the rewrite was built on, on a community build of ALLaM 7B.</footer>
 
 <script>
 const $ = id => document.getElementById(id);
@@ -358,7 +446,26 @@ const HELD_BACK = { total: 41, alone: 3, mine: 32 };
 const MESSY = [["As written", 65], ["First letter capital", 65], ["An emoji on the end", 64], ["No punctuation", 63], ["Stretched letters", 55], ["Swapped letters", 50], ["ALL CAPITALS", 46], ["One typo", 39], ["No vowels", 38], ["No number letters", 26], ["Two typos", 17]];
 const MESSY_TOTAL = 75, PASS_MARK = 44;
 
+/* The public benchmark, also as typed here. Source: runs/local_gemma/scorecard.md. demo/test_server.py checks these against it
+   and replays the 700 saved calls behind it to check the picks and the flips. The picks are the first questions in file order
+   that ALLaM gets right in English and formal Arabic and wrong in Saudi, leaving out dmmlu-high_school_psychology-35, whose
+   statements I, II and III are missing from the benchmark. */
+const BENCH_FORMS = ["English", "Formal Arabic", "Saudi", "Emirati", "Syrian", "Egyptian", "Moroccan"];
+const SCORECARD = [
+  { model: "ALLaM 7B", right: [58, 58, 46, 51, 53, 53, 54], tax: [1.0, 1.0, 1.2, 1.1, 1.1, 1.1, 1.1] },
+  { model: "Gemma 3 4B", right: [53, 44, 39, 41, 38, 40, 36], tax: [1.0, 1.5, 1.6, 1.5, 1.6, 1.6, 1.9] },
+  { model: "Qwen 2.5 7B", right: [69, 49, 48, 57, 41, 46, 50], tax: [1.0, 1.8, 1.9, 1.6, 2.2, 2.0, 1.9] },
+  { model: "Qwen 2.5 1.5B", right: [48, 43, 41, 40, 37, 33, 31], tax: [1.0, 1.4, 1.5, 1.5, 1.6, 1.9, 2.1] },
+];
+const FORM_PICKS = [["dmmlu-astronomy-63", "Why Mars was wetter"], ["dmmlu-philosophy-77", "Augustine on lying"], ["dmmlu-prehistory-83", "The earliest writing"]];
+const FLIPS = { againstSaudi: 21, forSaudi: 9 };
+const NICHE = ["Khuzestani", "Cypriot Arabic"];
+const LETTERS = "ABCDE";
+const LEAKS = { en: "None, the baseline", msa: "None on the sealed test", mixed: "None on the sealed test", dialect: "Open", najdi: "Open, the next leak", arabizi: "First one, smaller, not closed" };
+const FOOT_BENCHMARK = "Tokens are the pieces of text an AI reads and writes, and they're how AI is priced. These questions are from MBZUAI's Dialectal Arabic MMLU, on a community build of ALLaM 7B, and nobody on this project wrote them.";
+
 let info = null, questions = [], number = 0, busy = false, stopping = false;
+let footLive = "", benchGroups = [], groupAt = 0, shownModel = 0, runStarted = 0;
 const waste = { alone: [0], mine: [0], total: 225, x: null, y: null, pick: null };
 
 function el(tag, className, text) {
@@ -370,8 +477,8 @@ function el(tag, className, text) {
 const tokens = value => Math.round(value).toLocaleString("en");
 const compact = value => value >= 1000 ? `${+(value / 1000).toFixed(1)}K` : String(value);
 
-async function* ask(body) {
-  const response = await fetch("api/ask", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+async function* stream(url, body) {
+  const response = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
   if (!response.ok) throw new Error((await response.json()).error || "The server refused the question");
   const reader = response.body.getReader(), decoder = new TextDecoder();
   let held = "";
@@ -389,6 +496,7 @@ async function* ask(body) {
     }
   }
 }
+const ask = body => stream("api/ask", body);
 
 /* One question: the trace fills in as it happens, then the outcome and the receipt appear. */
 function resetTrace() {
@@ -408,6 +516,16 @@ function step(key, detail, why, state = "done") {
   item.querySelector(".why")?.remove();
   if (detail) { const d = el("div", "detail", detail); d.dir = "auto"; d.title = detail; item.append(d); }
   if (why) item.append(el("div", "why", why));
+}
+const isDialect = form => form === "dialect" || form === "najdi";
+function leakOf(detected, known) {
+  // Typed text only has the detector's word for it, and a dialect with no cue word reads as formal Arabic.
+  if (!known && (detected === "msa" || detected === "mixed")) return "None seen, dialects can hide here";
+  return LEAKS[known || detected];
+}
+function formNote(detected, known) {
+  const leak = `Leak: ${leakOf(detected, known).toLowerCase()}`;
+  return isDialect(known) && !isDialect(detected) ? `Really ${NAMES[known]}, with no dialect word to catch. ${leak}` : leak;
 }
 function why(event, form) {
   if (event.route === "small") return "English goes to the smaller model";
@@ -457,8 +575,13 @@ function clearOutcome(kind, message) {
   fillSide("sideMine", null, "With Halala");
   $("thisQ").replaceChildren(el("p", "note", "Ask a question to see what it cost."));
 }
-function outcome(rewritten, mine, spent, alone) {
+function outcome(form, rewritten, mine, spent, alone) {
   const before = alone.tokens, after = spent.tokens, saved = before - after;
+  if (alone.same_call && isDialect(form)) {
+    if (mine.correct === false) return ["bad", "ALLaM got this dialect question wrong, and Halala has no fix yet. This is the next leak."];
+    if (mine.correct === null) return ["plain", "Halala has no fix for dialects yet, so this went to ALLaM as typed. Typed questions aren't scored."];
+    return ["plain", "ALLaM got this one right. Halala has no fix for dialects yet, so it went as typed."];
+  }
   if (alone.same_call) {
     if (mine.correct === false) return ["bad", "Nothing to rewrite, and ALLaM got this one wrong. Halala doesn't help here yet."];
     if (mine.correct === null) return ["plain", "Nothing to rewrite, so Halala stayed out of the way. Typed questions aren't scored."];
@@ -472,8 +595,8 @@ function outcome(rewritten, mine, spent, alone) {
   if (mine.correct) return ["plain", saved > 0 ? `Both right. Halala used ${tokens(saved)} fewer tokens.` : saved < 0 ? `Both right. Halala cost ${tokens(-saved)} more tokens.` : "Both right, for the same tokens."];
   return ["bad", alone.correct ? "Halala made this one worse: ALLaM alone got it right." : "Both wrong. Halala didn't help on this one."];
 }
-function showOutcome(rewritten, mine, spent, alone) {
-  const [kind, message] = outcome(rewritten, mine, spent, alone);
+function showOutcome(form, rewritten, mine, spent, alone) {
+  const [kind, message] = outcome(form, rewritten, mine, spent, alone);
   setVerdict(kind, message);
   if (alone.same_call) {
     $("duel").className = "single";
@@ -504,9 +627,9 @@ function receiptHead(sub) {
   head.append(el("div", "r-title", "Halala"), el("div", "r-sub", sub));
   return head;
 }
-function receiptLines(question, form, rewritten, mine, spent, alone) {
+function receiptLines(question, form, leak, rewritten, mine, spent, alone) {
   number += 1;
-  const lines = [receiptHead("Receipt " + String(number).padStart(4, "0")), el("div", "r-rule"), text(question), line(["Form", NAMES[form]]), el("div", "r-rule")];
+  const lines = [receiptHead("Receipt " + String(number).padStart(4, "0")), el("div", "r-rule"), text(question), line(["Form", NAMES[form]]), line(["Leak", leak]), el("div", "r-rule")];
   if (alone.same_call) {
     lines.push(el("div", "r-label", "LEFT AS TYPED"), text(mine.text), verdict(mine.correct), line([mine.correct === false ? "Wasted" : "ALLaM", tokens(spent.tokens)]),
                el("div", "r-rule"), line(["TOTAL", tokens(spent.tokens)], "r-total"));
@@ -551,9 +674,10 @@ function lock(on) {
   busy = on;
   $("send").disabled = on;
   $("go").disabled = on;
-  document.querySelectorAll("#picks button").forEach(b => { b.disabled = on; });
+  $("goForms").disabled = on;
+  document.querySelectorAll("#picks button, #formPicks button").forEach(b => { b.disabled = on; });
 }
-async function askOne(question, answers = []) {
+async function askOne(question, answers = [], known = null) {
   if (busy || !question.trim()) return;
   lock(true);
   resetTrace();
@@ -564,15 +688,15 @@ async function askOne(question, answers = []) {
   let form, rewritten, mine, spent, alone;
   try {
     for await (const e of ask({ question, answers, paths: ["halala", "direct"] })) {
-      if (e.step === "form") { form = e.form; step("form", NAMES[e.form]); step("rewrite", "", "Working", "now"); }
+      if (e.step === "form") { form = e.form; step("form", NAMES[e.form], formNote(e.form, known)); step("rewrite", "", "Working", "now"); }
       else if (e.step === "rewrite") { rewritten = e.rewritten; step("rewrite", e.rewritten ? e.prompt : "Nothing to rewrite", e.rewritten ? "Rules and real Arabic words, with no model call" : ""); step("route", "", "Choosing", "now"); }
       else if (e.step === "route") { step("route", modelName(e.model), why(e, form)); step("answer", "", "Thinking", "now"); }
       else if (e.step === "answer") { mine = e; reply.textContent = e.text || "(no answer)"; $("thread").scrollTop = $("thread").scrollHeight; step("answer", e.text || "(no answer)", `${e.tokens} tokens, ${e.active_s.toFixed(1)} seconds of compute`); }
       else if (e.step === "spent") spent = e;
       else if (e.step === "direct") alone = e;
     }
-    showOutcome(rewritten, mine, spent, alone);
-    await print(receiptLines(question, form, rewritten, mine, spent, alone));
+    showOutcome(known || form, rewritten, mine, spent, alone);
+    await print(receiptLines(question, known || form, leakOf(form, known), rewritten, mine, spent, alone));
   } catch (error) {
     reply.textContent = "The model didn't answer.";
     step("answer", "", error.message, "fail");
@@ -751,9 +875,10 @@ function buildResults() {
   $("failed").replaceChildren(held, messy, failed);
 }
 async function runAll() {
-  if (busy) { stopping = true; return; }
+  if (busy) { if (performance.now() - runStarted > 600) stopping = true; return; }   // a double-click shouldn't stop the run
   if (!questions.length) { $("now").textContent = "No questions loaded. Is the server running?"; return; }
   stopping = false;
+  runStarted = performance.now();
   $("failed").hidden = true;
   $("meter").firstElementChild.style.width = "0";
   $("go").textContent = "Stop";
@@ -786,7 +911,7 @@ async function runAll() {
       draw(tally);
     }
     $("now").textContent = stopping ? "Stopped." : `All ${order.length} questions done.`;
-    if (!stopping) $("failed").hidden = false;
+    $("failed").hidden = false;
   } catch (error) {
     $("now").textContent = "The model didn't answer: " + error.message;
   }
@@ -794,12 +919,152 @@ async function runAll() {
   lock(false);
 }
 
+/* Dialects: one benchmark question asked in every form, then the saved run it comes from. */
+function formCard(form) {
+  const card = el("article", "side card"), who = el("div", "who"), asked = el("p", "fq", form.question);
+  card.id = "f-" + form.form;
+  asked.dir = "auto";
+  asked.title = form.question;
+  who.append(el("b", "", form.name), el("span", "mark-chip"));
+  card.append(who, asked, el("div", "ans none", "–"), el("div", "bill"));
+  return card;
+}
+function fillForm(reply) {
+  const card = $("f-" + reply.form), chip = card.querySelector(".mark-chip"), answer = card.querySelector(".ans"), bill = card.querySelector(".bill");
+  card.className = "side card reveal " + (reply.correct ? "right" : "wrong");
+  chip.className = "mark-chip " + (reply.correct ? "right" : "wrong");
+  chip.textContent = reply.correct ? "✓ RIGHT" : "✗ WRONG";
+  answer.textContent = reply.picked || "?";
+  answer.className = "ans";
+  answer.title = reply.text;
+  bill.replaceChildren(el("b", "", tokens(reply.tokens)), ` tokens${reply.correct ? "" : " wasted"}`);
+}
+function sumForms(replies) {
+  const right = replies.filter(r => r.correct).length, wasted = replies.reduce((sum, r) => sum + (r.correct ? 0 : r.tokens), 0);
+  if (right === replies.length) return `Right in all ${right} forms, so nothing was wasted on wrong answers here.`;
+  if (!right) return `Wrong in all ${replies.length} forms, so this one is just a hard question.`;
+  return `Right in ${right} of ${replies.length} forms, with ${tokens(wasted)} tokens wasted on the rest. Same question, same model, written ${replies.length} ways.`;
+}
+function showGroup() {
+  const group = benchGroups[groupAt], english = group.forms[0], options = el("ol");
+  english.choices.forEach((choice, i) => {
+    const key = LETTERS[i] === group.answer;
+    options.append(el("li", key ? "key" : "", `${LETTERS[i]}. ${choice}${key ? " ✓" : ""}`));
+  });
+  $("formQ").replaceChildren(el("h2", "", english.question), options);
+  $("formCards").replaceChildren(...group.forms.map(formCard));
+  $("formSum").textContent = "Ask ALLaM this question in all seven forms.";
+  $("whichQ").textContent = `Question ${groupAt + 1} of ${benchGroups.length}`;
+  document.querySelectorAll("#formPicks [data-group]").forEach(b => b.classList.toggle("on", b.dataset.group === group.group));
+}
+function moveGroup(by) {
+  if (busy) return;
+  groupAt = (groupAt + by + benchGroups.length) % benchGroups.length;
+  showGroup();
+}
+async function runForms() {
+  if (busy || !benchGroups.length) return;
+  showGroup();
+  lock(true);
+  $("formSum").textContent = "Asking ALLaM in every form...";
+  const replies = [];
+  let finished = false;
+  try {
+    for await (const e of stream("api/every-dialect", { group: benchGroups[groupAt].group })) {
+      if (e.step === "asking") {
+        const card = $("f-" + e.form);
+        card.classList.add("now");
+        card.querySelector(".bill").textContent = "Thinking";
+      } else if (e.step === "reply") {
+        replies.push(e);
+        fillForm(e);
+      } else if (e.step === "done") {
+        finished = true;
+      }
+    }
+    if (!finished) throw new Error("the run stopped early");
+    $("formSum").textContent = sumForms(replies);
+  } catch (error) {
+    $("formSum").textContent = "The model didn't answer: " + error.message;
+    document.querySelectorAll("#formCards .now").forEach(card => {
+      card.classList.remove("now");
+      card.querySelector(".bill").textContent = "";
+    });
+  }
+  lock(false);
+}
+function formPickButtons() {
+  const box = $("formPicks"), stepper = el("span", "stepper"), back = el("button", "", "‹"), forward = el("button", "", "›"), which = el("span");
+  box.replaceChildren(el("span", "", "In the saved run, right in English and formal Arabic, wrong in Saudi:"));
+  for (const [group, label] of FORM_PICKS) {
+    const at = benchGroups.findIndex(g => g.group === group);
+    if (at < 0) continue;
+    const button = el("button", "", label);
+    button.type = "button";
+    button.dataset.group = group;
+    button.onclick = () => { if (!busy) { groupAt = at; runForms(); } };
+    box.append(button);
+  }
+  which.id = "whichQ";
+  back.type = forward.type = "button";
+  back.setAttribute("aria-label", "Previous question");
+  forward.setAttribute("aria-label", "Next question");
+  back.onclick = () => moveGroup(-1);
+  forward.onclick = () => moveGroup(1);
+  stepper.append(back, which, forward);
+  box.append(stepper);
+  groupAt = Math.max(0, benchGroups.findIndex(g => g.group === FORM_PICKS[0][0]));
+  showGroup();
+}
+function drawScorecard() {
+  const card = SCORECARD[shownModel], english = card.right[0], lowest = Math.min(...card.right.slice(2));
+  $("benchTitle").textContent = `Right answers out of 100, on ${card.model} with no Halala`;
+  const head = el("div", "frow head");
+  head.append(el("span"), el("span"), el("span", "", "Right"), el("span", "", "Tax"));
+  const rows = BENCH_FORMS.map((name, i) => {
+    const row = el("div", "frow" + (i > 1 && card.right[i] === lowest ? " low" : "")), track = el("div", "ftrack"), fill = el("i"), mark = el("u");
+    fill.style.width = `${card.right[i]}%`;
+    mark.style.left = `${english}%`;
+    track.append(fill, mark);
+    row.append(el("span", "", name), track, el("b", "", String(card.right[i])), el("em", "", `${card.tax[i].toFixed(1)}×`));
+    row.title = `${name}: ${card.right[i]} of 100 right, ${card.tax[i].toFixed(1)} times the tokens for a right answer in English`;
+    return row;
+  });
+  const blanks = NICHE.map(name => {
+    const row = el("div", "frow none");
+    row.append(el("span", "", name), el("div", "ftrack", "not measured yet"));
+    return row;
+  });
+  $("formRows").replaceChildren(head, ...rows, ...blanks);
+}
+function drawTaxes() {
+  const table = el("table", "taxes"), head = el("tr");
+  head.append(el("th", "", "Model"), ...BENCH_FORMS.slice(1).map(name => el("th", "", name.replace("Formal Arabic", "Formal"))));
+  table.append(head);
+  SCORECARD.forEach((card, at) => {
+    const row = el("tr"), cell = el("td"), button = el("button", "", card.model);
+    button.type = "button";
+    button.setAttribute("aria-pressed", at === shownModel);
+    button.onclick = () => { shownModel = at; drawScorecard(); drawTaxes(); $("taxes").querySelectorAll("button")[at].focus(); };
+    cell.append(button);
+    row.append(cell);
+    card.tax.slice(1).forEach((tax, i) => {
+      const value = el("td", "", `${tax.toFixed(1)}×`);
+      value.style.background = `rgba(156, 90, 34, ${((tax - 1) / 1.2 * .5).toFixed(3)})`;
+      value.title = `${card.model}, ${BENCH_FORMS[i + 1]}: ${tax.toFixed(1)} times the tokens for a right answer in English`;
+      row.append(value);
+    });
+    table.append(row);
+  });
+  $("taxes").replaceChildren(table);
+}
+
 function show(view) {
-  const one = view === "one";
-  $("one").hidden = !one;
-  $("all").hidden = one;
-  $("tabOne").setAttribute("aria-selected", one);
-  $("tabAll").setAttribute("aria-selected", !one);
+  for (const [panel, tab] of [["one", "tabOne"], ["all", "tabAll"], ["dialects", "tabDialects"]]) {
+    $(panel).hidden = panel !== view;
+    $(tab).setAttribute("aria-selected", panel === view);
+  }
+  $("foot").textContent = view === "dialects" ? FOOT_BENCHMARK : footLive;
 }
 function pickButtons() {
   const box = $("picks");
@@ -810,17 +1075,17 @@ function pickButtons() {
     const button = el("button", "", q.question);
     button.type = "button";
     button.dir = "auto";
-    button.onclick = () => askOne(q.question, q.answers);
+    button.onclick = () => askOne(q.question, q.answers, q.form);
     box.append(button);
   }
-  const other = el("span", "label", "The same question, written another way");
+  const other = el("span", "label", "Days in a week, written another way");
   box.append(other);
   for (const form of ["en", "msa", "najdi", "mixed"]) {
     const q = questions.find(x => x.group === PICKS[0] && x.form === form);
     if (!q) continue;
     const button = el("button", "", NAMES[form]);
     button.type = "button";
-    button.onclick = () => askOne(q.question, q.answers);
+    button.onclick = () => askOne(q.question, q.answers, q.form);
     box.append(button);
   }
 }
@@ -833,9 +1098,15 @@ async function start() {
   drawTiles(null);
   buildResults();
   wireWaste();
+  drawScorecard();
+  drawTaxes();
+  footLive = $("foot").textContent;
+  $("formNote").textContent = `Picked by a fixed rule: the first questions that qualify, leaving out one with its text missing. One question is only an example: across the saved 100, ALLaM is right in English and wrong in Saudi on ${FLIPS.againstSaudi}, and the other way round on ${FLIPS.forSaudi}.`;
   $("tabOne").onclick = () => show("one");
   $("tabAll").onclick = () => show("all");
+  $("tabDialects").onclick = () => show("dialects");
   $("go").onclick = runAll;
+  $("goForms").onclick = runForms;
   $("ask").onsubmit = event => { event.preventDefault(); const value = $("q").value; $("q").value = ""; askOne(value); };
   try {
     info = await (await fetch("api/status")).json();
@@ -847,6 +1118,12 @@ async function start() {
   } catch {
     $("status").textContent = "Start demo/server.py first";
     $("status").className = "bad";
+  }
+  try {
+    benchGroups = (await (await fetch("api/benchmark")).json()).groups || [];
+    formPickButtons();
+  } catch {
+    $("formSum").textContent = "The benchmark didn't load. Restart demo/server.py.";
   }
 }
 start();

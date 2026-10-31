@@ -13,7 +13,7 @@ from collections import defaultdict
 
 from .config import resolve, run_dir
 from .data import Item, _unit, load_jsonl, write_jsonl
-from .models import build_models
+from .models import Completion, build_models
 from .pipeline import SYSTEM_MC, format_mc
 from .scoring import LETTERS, score
 
@@ -77,14 +77,21 @@ def wilson(wins: int, n: int, z: float = 1.96) -> tuple[float, float]:
     return max(0.0, centre - half), min(1.0, centre + half)
 
 
+def ask_item(model, item: Item) -> tuple[Completion, bool]:
+    """One benchmark question and whether the reply is right. The scorecard and the demo share this call, so the prompt and
+    the marking are the same, though a reply can still move between runs (runs/local_gemma/live_replay.md). It skips `steps`
+    on purpose: Halala's rewrite plays no part here, and `for_model` would change the prompt."""
+    c = model.complete(SYSTEM_MC, format_mc(item.question, item.choices), 0.0, 0, {"answer": item.answers[0]})
+    return c, score(c.text, item.answers, item.choices)
+
+
 def _audit(model, items: list[Item]) -> dict[str, list[dict]]:
     """Every question through one model, grouped by form. One model at a time, so it never swaps."""
     print(f"{model.name}: {len(items)} questions", flush=True)
     per_form: dict[str, list[dict]] = defaultdict(list)
     for item in items:
-        c = model.complete(SYSTEM_MC, format_mc(item.question, item.choices), 0.0, 0, {"answer": item.answers[0]})
-        per_form[item.variant].append({"correct": score(c.text, item.answers, item.choices),
-                                       "tokens": c.tokens_in + c.tokens_out})
+        c, correct = ask_item(model, item)
+        per_form[item.variant].append({"correct": correct, "tokens": c.tokens_in + c.tokens_out})
     return per_form
 
 

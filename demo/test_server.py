@@ -1,4 +1,4 @@
-"""Tests for the demo server, on mock models only. Nothing here reaches a real model.
+"""Tests for the demo server, on mock models and saved calls. Nothing here reaches a real model.
 
 Run from anywhere: python demo/test_server.py
 """
@@ -11,6 +11,7 @@ sys.dont_write_bytecode = True
 
 import http.client
 import json
+import re
 import threading
 import time
 import unittest
@@ -19,11 +20,13 @@ from unittest import mock
 
 import server
 
-from halala.config import load_config
-from halala.models import Completion, OllamaModel
-from halala.pipeline import SYSTEM_ANSWER
+from halala.config import load_config, resolve
+from halala.dialect_audit import FORMS, ask_item
+from halala.models import Completion, OllamaModel, build_models
+from halala.pipeline import SYSTEM_ANSWER, SYSTEM_MC, format_mc
 
 DEMO = Path(__file__).resolve().parent
+SHOWN_MODELS = {"allam-7b-q4-inst": "ALLaM 7B", "gemma3:4b": "Gemma 3 4B", "qwen2.5:7b": "Qwen 2.5 7B", "qwen2.5:1.5b": "Qwen 2.5 1.5B"}
 ARABIZI = "wesh 3asmat el sa3odiya?"
 ENGLISH = "What is the capital of Saudi Arabia?"
 FORMAL = "ما هي عاصمة المملكة العربية السعودية؟"
@@ -184,6 +187,36 @@ class HttpTest(ServerCase):
         self.assertEqual(self.request("POST", "/api/ask", b"{", {"Content-Type": "application/json"})[0], 400)
         self.assertEqual(self.request("POST", "/api/nope", b"{}", {"Content-Type": "application/json"})[0], 404)
 
+    def test_the_benchmark_comes_with_every_form_and_never_the_sealed_set(self):
+        code, body = self.request("GET", "/api/benchmark")
+        groups = json.loads(body)["groups"]
+        self.assertEqual(code, 200)
+        self.assertEqual(len(groups), 100)
+        self.assertTrue(all([f["form"] for f in g["forms"]] == list(FORMS) for g in groups))
+        self.assertTrue(all(g["group"].startswith("dmmlu-") for g in groups))
+
+    def test_every_dialect_asks_each_form_straight_and_marks_the_reply(self):
+        group, items = next(iter(self.server.demo.groups.items()))
+        key = items[0].answers[0]
+        for reply, right in ((key, True), ("ABCD"[("ABCD".index(key) + 1) % 4], False)):
+            self.server.demo.large = spy = Spy("large", reply=reply)
+            self.server.demo.last_call = time.monotonic()   # no pause, so no warm-up
+            code, body = self.request("POST", "/api/every-dialect", json.dumps({"group": group}), {"Content-Type": "application/json"})
+            events = [json.loads(line) for line in body.decode("utf-8").splitlines()]
+            replies = [e for e in events if e["step"] == "reply"]
+            self.assertEqual(code, 200)
+            self.assertEqual([r["form"] for r in replies], list(FORMS))
+            self.assertEqual(events[-1], {"step": "done"})
+            self.assertEqual(spy.seen, [(SYSTEM_MC, format_mc(it.question, it.choices)) for it in items])
+            self.assertEqual({r["picked"] for r in replies}, {reply})
+            self.assertEqual({r["correct"] for r in replies}, {right})
+            self.assertEqual({r["tokens"] for r in replies}, {12})
+
+    def test_every_dialect_refuses_anything_but_a_benchmark_question(self):
+        headers = {"Content-Type": "application/json"}
+        for raw in (b"{", b"[]", b"{}", b'{"group": "nope"}', b'{"group": ["a"]}'):
+            self.assertEqual(self.request("POST", "/api/every-dialect", raw, headers)[0], 400, raw)
+
     def test_a_second_server_cannot_take_the_same_port(self):
         with self.assertRaises(OSError):
             server.make_server(self.cfg(), self.port)
@@ -224,6 +257,42 @@ class HttpTest(ServerCase):
             arrivals[json.loads(line)["step"]] = time.perf_counter() - start
         self.assertLess(arrivals["asking"], 0.25)
         self.assertGreater(arrivals["answer"], 0.4)
+
+
+class TypedNumbersTest(unittest.TestCase):
+    """The Dialects tab types its saved numbers in, so they are checked against where they came from."""
+
+    page = (DEMO / "index.html").read_text(encoding="utf-8")
+
+    def scorecard_rows(self) -> dict[str, list[list[str]]]:
+        rows: dict[str, list[list[str]]] = {}
+        for row in (DEMO.parent / "runs/local_gemma/scorecard.md").read_text(encoding="utf-8").splitlines():
+            cells = [cell.strip() for cell in row.strip("|").split("|")]
+            if len(cells) == 8 and cells[0] in SHOWN_MODELS:
+                rows.setdefault(cells[0], []).append(cells[1:])
+        return rows
+
+    def test_the_scorecard_on_the_page_matches_the_saved_report(self):
+        for name, (right, tax) in self.scorecard_rows().items():
+            shown = f'{{ model: "{SHOWN_MODELS[name]}", right: [{", ".join(right)}], tax: [{", ".join(t.rstrip("x") for t in tax)}] }}'
+            self.assertIn(shown, self.page)
+
+    def test_the_picks_and_flips_on_the_page_replay_from_the_saved_calls(self):
+        cfg = load_config(resolve("configs/local_gemma.toml"))
+        with mock.patch.object(OllamaModel, "_call", side_effect=AssertionError("a real model call")):
+            _, large, cache = build_models(cfg)
+            self.addCleanup(cache.close)
+            right = {group: {it.variant: ask_item(large, it)[1] for it in items}
+                     for group, items in server.benchmark_groups().items()}
+        self.assertEqual({form: sum(forms[form] for forms in right.values()) for form in FORMS},
+                         dict(zip(FORMS, (58, 58, 46, 51, 53, 53, 54))))
+        against = sum(forms["ENG"] and not forms["KSA"] for forms in right.values())
+        back = sum(forms["KSA"] and not forms["ENG"] for forms in right.values())
+        self.assertIn(f"againstSaudi: {against}, forSaudi: {back}", self.page)
+        rule = [group for group, forms in right.items() if forms["ENG"] and forms["MSA"] and not forms["KSA"]]
+        rule.remove("dmmlu-high_school_psychology-35")   # its statements I, II and III are missing from the benchmark
+        picks = re.findall(r'\["(dmmlu-[^"]+)", "', self.page)
+        self.assertEqual(picks, rule[:len(picks)])
 
 
 if __name__ == "__main__":
