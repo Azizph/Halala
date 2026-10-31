@@ -4,8 +4,9 @@
 
 ## About
 
-**Halala**, the smallest unit of the Saudi riyal, measures what a correct AI answer costs for each way of writing Arabic, and
-brings that cost down. Challenge 2: Deliver AI with Less Compute.
+**Halala** is the smallest unit of the Saudi riyal, a coin that has almost left daily life because inflation made it too small to
+bother with. This project borrows the name for one goal: bringing the cost of a right AI answer back down to the halala, however you
+write. Challenge 2: Deliver AI with Less Compute.
 
 Built by Abdulaziz Althabit. This is a student entry, tested on a community build of ALLaM 7B, not Humain's served models, and
 it isn't endorsed by Humain.
@@ -16,33 +17,44 @@ it isn't endorsed by Humain.
 
 ### The issue
 
-Every AI answer costs compute, right or wrong, so the real price is the cost of a correct answer. That price depends on how you
-write. Ask ALLaM in English and a correct answer costs 1. Type the same question in Arabizi, Arabic in Latin letters and numbers
-like `wesh 3asmat el sa3odiya?`, and it costs about 8 times as much. Hard questions in Saudi dialect cost about 1.2 times.
+A shop that charged more for your accent would be a scandal, and most of the time you'd get the wrong order as well. That's close to
+what happens when people ask an AI the way they really write.
 
-That's the **Dialect Tax**, and average scores hide it. The usual way to save compute, sending work to a cheaper model, adds to
-it: Gemma 3 4B pays 1.5 to 1.9 times its English cost on Arabic, while ALLaM pays 1.0 to 1.2 times.
+Every AI answer costs compute, right or wrong, so the real price is the cost of a right answer. Call one right answer in English on
+ALLaM **1 halala**, a unit of compute, not money. Formal Arabic and Najdi cost about 1.1. Type the same question in Arabizi, Arabic in
+Latin letters and numbers like `wesh 3asmat el sa3odiya?`, and it costs about 8.
+
+That's the **Dialect Tax**: the extra you pay, and the wrong answers you get, for writing the way you speak. Average scores hide it.
+The usual way to save compute, sending work to a cheaper model, adds to it: Gemma 3 4B pays 1.5 to 1.9 times its English cost on
+Arabic, by tokens, while ALLaM pays 1.0 to 1.2 times.
+
+Arabizi itself is a habit from the old internet, when keyboards had no Arabic, so it's fair to ask why it matters. It's the clearest
+case of something much wider. On 100 hard questions from a public benchmark, ALLaM gets 58 right in English and 46 in Saudi dialect,
+where a right answer costs about 1.2 times as much, by tokens.
 
 ### The solution
 
-Halala is a thin layer in front of the model. It does three things:
+Halala is a thin layer in front of the model that works through the tax, leak by leak:
 
 1. **Measures the tax** for each way of writing, so a gap can't hide in an average.
-2. **Removes what it can before the model runs,** at no compute cost.
-3. **Spends compute only where it buys right answers,** and keeps Arabic on the model built for it.
+2. **Fixes the worst leak first,** before the model runs, with no model call.
+3. **Moves to the next,** with Arabic staying on ALLaM, the model built for it.
+
+This entry goes after one leak, Arabizi, because it's the worst and it's small enough to fix and test properly in a hackathon. Saudi
+and the other dialects come next. The goal is one halala, however you write.
 
 ### Results
 
 The Dialect Tax before and after Halala, on 55 sealed questions that nobody saw until one logged run. Each cell shows correct
-answers out of 11, then real seconds per correct answer as a multiple of English:
+answers out of 11, then what one right answer costs in halalas:
 
 | Way of writing | ALLaM alone | With Halala |
 |---|---|---|
-| English | 11, 1.0x | 11, 1.0x |
-| Formal Arabic | 10, 1.1x | 11, 1.0x |
-| Najdi | 10, 1.1x | 10, 1.1x |
-| Arabizi | 2, **8.1x** | 8, **1.5x** |
-| Mixed Arabic-English | 11, 1.0x | 11, 1.1x |
+| English | 11, 1.0 | 11, 1.0 |
+| Formal Arabic | 10, 1.1 | 11, 1.0 |
+| Najdi | 10, 1.1 | 10, 1.1 |
+| Arabizi | 2, **8.1** | 8, **1.5** |
+| Mixed Arabic-English | 11, 1.0 | 11, 1.1 |
 | **All 55** | **44 correct, 0.37 seconds each** | **51 correct, 0.30 seconds each** |
 
 **The saving is on Arabizi.** The other four forms cost about the same as ALLaM alone. Across all 55, total compute fell 5.7% and
@@ -97,7 +109,7 @@ and every answer's real cost is recorded.
 2. A realistic user asking the way they actually type.
 3. One question followed through the trace.
 4. The traffic stream, with the tax shrinking live.
-5. The before-and-after Dialect Tax table, including what didn't work.
+5. The before-and-after Dialect Tax table in halalas, including what didn't work.
 
 ---
 
@@ -106,11 +118,15 @@ and every answer's real cost is recorded.
 **Isn't this just a router?** Barely. The contribution is measuring the tax by form, and a free fix for the biggest gap. A learned
 router was tested and didn't earn its place.
 
+**Why does Arabizi matter at all?** On its own it's a habit from the old internet. It matters as the clearest case of a wider tax: the
+less your Arabic looks like a textbook, the more a right answer costs, and the less likely you are to get one. It's also the worst
+leak, and one that could be fixed and properly tested in a hackathon.
+
 **Does it save compute on every question?** No. The saving is on Arabizi. English and Arabic cost about what they did: Arabic stays
 on ALLaM on purpose, and English on the smaller model saved nothing when tested. The point is that compute is wasted unevenly, so the
 biggest leak can be found and closed for free. How much that saves overall depends on how much of the traffic is Arabizi.
 
-**Is the Dialect Tax fixed?** No. Arabizi still costs 1.5 times English on the sealed test, keeping Arabic on ALLaM avoids the
+**Is the Dialect Tax fixed?** No. Arabizi still costs 1.5 halalas on the sealed test, not 1, keeping Arabic on ALLaM avoids the
 cheap-model cost, and Saudi is still open.
 
 **How do you know the numbers aren't overfitted?** The test questions were sealed before development, and their hash shows they

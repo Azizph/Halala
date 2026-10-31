@@ -4,20 +4,26 @@ This is the only plan. If anything else disagrees with it, this file wins. The r
 
 ## The problem
 
-Every AI answer costs compute, right or wrong, so the real price is the cost of a correct answer. That price depends on how
-you write. Ask ALLaM in English and a correct answer costs 1. Type the same question in Arabizi and it costs about 8 times
-as much. Hard questions in Saudi dialect cost about 1.2 times.
+Every AI answer costs compute, right or wrong, so the real price is the cost of a right answer. Call one right answer in English
+on ALLaM 1 halala, a unit of compute, not money. Type the same question in Arabizi and it costs about 8. Hard questions in Saudi
+dialect cost about 1.2, by tokens.
 
-That's the **Dialect Tax**, and average scores hide it. The usual way to save compute, sending work to a cheaper model, adds to
-it: Gemma pays 1.5 to 1.9 times its English cost on Arabic.
+That's the **Dialect Tax**: the extra you pay, and the wrong answers you get, for writing the way you speak. Average scores hide it.
+The usual way to save compute, sending work to a cheaper model, adds to it: Gemma pays 1.5 to 1.9 times its English cost on Arabic,
+by tokens.
+
+The real halala has almost left daily life because of inflation. The goal is bringing the cost of a right answer back down to the
+halala, however you write. Arabizi is the first leak: a habit from the old internet, the worst case, and small enough to fix and test
+in a hackathon. The tax is wider: on 100 hard questions, ALLaM gets 58 right in English and 46 in Saudi dialect. Say why it matters
+to non-technical judges: a shop that charged more for your accent would be a scandal.
 
 ## The solution
 
-Halala is a thin layer in front of the model. It does three things:
+Halala is a thin layer in front of the model that works through the tax, leak by leak:
 
 1. **Measures the tax** for each way of writing, so a gap can't hide in an average.
-2. **Removes what it can before the model runs,** at no compute cost.
-3. **Spends compute only where it buys right answers,** and keeps Arabic on the model built for it.
+2. **Fixes the worst leak first,** before the model runs, with no model call.
+3. **Moves to the next,** with Arabic staying on ALLaM, the model built for it.
 
 ## How it works
 
@@ -61,13 +67,12 @@ screen: it's a unit of compute, not a real price.
 2. Show a realistic user asking the way they actually type.
 3. Follow one question through the trace.
 4. Run the traffic stream.
-5. End on the before-and-after Dialect Tax table, including what didn't work.
+5. End on the before-and-after Dialect Tax table in halalas, including what didn't work.
 
 If time allows, add one more thing: show that any app can point at Halala with a one-line change, which would make it feel like
 a product a Humain engineer could use.
 
-It reuses the live pipeline already in `demo/`, so about 3.5 hours looks realistic, though that pipeline has only been tested on
-mock models so far.
+It reuses the live pipeline already in `demo/`, which has run all 225 development questions on the real models.
 
 ## Checklist to 8pm
 
@@ -96,7 +101,7 @@ doesn't need to be technically exhaustive. Work top to bottom. Tick each item wi
 | [x] | Freeze: commit, check that a fresh clone gives the same numbers: every form's correct answers match, and so do all 30 unseen rewrites and results, at `f9d07d1` (02:35) | Lead, builder approves | 10:00 |
 | [x] | Run the sealed test once: 44 to 51 of 55, Arabizi 2 to 8 of 11, 18.5% less real compute per correct answer on a one-fifth Arabizi mix (02:40) | Lead | 10:30 |
 | [x] | Put the final numbers in `PROJECT_PAGE.md` and the console (02:50) | Lead | 11:00 |
-| [ ] | Build 8 to 10 slides | Lead | 12:30 |
+| [x] | Build 8 to 10 slides: 10 slides, at https://claude.ai/artifact/FgLv6W9gRVkkm28HAo48uQ, with the video link still to add on the last slide (03:50) | Lead | 12:30 |
 | [ ] | Record the video | Builder | 15:00 |
 | [ ] | Final check, commit and push | Lead, builder approves | 16:00 |
 | [ ] | Submit | Builder | 17:00 |
@@ -129,7 +134,6 @@ Ideas that aren't in the plan. They stay here unless the builder moves them onto
 
 - Open replies on the benchmark, to see if "reply with only the letter" causes part of the Saudi gap. It needs 100 fresh questions.
 - A retry of the Saudi word list on fresh questions, adding `ايش من الجاي` and `الي`.
-- Update `main` before submitting: it's GitHub's default branch and it's still at `c1bbe6f`, so a clone misses everything since.
 - `test_bad_requests_are_refused` in `demo/test_server.py` fails about one run in ten on Windows. The server refuses a bad address
   without reading the request, so the connection can reset. The console never sends one, so it's left alone after the freeze.
 - Rewrite misses left alone: an apostrophe typed for ع (`a'la`), `3ando` becoming `غاندو`, `3alam` read as world when it means flag,
