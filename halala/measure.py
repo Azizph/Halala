@@ -1,4 +1,4 @@
-"""What a correct answer really costs, by how the question was written: the Dialect Tax, in real seconds.
+"""What a correct answer really costs, by how the question was written: the Dialect Tax, in real seconds and tokens.
 
 `dialect-tax` shows the tax in each form before and after each fix, and `check` guards that table against regressions.
 `measure` shows what Halala does to mixed traffic. `sealed` is the one run on unseen questions. Seconds are the server's own
@@ -44,6 +44,7 @@ def _row(item, small, large, cfg: dict, alone: bool) -> dict:
     return {
         "variant": item.variant,
         "correct": score(result["text"], item.answers, item.choices),
+        "tokens_in": sum(c["tokens_in"] for c in calls),
         "tokens_out": sum(c["tokens_out"] for c in calls),
         "seconds": sum(c["latency_s"] for c in calls),
         "active_s": sum(c["active_s"] for c in calls),
@@ -55,22 +56,33 @@ def _per_correct(rows: list[dict]) -> float:
     return sum(r["active_s"] for r in rows) / max(1, sum(r["correct"] for r in rows))
 
 
+def _tokens_per_correct(rows: list[dict]) -> float:
+    """Tokens read and written per correct answer. They repeat exactly between runs, but they aren't compute: writing a token
+    costs far more than reading one, so the seconds stay beside them."""
+    return sum(r["tokens_in"] + r["tokens_out"] for r in rows) / max(1, sum(r["correct"] for r in rows))
+
+
 def _by_form(rows: list[dict]) -> dict:
-    """Correct answers in each form, and the tax: real seconds per correct answer as a multiple of English."""
+    """Correct answers in each form, and the tax: real seconds per correct answer as a multiple of English, then the same in tokens."""
     base = _per_correct([r for r in rows if r["variant"] == "en"]) or 1.0
+    token_base = _tokens_per_correct([r for r in rows if r["variant"] == "en"]) or 1.0
     forms = {}
     for variant in VARIANTS:
         group = [r for r in rows if r["variant"] == variant]
         if group:
             forms[variant] = {"correct": sum(r["correct"] for r in group), "n": len(group),
                               "seconds_per_correct": round(_per_correct(group), 3),
-                              "tax": round(_per_correct(group) / base, 2)}
+                              "tax": round(_per_correct(group) / base, 2),
+                              "tokens_per_correct": round(_tokens_per_correct(group), 1),
+                              "token_tax": round(_tokens_per_correct(group) / token_base, 2)}
     return forms
 
 
 def _tax_table(results: dict[str, list[dict]], intro: str) -> tuple[str, dict]:
     summary = {label: {"correct": sum(r["correct"] for r in rows), "n": len(rows),
-                       "seconds_per_correct": round(_per_correct(rows), 3), "forms": _by_form(rows)}
+                       "seconds_per_correct": round(_per_correct(rows), 3),
+                       "tokens": sum(r["tokens_in"] + r["tokens_out"] for r in rows),
+                       "tokens_per_correct": round(_tokens_per_correct(rows), 1), "forms": _by_form(rows)}
                for label, rows in results.items()}
     forms = list(next(iter(summary.values()))["forms"])
     lines = [f"{intro} Each form shows correct answers, then the tax: real seconds per correct answer as a multiple of "
@@ -79,6 +91,11 @@ def _tax_table(results: dict[str, list[dict]], intro: str) -> tuple[str, dict]:
     for label, row in summary.items():
         cells = [f"{row['forms'][f]['correct']}, {row['forms'][f]['tax']:.2f}x" for f in forms]
         lines.append(f"| {label} | {row['correct']} of {row['n']} | {row['seconds_per_correct']:.2f} | " + " | ".join(cells) + " |")
+    lines += ["", "The same runs in tokens read and written. Each form shows correct answers, then tokens per correct answer.", "",
+              "| Design | Correct | Tokens per correct | " + " | ".join(forms) + " |", "|---|---|---|" + "---|" * len(forms)]
+    for label, row in summary.items():
+        cells = [f"{row['forms'][f]['correct']}, {row['forms'][f]['tokens_per_correct']:.0f}" for f in forms]
+        lines.append(f"| {label} | {row['correct']} of {row['n']} | {row['tokens_per_correct']:.0f} | " + " | ".join(cells) + " |")
     return "\n".join(lines), summary
 
 
@@ -122,10 +139,11 @@ def cmd_fresh(cfg: dict, data: str) -> str:
     control = [_row(replace(it, question=it.meta["arabic"]), small, large, one_model, True) for it in items if "arabic" in it.meta]
     detected = sum(detect_variant(it.question) == "arabizi" for it in items)
     lines = [f"{len(items)} fresh Arabizi questions, written by a separate agent from published examples. Read by Halala as "
-             f"Arabizi: {detected} of {len(items)}. {NOISE}", "", "| Design | Correct | Seconds per correct |", "|---|---|---|"]
+             f"Arabizi: {detected} of {len(items)}. {NOISE}", "", "| Design | Correct | Seconds per correct | Tokens per correct |",
+             "|---|---|---|---|"]
     for label, rows in {**results, "ALLaM alone, the same questions in proper Arabic": control}.items():
         if rows:
-            lines.append(f"| {label} | {sum(r['correct'] for r in rows)} of {len(rows)} | {_per_correct(rows):.2f} |")
+            lines.append(f"| {label} | {sum(r['correct'] for r in rows)} of {len(rows)} | {_per_correct(rows):.2f} | {_tokens_per_correct(rows):.0f} |")
     lines += ["", "| Question | Rewrite | ALLaM alone | With Halala |", "|---|---|---|---|"]
     for it, before, after in zip(items, *results.values()):
         lines.append(f"| {it.question} | {prepare(it.question)[0]} | {'right' if before['correct'] else 'wrong'} | "

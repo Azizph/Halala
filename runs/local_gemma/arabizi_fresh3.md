@@ -1,10 +1,10 @@
 30 fresh Arabizi questions, written by a separate agent from published examples. Read by Halala as Arabizi: 29 of 30. Identical runs vary by up to about 20%, so small differences mean little.
 
-| Design | Correct | Seconds per correct |
-|---|---|---|
-| ALLaM alone | 1 of 30 | 21.00 |
-| With Halala | 24 of 30 | 0.39 |
-| ALLaM alone, the same questions in proper Arabic | 28 of 30 | 0.32 |
+| Design | Correct | Seconds per correct | Tokens per correct |
+|---|---|---|---|
+| ALLaM alone | 1 of 30 | 25.49 | 1944 |
+| With Halala | 24 of 30 | 0.50 | 60 |
+| ALLaM alone, the same questions in proper Arabic | 28 of 30 | 0.44 | 52 |
 
 | Question | Rewrite | ALLaM alone | With Halala |
 |---|---|---|---|

@@ -4,9 +4,9 @@ This is the only plan. If anything else disagrees with it, this file wins. The r
 
 ## The problem
 
-Every AI answer costs compute, right or wrong, so the real price is the cost of a right answer. Call one right answer in English
-on ALLaM 1 halala, a unit of compute, not money. Type the same question in Arabizi and it costs about 8. Hard questions in Saudi
-dialect cost about 1.2, by tokens.
+Every AI answer costs tokens, right or wrong, so the real price is the cost of a right answer. On sealed questions, a right answer
+in English takes ALLaM about 50 tokens. Type the same question in Arabizi and it takes 317. Hard questions in Saudi dialect cost
+about 1.2 times English.
 
 That's the **Dialect Tax**: the extra you pay, and the wrong answers you get, for writing the way you speak. Average scores hide it.
 The usual way to save compute, sending work to a cheaper model, adds to it: Gemma pays 1.5 to 1.9 times its English cost on Arabic,
@@ -32,19 +32,20 @@ of real Arabic words, with no model call. Arabic goes to ALLaM. English can go t
 both, though that setting is off in every result here and saved nothing when tested. A free check catches empty or refused answers,
 and every answer's real cost is recorded.
 
-**Where that leaves the tax:** on the sealed test, 55 questions nobody saw until one logged run, Arabizi goes from 2 to 8 of 11
-correct, and its tax from 8.1 times English to 1.5 times (`runs/local_gemma/sealed.md`). Each form has only 11 questions there, so
-those figures are rough. **The saving is on Arabizi alone.** English and Arabic cost about what they did, because Arabic stays on
-ALLaM on purpose and English on the smaller model saved nothing when tested (`runs/local_gemma/english_small_model.md`). Across all
-55, right answers rise from 44 to 51 and total compute falls 5.7%, so compute per correct answer is 18.5% lower on a test that's
-one-fifth Arabizi. That figure follows the share of Arabizi in the traffic: about 10% at a tenth, and 5% at a twentieth. On 30 other
-Arabizi questions nobody had seen, ALLaM alone gets 1 right and Halala gets 24, against 28 of 30 when the same questions are written in
+**Where that leaves the tax:** on the sealed test, 55 questions tested once, Arabizi goes from 2 to 8 of 11 correct, and from 317 to
+64 tokens per right answer, against 50 in English (`runs/local_gemma/sealed.md`). Each form has only 11 questions there, so those
+figures are rough. Tokens repeat exactly but they aren't compute, so keep real seconds one layer down: Arabizi's tax goes from 8.1
+times English to 1.5 times, and seconds per right answer fall 18.5%. **The saving is on Arabizi alone.** English and Arabic cost about
+what they did, because Arabic stays on ALLaM on purpose and English on the smaller model saved nothing when tested
+(`runs/local_gemma/english_small_model.md`). Across all 55, right answers rise from 44 to 51 and total tokens fall 4.5%, so tokens per
+right answer are 17.5% lower on a test that's one-fifth Arabizi. That figure follows the share of Arabizi in the traffic: about 10%
+at a tenth, and about 6% at a twentieth. On 30 other Arabizi questions nobody had seen, ALLaM alone gets 1 right and Halala gets 24, against 28 of 30 when the same questions are written in
 proper Arabic (`runs/local_gemma/arabizi_fresh3.md`). That batch looks easier than the one before it, because the previous rewrite
 got 23 there and 18 on the earlier one. Without its list of real words, this rewrite gets 14 (`runs/local_gemma/arabizi_parts.md`).
-On the development questions, which the rewrite was built on, Arabizi goes from 8 to 38 of 45 correct, and right answers across all
-225 rise from 179 to 208 (`runs/local_gemma/dialect_tax.md`), with compute per correct answer about 28% lower on the same one-fifth
-mix once the machine's speed changes are taken out (`runs/local_gemma/compute_drift.md`). Lead with Arabizi's tax on the sealed test,
-and only quote an overall saving with its traffic mix. Keeping Arabic on ALLaM avoids the cheap-model cost. The Arabizi gap is
+On the development questions, which the rewrite was built on, Arabizi goes from 8 to 38 of 45 correct and from 327 to 55 tokens per
+right answer, and right answers across all 225 rise from 179 to 208 (`runs/local_gemma/dialect_tax.md`), with real compute per right
+answer about 28% lower on the same one-fifth mix once the machine's speed changes are taken out (`runs/local_gemma/compute_drift.md`).
+Lead with Arabizi's tokens on the sealed test, and only quote an overall saving with its traffic mix. Keeping Arabic on ALLaM avoids the cheap-model cost. The Arabizi gap is
 smaller, not closed, and the Saudi gap is still open.
 
 ## The demo
@@ -54,12 +55,11 @@ The old one explained Halala like a slideshow. The new one lets you watch the ta
 - **The Halala console:** an ordinary chat box on the left and a live trace in the middle, showing form detected, rewrite, model
   chosen and answer.
 - **A receipt for every answer:** this is the idea to lead with, because it fits the name. Each answer prints a receipt of what
-  it cost against the same question unaided, and wrong answers show up as money wasted. Anyone understands a receipt.
+  it cost against the same question unaided, and wrong answers show up as tokens wasted. Anyone understands a receipt.
 - **The big moment:** press one button and a stream of mixed questions runs through ALLaM alone and Halala side by side. Bars for
   each form build up live, and Arabizi's bar visibly drops. It's scale you can see, not one hand-picked example.
 
-Receipts are priced in halalas, where 1 halala is what a correct English answer costs ALLaM, measured in real seconds. Say so on
-screen: it's a unit of compute, not a real price.
+Receipts are in tokens, real counts from the server. Say on screen what a token is: the pieces of text an AI reads and writes.
 
 ### The video
 
@@ -67,7 +67,7 @@ screen: it's a unit of compute, not a real price.
 2. Show a realistic user asking the way they actually type.
 3. Follow one question through the trace.
 4. Run the traffic stream.
-5. End on the before-and-after Dialect Tax table in halalas, including what didn't work.
+5. End on the before-and-after Dialect Tax table in tokens, including what didn't work.
 
 If time allows, add one more thing: show that any app can point at Halala with a one-line change, which would make it feel like
 a product a Humain engineer could use.
@@ -99,7 +99,7 @@ doesn't need to be technically exhaustive. Work top to bottom. Tick each item wi
 | [x] | Second rewrite round: fix the general misses, then run it once on a new blind batch. It stays: 23 to 24 of 30 blind, 74% to 80% of the target words, 37 to 38 of 45 on development questions, and no form lost (02:10) | Lead, agent | 08:00 |
 | [x] | Check the 60 blind questions, the 15 fresh ones and the console's Arabic, and say whether the dataset was hand-checked and whether pre-written code is allowed: all passed, the dataset was hand-checked, and earlier code is allowed (02:25) | Builder | 09:00 |
 | [x] | Freeze: commit, check that a fresh clone gives the same numbers: every form's correct answers match, and so do all 30 unseen rewrites and results, at `f9d07d1` (02:35) | Lead, builder approves | 10:00 |
-| [x] | Run the sealed test once: 44 to 51 of 55, Arabizi 2 to 8 of 11, 18.5% less real compute per correct answer on a one-fifth Arabizi mix (02:40) | Lead | 10:30 |
+| [x] | Run the sealed test once: 44 to 51 of 55, Arabizi 2 to 8 of 11, 18.5% less real compute per correct answer on a one-fifth Arabizi mix (02:40). The builder had it reopened once to count tokens, replaying saved answers with new calls blocked, and it matched exactly (04:12) | Lead | 10:30 |
 | [x] | Put the final numbers in `PROJECT_PAGE.md` and the console (02:50) | Lead | 11:00 |
 | [x] | Build 8 to 10 slides: 10 slides, at https://claude.ai/artifact/FgLv6W9gRVkkm28HAo48uQ, with the video link still to add on the last slide (03:50) | Lead | 12:30 |
 | [ ] | Record the video | Builder | 15:00 |
@@ -134,6 +134,10 @@ Ideas that aren't in the plan. They stay here unless the builder moves them onto
 
 - Open replies on the benchmark, to see if "reply with only the letter" causes part of the Saudi gap. It needs 100 fresh questions.
 - A retry of the Saudi word list on fresh questions, adding `ايش من الجاي` and `الي`.
+- A Dialect Tax scorecard across models: `dialect-audit` on more of the installed models, with no new data needed.
+- A short test of telling the model which dialect it's reading, as a first step on the Saudi leak.
+- An answer memory shared across forms looks weak: rewritten Arabizi matches the proper Arabic exactly on only 6 of 30 unseen
+  questions, and no other pair of forms matched.
 - `test_bad_requests_are_refused` in `demo/test_server.py` fails about one run in ten on Windows. The server refuses a bad address
   without reading the request, so the connection can reset. The console never sends one, so it's left alone after the freeze.
 - Rewrite misses left alone: an apostrophe typed for ع (`a'la`), `3ando` becoming `غاندو`, `3alam` read as world when it means flag,

@@ -20,9 +20,9 @@ it isn't endorsed by Humain.
 A shop that charged more for your accent would be a scandal, and most of the time you'd get the wrong order as well. That's close to
 what happens when people ask an AI the way they really write.
 
-Every AI answer costs compute, right or wrong, so the real price is the cost of a right answer. Call one right answer in English on
-ALLaM **1 halala**, a unit of compute, not money. Formal Arabic and Najdi cost about 1.1. Type the same question in Arabizi, Arabic in
-Latin letters and numbers like `wesh 3asmat el sa3odiya?`, and it costs about 8.
+Every AI answer costs tokens, the pieces of text it reads and writes, right or wrong, so the real price is the cost of a right answer.
+On questions nobody had seen, a right answer in English takes ALLaM about 50 tokens, and formal Arabic and Najdi take about the same.
+Type the question in Arabizi, Arabic in Latin letters and numbers like `wesh 3asmat el sa3odiya?`, and it takes 317.
 
 That's the **Dialect Tax**: the extra you pay, and the wrong answers you get, for writing the way you speak. Average scores hide it.
 The usual way to save compute, sending work to a cheaper model, adds to it: Gemma 3 4B pays 1.5 to 1.9 times its English cost on
@@ -45,29 +45,32 @@ and the other dialects come next. The goal is one halala, however you write.
 
 ### Results
 
-The Dialect Tax before and after Halala, on 55 sealed questions that nobody saw until one logged run. Each cell shows correct
-answers out of 11, then what one right answer costs in halalas:
+The Dialect Tax before and after Halala, on 55 sealed questions that nobody saw until one logged test. Each cell shows correct
+answers out of 11, then tokens for one right answer:
 
 | Way of writing | ALLaM alone | With Halala |
 |---|---|---|
-| English | 11, 1.0 | 11, 1.0 |
-| Formal Arabic | 10, 1.1 | 11, 1.0 |
-| Najdi | 10, 1.1 | 10, 1.1 |
-| Arabizi | 2, **8.1** | 8, **1.5** |
-| Mixed Arabic-English | 11, 1.0 | 11, 1.1 |
-| **All 55** | **44 correct, 0.37 seconds each** | **51 correct, 0.30 seconds each** |
+| English | 11, 50 | 11, 50 |
+| Formal Arabic | 10, 52 | 11, 48 |
+| Najdi | 10, 51 | 10, 51 |
+| Arabizi | 2, **317** | 8, **64** |
+| Mixed Arabic-English | 11, 47 | 11, 47 |
+| **All 55** | **44 correct, 62 tokens each** | **51 correct, 51 tokens each** |
 
-**The saving is on Arabizi.** The other four forms cost about the same as ALLaM alone. Across all 55, total compute fell 5.7% and
-right answers rose from 44 to 51, which makes compute per correct answer 18.5% lower. That figure depends on the traffic: a fifth of
-these questions are Arabizi, and it falls to about 10% if a tenth are, and 5% if a twentieth are. With 11 questions in each form, one
+**The saving is on Arabizi.** The other four forms cost about the same as ALLaM alone. Across all 55, total tokens fell 4.5% and right
+answers rose from 44 to 51, which makes tokens per right answer 17.5% lower. That figure depends on the traffic: a fifth of these
+questions are Arabizi, and it falls to about 10% if a tenth are, and about 6% if a twentieth are. With 11 questions in each form, one
 question moves a form by 9%, so the form figures are rough.
 
-On 30 more Arabizi questions, written blind by a separate agent that never saw the code, ALLaM got 1 right as typed and Halala got
-24, against 28 in proper Arabic. Without its list of real Arabic words, Halala got 14. That batch looks easier than the one before
-it, because the previous version of the rewrite got 23 there and 18 on the earlier one.
+Tokens repeat exactly between runs, but they aren't compute, because writing a token costs far more than reading one. Real seconds
+tell the same story: Arabizi went from 8.1 to 1.5 times English, and seconds per right answer fell 18.5% on this test.
 
-On the 225 development questions, right answers rise from 179 to 208, and Arabizi from 8 to 38 of 45. The rewrite was built on those
-questions, so they overstate it.
+On 30 more Arabizi questions, written blind by a separate agent that never saw the code, ALLaM got 1 right as typed and Halala got
+24, at 60 tokens per right answer, against 28 in proper Arabic at 52. Without its list of real Arabic words, Halala got 14. That batch
+looks easier than the one before it, because the previous version of the rewrite got 23 there and 18 on the earlier one.
+
+On the 225 development questions, right answers rise from 179 to 208, and Arabizi from 8 to 38 of 45, at 327 tokens per right answer
+down to 55. The rewrite was built on those questions, so they overstate it.
 
 ---
 
@@ -81,13 +84,14 @@ and every answer's real cost is recorded.
 **How it was tested**
 
 - **Unseen questions:** the same 56 hand-checked questions in five forms, with 11 of them sealed before development. A hash proves
-  they didn't change, and every opening is logged. They were opened once.
+  they didn't change, and every opening is logged. They were tested once, and reopened once afterwards to count tokens from the saved
+  answers, with no new model calls.
 - **Blind Arabizi:** 60 questions in two batches, written by a separate agent that never saw the code. Each batch ran once on a
   frozen rewrite, under a keep-or-drop rule set beforehand.
 - **Outside benchmark:** 100 hard questions from MBZUAI's Dialectal Arabic MMLU, in 7 forms, on both models. Nobody on this project
   wrote them.
-- **Real measurements:** seconds come from the server's own clock, and failed attempts count as spend. The machine's speed drifts
-  between runs, and the sealed run replays identical prompts from a cache, which keeps that drift out of most of its comparison.
+- **Real measurements:** token counts and seconds both come from the server, and failed attempts count as spend. The machine's speed
+  drifts between runs, and the sealed run replays identical prompts from a cache, which keeps that drift out of most of its comparison.
 - **Tests and checks:** unit tests on mock models, a regression check on the tax table, and a fresh clone that reproduced every
   correct-answer count.
 
@@ -109,7 +113,7 @@ and every answer's real cost is recorded.
 2. A realistic user asking the way they actually type.
 3. One question followed through the trace.
 4. The traffic stream, with the tax shrinking live.
-5. The before-and-after Dialect Tax table in halalas, including what didn't work.
+5. The before-and-after Dialect Tax table in tokens, including what didn't work.
 
 ---
 
@@ -126,8 +130,8 @@ leak, and one that could be fixed and properly tested in a hackathon.
 on ALLaM on purpose, and English on the smaller model saved nothing when tested. The point is that compute is wasted unevenly, so the
 biggest leak can be found and closed for free. How much that saves overall depends on how much of the traffic is Arabizi.
 
-**Is the Dialect Tax fixed?** No. Arabizi still costs 1.5 halalas on the sealed test, not 1, keeping Arabic on ALLaM avoids the
-cheap-model cost, and Saudi is still open.
+**Is the Dialect Tax fixed?** No. Arabizi still takes 64 tokens per right answer on the sealed test, against 50 in English, keeping
+Arabic on ALLaM avoids the cheap-model cost, and Saudi is still open.
 
 **How do you know the numbers aren't overfitted?** The test questions were sealed before development, and their hash shows they
 didn't change. The questions were written by the same person as the rules, so blind Arabizi was tested too. The first test showed
@@ -136,6 +140,10 @@ hadn't seen.
 
 **What was the biggest mistake?** Ollama silently ran ALLaM with the wrong prompt format, which invalidated the early numbers. Later,
 real measurement overturned a token estimate that made one design look cheapest.
+
+**Why report tokens, when a token estimate misled you?** That was an estimate. These are real counts from the server. Tokens are how
+AI is priced and they repeat exactly between runs, so they're the clearest unit to show. They still aren't compute, so real seconds sit
+beside them, and design choices were made on seconds.
 
 **What doesn't this show?** These results use a community build of ALLaM 7B, not Humain's served models. The test sets are small, so
 a difference of a few points can be noise. Arabizi may do worse on words the lists don't hold.

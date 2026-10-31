@@ -95,14 +95,6 @@ def run_question(question: str, answers: list[str], paths: tuple[str, ...] | lis
     yield {"step": "done"}
 
 
-def halala_seconds(cfg: dict) -> float | None:
-    """The receipt's unit: real seconds for one correct English answer on ALLaM alone, from the last dialect-tax run."""
-    path = resolve(cfg["run"]["out_dir"]) / cfg["run"]["name"] / "dialect_tax.json"
-    if not path.exists():
-        return None
-    return json.loads(path.read_text(encoding="utf-8"))["ALLaM alone"]["forms"]["en"]["seconds_per_correct"]
-
-
 class Demo:
     """What the request handlers share. One GPU, so one question at a time."""
 
@@ -129,7 +121,6 @@ class Demo:
             "models": {tier: models[tier]["name"] for tier in TIERS},
             "route_english": self.cfg["cascade"]["route_english"],
             "instruction": SYSTEM_ANSWER,
-            "halala_seconds": halala_seconds(self.cfg),
         }
 
     def run(self, question: str, answers: list[str], paths: list[str]) -> Iterator[dict]:

@@ -19,7 +19,7 @@ The tests use mock models. For real answers, install [Ollama](https://ollama.com
 | Command | What it does |
 |---|---|
 | `python -m halala ask "wesh 3asmat el sa3odiya?"` | Sends one question through Halala and prints each step |
-| `python -m halala dialect-tax` | Real seconds per correct answer by form, before and after each fix |
+| `python -m halala dialect-tax` | Tokens and real seconds per correct answer by form, before and after each fix |
 | `python -m halala fresh --data data/arabizi_fresh3.jsonl` | Arabizi on questions nobody tuned on, against the same questions in proper Arabic |
 | `python -m halala check` | Fails if any form's correct answers fall below the saved baseline |
 | `python -m halala measure` | ALLaM alone against Halala on mixed traffic |

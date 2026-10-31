@@ -3,36 +3,48 @@
     "correct": 44,
     "n": 55,
     "seconds_per_correct": 0.368,
+    "tokens": 2741,
+    "tokens_per_correct": 62.3,
     "forms": {
       "en": {
         "correct": 11,
         "n": 11,
         "seconds_per_correct": 0.268,
-        "tax": 1.0
+        "tax": 1.0,
+        "tokens_per_correct": 49.9,
+        "token_tax": 1.0
       },
       "msa": {
         "correct": 10,
         "n": 11,
         "seconds_per_correct": 0.297,
-        "tax": 1.11
+        "tax": 1.11,
+        "tokens_per_correct": 52.4,
+        "token_tax": 1.05
       },
       "najdi": {
         "correct": 10,
         "n": 11,
         "seconds_per_correct": 0.298,
-        "tax": 1.11
+        "tax": 1.11,
+        "tokens_per_correct": 51.4,
+        "token_tax": 1.03
       },
       "arabizi": {
         "correct": 2,
         "n": 11,
         "seconds_per_correct": 2.177,
-        "tax": 8.12
+        "tax": 8.12,
+        "tokens_per_correct": 317.0,
+        "token_tax": 6.35
       },
       "mixed": {
         "correct": 11,
         "n": 11,
         "seconds_per_correct": 0.27,
-        "tax": 1.01
+        "tax": 1.01,
+        "tokens_per_correct": 47.3,
+        "token_tax": 0.95
       }
     }
   },
@@ -40,36 +52,48 @@
     "correct": 51,
     "n": 55,
     "seconds_per_correct": 0.3,
+    "tokens": 2619,
+    "tokens_per_correct": 51.4,
     "forms": {
       "en": {
         "correct": 11,
         "n": 11,
         "seconds_per_correct": 0.268,
-        "tax": 1.0
+        "tax": 1.0,
+        "tokens_per_correct": 49.9,
+        "token_tax": 1.0
       },
       "msa": {
         "correct": 11,
         "n": 11,
         "seconds_per_correct": 0.272,
-        "tax": 1.01
+        "tax": 1.01,
+        "tokens_per_correct": 47.6,
+        "token_tax": 0.95
       },
       "najdi": {
         "correct": 10,
         "n": 11,
         "seconds_per_correct": 0.303,
-        "tax": 1.13
+        "tax": 1.13,
+        "tokens_per_correct": 51.3,
+        "token_tax": 1.03
       },
       "arabizi": {
         "correct": 8,
         "n": 11,
         "seconds_per_correct": 0.397,
-        "tax": 1.48
+        "tax": 1.48,
+        "tokens_per_correct": 64.5,
+        "token_tax": 1.29
       },
       "mixed": {
         "correct": 11,
         "n": 11,
         "seconds_per_correct": 0.287,
-        "tax": 1.07
+        "tax": 1.07,
+        "tokens_per_correct": 47.0,
+        "token_tax": 0.94
       }
     }
   }
