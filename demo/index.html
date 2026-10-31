@@ -4,119 +4,249 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Halala console</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Ccircle cx='100' cy='100' r='98' fill='%239C5A22'/%3E%3Cpath d='M84 34 A25 25 0 0 0 84 84 A41 41 0 0 0 84 166' fill='none' stroke='%23FAFAF8' stroke-width='18' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M116 34 A25 25 0 0 1 116 84 A41 41 0 0 1 116 166' fill='none' stroke='%23FAFAF8' stroke-width='18' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Readex+Pro:wght@300..700&display=swap">
 <style>
 :root {
-  --counter: #efe7d8; --paper: #fffdf7; --ink: #1d1b18; --muted: #675f50; --line: #d6ccb8;
-  --right: #0d6a4f; --wrong: #b23327; --coin: #a4602a; --alone: #8d8676; --panel: #f8f3e8;
-  --mono: "Cascadia Mono", Consolas, "Courier New", monospace;
-  --sans: "Segoe UI", Tahoma, system-ui, sans-serif;
+  --ink: #16140F; --ink-soft: #5F5B54; --page: #F5F1E8; --card: #FFFFFF; --sunk: #EFEBE3;
+  --line: #E3DED4; --line-strong: #C9BFAE;
+  --bronze: #9C5A22; --bronze-text: #8A4E1C; --bronze-hover: #6E3F17; --bronze-on-dark: #C98A4B;
+  --cream: #F3EFE6; --muted-on-dark: #A8A399; --line-on-dark: #3A362E; --raised-on-dark: #26231C;
+  --alone: #A0978A; --wrong: #B23327; --wrong-tint: #F9EAE6; --right: #1F5C4A; --right-tint: #E4F0EA;
+  --sans: "Readex Pro", "Segoe UI", Tahoma, system-ui, sans-serif;
+  --mono: "IBM Plex Mono", "Cascadia Mono", Consolas, monospace;
 }
 * { box-sizing: border-box; }
 html, body { height: 100%; }
-body { margin: 0; background: var(--counter); color: var(--ink); font: 17px/1.45 var(--sans); display: flex; flex-direction: column; }
+body { margin: 0; background: var(--page); color: var(--ink); font: 400 16px/1.5 var(--sans); display: flex; flex-direction: column; }
 button, input { font: inherit; color: inherit; }
-button { cursor: pointer; border: 1px solid var(--line); background: var(--paper); border-radius: 8px; padding: 8px 14px; }
-button:hover:not(:disabled) { border-color: var(--ink); }
+button { cursor: pointer; border: 1px solid var(--line-strong); background: var(--card); border-radius: 10px; padding: 8px 14px; min-height: 40px; }
+button:hover:not(:disabled) { border-color: var(--bronze); }
 button:disabled { opacity: .55; cursor: default; }
-:focus-visible { outline: 3px solid var(--coin); outline-offset: 2px; }
-[dir=auto] { unicode-bidi: plaintext; }
+:focus-visible { outline: 3px solid var(--bronze-on-dark); outline-offset: 2px; }
+[dir=auto] { unicode-bidi: plaintext; text-align: start; }
+h1, h2, h3, p, figure { margin: 0; }
 
-header { display: flex; align-items: center; gap: 28px; padding: 12px 28px; background: var(--ink); color: var(--paper); flex-wrap: wrap; }
-.brand { display: flex; align-items: center; gap: 12px; }
-.coin { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: var(--coin); color: var(--paper); font-weight: 700; font-size: 20px; }
-.brand b { font-size: 22px; }
-.brand span.line { color: #cfc6b4; }
-nav { display: flex; gap: 6px; margin-inline-start: auto; }
-nav button { background: transparent; color: var(--paper); border-color: #5c564b; }
-nav button[aria-selected=true] { background: var(--paper); color: var(--ink); border-color: var(--paper); }
-#status { font-size: 15px; padding: 6px 12px; border-radius: 999px; background: #3a362f; }
-#status.live { background: var(--right); }
-#status.bad { background: var(--wrong); }
+body > header { display: flex; align-items: center; gap: 24px; padding: 10px 28px; background: var(--ink); color: var(--cream); flex-wrap: wrap; }
+.brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.mark { width: 38px; height: 38px; flex: none; display: block; }
+.brand b { font-size: 22px; font-weight: 600; letter-spacing: -.02em; line-height: 1; }
+.brand .pip { width: 5px; height: 5px; border-radius: 50%; background: var(--bronze-on-dark); }
+.brand .ar { font-size: 24px; font-weight: 600; line-height: 1; }
+.brand .line { color: var(--muted-on-dark); font-size: 15px; margin-inline-start: 12px; }
+nav { display: flex; gap: 4px; margin-inline-start: auto; padding: 4px; border-radius: 13px; background: var(--raised-on-dark); }
+nav button { border: 0; background: transparent; color: var(--muted-on-dark); padding: 7px 18px; border-radius: 10px; font-weight: 500; }
+nav button:hover:not(:disabled) { color: var(--cream); }
+nav button[aria-selected=true] { background: var(--cream); color: var(--ink); }
+#status { display: flex; align-items: center; gap: 8px; font: 500 14px var(--mono); padding: 7px 14px; border-radius: 999px; border: 1px solid var(--line-on-dark); color: var(--cream); }
+#status::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--muted-on-dark); }
+#status.live::before { background: #6FC29A; }
+#status.bad { background: var(--wrong); border-color: var(--wrong); }
+#status.bad::before { background: var(--cream); }
 
 main { flex: 1; min-height: 0; }
-#one { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr) minmax(0, .95fr); }
-section { min-width: 0; padding: 22px 26px; display: flex; flex-direction: column; min-height: 0; }
-h2 { margin: 0 0 14px; font-size: 15px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+main[hidden] { display: none !important; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; }
+.eyebrow { font: 500 13px var(--mono); letter-spacing: .05em; text-transform: uppercase; color: var(--bronze-text); }
 
-#thread { flex: 1; overflow: auto; display: flex; flex-direction: column; gap: 12px; padding-bottom: 12px; min-height: 120px; }
-.bubble { max-width: 92%; padding: 12px 16px; border-radius: 14px; background: var(--paper); border: 1px solid var(--line); overflow-wrap: anywhere; font-size: 20px; }
-.bubble.you { align-self: flex-end; background: var(--ink); color: var(--paper); border-color: var(--ink); }
-.empty { color: var(--muted); margin: auto; text-align: center; max-width: 30ch; }
-#picks { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
-#picks button { font-size: 15px; padding: 6px 12px; max-width: 100%; overflow-wrap: anywhere; text-align: start; }
-#picks .label { width: 100%; font-size: 14px; color: var(--muted); }
+#one { display: grid; grid-template-columns: minmax(280px, 380px) minmax(0, 1fr) minmax(300px, 370px); gap: 16px; padding: 16px 20px; }
+#one > section { min-width: 0; min-height: 0; display: flex; flex-direction: column; }
+
+#chat { padding: 16px; gap: 12px; }
+#thread { flex: 1; overflow: auto; display: flex; flex-direction: column; gap: 10px; min-height: 120px; }
+.bubble { width: fit-content; max-width: 92%; padding: 10px 15px; border-radius: 14px; background: var(--sunk); overflow-wrap: anywhere; font-size: 18px; line-height: 1.4; }
+.bubble.you { align-self: flex-end; background: var(--ink); color: var(--cream); }
+.empty { color: var(--ink-soft); margin: auto; text-align: center; max-width: 28ch; }
+#picks { display: flex; flex-wrap: wrap; gap: 6px; }
+#picks button { font-size: 15px; padding: 5px 11px; max-width: 100%; overflow-wrap: anywhere; text-align: start; min-height: 36px; }
+#picks .label { width: 100%; font-size: 14px; color: var(--ink-soft); margin-top: 4px; }
 form { display: flex; gap: 8px; }
-form input { flex: 1; min-width: 0; padding: 12px 14px; border-radius: 8px; border: 1px solid var(--line); background: var(--paper); }
-form button { background: var(--ink); color: var(--paper); border-color: var(--ink); padding: 12px 20px; }
+form input { flex: 1; min-width: 0; padding: 10px 14px; border-radius: 10px; border: 1px solid var(--line-strong); background: var(--card); }
+form button { background: var(--bronze); color: #FFFFFF; border-color: var(--bronze); font-weight: 500; padding: 10px 20px; }
+form button:hover:not(:disabled) { background: var(--bronze-hover); border-color: var(--bronze-hover); }
 
-#trace { background: var(--panel); border-inline: 1px solid var(--line); overflow: auto; }
-#steps { list-style: none; margin: 0; padding: 0; }
-#steps li { position: relative; padding: 0 0 22px 34px; color: var(--muted); }
-#steps li::before { content: ""; position: absolute; left: 4px; top: 6px; width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--line); background: var(--panel); }
-#steps li::after { content: ""; position: absolute; left: 10px; top: 24px; bottom: 0; width: 2px; background: var(--line); }
-#steps li:last-child::after { display: none; }
-#steps li.now { color: var(--ink); }
-#steps li.now::before { border-color: var(--coin); background: var(--coin); animation: pulse 1s infinite; }
-#steps li.done { color: var(--ink); }
+#stage { gap: 12px; overflow: auto; }
+#steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.9fr) minmax(0, 1.2fr) minmax(0, 1.3fr); gap: 10px; }
+#steps li { position: relative; min-width: 0; min-height: 106px; padding: 11px 14px 11px 36px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; color: var(--ink-soft); }
+#steps li::before { content: ""; position: absolute; left: 13px; top: 15px; width: 13px; height: 13px; border-radius: 50%; border: 2px solid var(--line-strong); background: var(--card); }
+#steps li.now::before { border-color: var(--bronze); background: var(--bronze); animation: pulse 1s infinite; }
 #steps li.done::before { border-color: var(--right); background: var(--right); }
 #steps li.fail::before { border-color: var(--wrong); background: var(--wrong); }
-#steps b { display: block; font-weight: 600; }
-#steps .detail { font-size: 21px; overflow-wrap: anywhere; }
-#steps .why { font-size: 15px; color: var(--muted); }
+#steps b { display: block; font-size: 14px; font-weight: 400; }
+#steps .detail { font-size: 19px; font-weight: 500; line-height: 1.3; color: var(--ink); overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+#steps .why { font-size: 13.5px; line-height: 1.35; margin-top: 2px; }
 @keyframes pulse { 50% { opacity: .35; } }
 
-#till { align-items: center; overflow: auto; }
-#receipt { width: min(100%, 430px); background: var(--paper); padding: 22px 22px 14px; font: 16px/1.5 var(--mono); position: relative; box-shadow: 0 6px 18px rgba(29, 27, 24, .16); margin-bottom: 14px; }
-#receipt::after { content: ""; position: absolute; left: 0; right: 0; bottom: -10px; height: 10px; background: linear-gradient(-45deg, transparent 7px, var(--paper) 0), linear-gradient(45deg, transparent 7px, var(--paper) 0); background-size: 14px 14px; background-repeat: repeat-x; }
-.r-title { text-align: center; font-weight: 700; font-size: 20px; letter-spacing: .12em; }
-.r-sub { text-align: center; color: var(--muted); font-size: 14px; }
-.r-rule { border-top: 1px dashed var(--muted); margin: 9px 0; }
+#verdict { display: flex; align-items: center; gap: 14px; padding: 12px 18px; border-radius: 14px; background: var(--sunk); min-height: 92px; }
+#verdict h2 { font-size: clamp(19px, 1.45vw, 27px); font-weight: 600; line-height: 1.25; letter-spacing: -.01em; }
+#verdict .sign { flex: none; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-size: 19px; font-weight: 600; line-height: 1; color: #FFFFFF; background: var(--ink-soft); }
+#verdict.good { background: var(--right-tint); }
+#verdict.good .sign { background: var(--right); }
+#verdict.bad { background: var(--wrong-tint); }
+#verdict.bad .sign { background: var(--wrong); }
+#verdict.idle .sign { background: var(--bronze); }
+
+#duel { flex: 1 0 auto; min-height: 176px; display: grid; grid-template-columns: minmax(0, 1fr) 36px minmax(0, 1fr); align-items: stretch; }
+#duel.single { grid-template-columns: minmax(0, 1fr); }
+#duel.single #sideAlone, #duel.single .link { display: none; }
+.side { min-width: 0; padding: 15px 20px; display: flex; flex-direction: column; gap: 8px; }
+.side.right { background: #F6FAF8; border-color: #BCD7CA; }
+.side.wrong { background: #FEF8F6; border-color: #EDCFC8; }
+.who { display: flex; align-items: center; gap: 9px; font-weight: 500; }
+.who .swatch { width: 13px; height: 13px; border-radius: 3px; flex: none; }
+.swatch.alone { background: var(--alone); }
+.swatch.mine { background: var(--bronze); }
+.mark-chip { margin-inline-start: auto; font: 600 14px var(--mono); padding: 3px 11px; border-radius: 999px; background: var(--sunk); color: var(--ink-soft); white-space: nowrap; }
+.mark-chip:empty { display: none; }
+.mark-chip.right { background: var(--right); color: #FFFFFF; }
+.mark-chip.wrong { background: var(--wrong); color: #FFFFFF; }
+.ans { margin-block: auto; text-align: center; font-size: clamp(30px, 2.9vw, 56px); font-weight: 600; line-height: 1.2; letter-spacing: -.01em; white-space: pre-line; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.ans.long { font-size: clamp(19px, 1.5vw, 27px); font-weight: 500; line-height: 1.3; }
+.ans.none { color: var(--line-strong); }
+.bill { font: 500 16px var(--mono); color: var(--ink-soft); text-align: center; }
+.bill b { font-size: 24px; font-weight: 600; color: var(--ink); }
+.link { place-self: center; z-index: 1; width: 44px; height: 44px; margin-inline: -4px; border-radius: 50%; display: grid; place-items: center; background: var(--bronze); color: #FFFFFF; font-size: 22px; font-weight: 500; line-height: 1; box-shadow: 0 0 0 4px var(--page); }
+.reveal { animation: reveal .3s ease-out both; }
+@keyframes reveal { from { opacity: 0; transform: translateY(6px); } }
+
+#charts { flex: 1 1 190px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 12px; }
+figure.card { padding: 13px 18px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+figcaption { font-weight: 600; font-size: 16px; line-height: 1.3; }
+.note { font-size: 13.5px; line-height: 1.4; color: var(--ink-soft); }
+.hbars { display: flex; flex-direction: column; justify-content: center; gap: 7px; flex: 1; }
+.hbar { display: grid; grid-template-columns: minmax(108px, 36%) minmax(0, 1fr); gap: 10px; align-items: center; }
+.hbar .name { font-size: 14.5px; line-height: 1.25; }
+.track { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.track i { display: block; height: 20px; min-width: 2px; border-radius: 0 4px 4px 0; transform-origin: left; animation: grow .45s ease-out both; }
+i.alone { background: var(--alone); }
+i.mine { background: var(--bronze); }
+.track span { font: 500 15px var(--mono); white-space: nowrap; }
+@keyframes grow { from { transform: scaleX(0); } }
+
+#till { overflow: auto; align-items: center; padding-bottom: 12px; }
+#receipt { width: 100%; background: #FFFFFF; padding: 18px 20px 14px; font: 15px/1.5 var(--mono); position: relative; box-shadow: 0 6px 20px rgba(22, 20, 15, .13); margin-bottom: 12px; }
+#receipt::after { content: ""; position: absolute; left: 0; right: 0; bottom: -10px; height: 10px; background: linear-gradient(-45deg, transparent 7px, #FFFFFF 0), linear-gradient(45deg, transparent 7px, #FFFFFF 0); background-size: 14px 14px; background-repeat: repeat-x; }
+.r-head { display: flex; align-items: center; gap: 10px; }
+.r-head svg { width: 32px; height: 32px; flex: none; }
+.r-title { font-family: var(--sans); font-weight: 600; font-size: 19px; letter-spacing: -.01em; line-height: 1.1; }
+.r-sub { color: var(--ink-soft); font-size: 13px; margin-inline-start: auto; }
+.r-rule { border-top: 1px dashed var(--line-strong); margin: 8px 0; }
 .r-row { display: flex; justify-content: space-between; gap: 14px; }
-.r-text { overflow-wrap: anywhere; font-family: var(--sans); }
-.r-wrong { color: var(--wrong); font-weight: 700; }
-.r-right { color: var(--right); font-weight: 700; }
-.r-total { font-weight: 700; font-size: 19px; }
-.r-note { color: var(--muted); font-size: 13px; line-height: 1.35; }
+.r-label { color: var(--ink-soft); font-size: 13px; letter-spacing: .05em; }
+.r-text { overflow-wrap: anywhere; font-family: var(--sans); font-size: 16px; line-height: 1.4; white-space: pre-line; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.r-wrong { color: var(--wrong); font-weight: 600; }
+.r-right { color: var(--right); font-weight: 600; }
+.r-total { font-weight: 600; font-size: 18px; }
+.r-saved { margin-top: 10px; padding: 12px 14px; border-radius: 10px; background: var(--right-tint); color: var(--right); }
+.r-saved .big { font-family: var(--sans); font-size: 27px; font-weight: 600; letter-spacing: -.01em; line-height: 1.15; }
+.r-saved .plus { font-family: var(--sans); font-size: 16px; font-weight: 500; margin-top: 2px; }
+.r-note { color: var(--ink-soft); font-size: 12.5px; line-height: 1.35; margin-top: 10px; }
 .print { animation: print .18s ease-out both; }
 @keyframes print { from { opacity: 0; transform: translateY(-5px); } }
 
-#all { display: flex; flex-direction: column; padding: 22px 34px; gap: 14px; overflow: auto; }
-#all[hidden], #one[hidden] { display: none; }
+#all { display: flex; flex-direction: column; padding: 16px 24px; gap: 12px; overflow: auto; }
 .top { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
-.top h1 { font-size: 27px; margin: 0; }
-.top p { margin: 0; color: var(--muted); }
-#go { background: var(--ink); color: var(--paper); border-color: var(--ink); padding: 10px 20px; margin-inline-start: auto; }
-#now { min-height: 28px; color: var(--muted); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-#meter { height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; }
-#meter i { display: block; height: 100%; width: 0; background: var(--coin); transition: width .2s; }
-.key { display: flex; gap: 22px; color: var(--muted); font-size: 15px; }
-.key i { display: inline-block; width: 14px; height: 14px; border-radius: 3px; margin-inline-end: 6px; vertical-align: -2px; }
-.row { display: grid; grid-template-columns: 200px minmax(0, 1fr) 150px; gap: 18px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--line); }
-.row .name b { display: block; font-size: 19px; }
-.bar { display: flex; align-items: center; gap: 10px; height: 25px; margin: 3px 0; }
-.bar i { display: block; height: 100%; width: 0; min-width: 2px; border-radius: 3px; transition: width .35s ease; }
-.bar.alone i { background: var(--alone); }
-.bar.mine i { background: var(--right); }
-.bar span { font: 600 17px var(--mono); white-space: nowrap; }
-.score { font: 600 18px var(--mono); text-align: end; }
-.score small { display: block; font: 13px var(--sans); color: var(--muted); }
-#sums { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
-#sums div { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; }
-#sums b { display: block; font: 700 23px var(--mono); }
-#sums span { color: var(--muted); font-size: 15px; }
-#failed { background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 12px 16px; }
-#failed h2 { margin-bottom: 6px; }
-#failed p { margin: 0 0 14px; font-size: 16px; }
-#failed ul { margin: 0; padding-inline-start: 20px; font-size: 16px; }
-footer { padding: 7px 28px; font-size: 14px; color: var(--muted); border-top: 1px solid var(--line); background: var(--panel); }
+.top h1 { font-size: 27px; font-weight: 600; letter-spacing: -.02em; line-height: 1.2; }
+.top p { color: var(--ink-soft); }
+#go { background: var(--bronze); color: #FFFFFF; border-color: var(--bronze); font-weight: 500; padding: 10px 22px; margin-inline-start: auto; }
+#go:hover:not(:disabled) { background: var(--bronze-hover); border-color: var(--bronze-hover); }
+#meter { height: 6px; background: var(--sunk); border-radius: 3px; overflow: hidden; flex: none; }
+#meter i { display: block; height: 100%; width: 0; background: var(--bronze); transition: width .2s; }
+#now { min-height: 24px; color: var(--ink-soft); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; flex: none; }
+#sums { display: grid; grid-template-columns: minmax(0, 1.35fr) repeat(3, minmax(0, 1fr)); gap: 12px; flex: none; }
+.tile { padding: 11px 16px; display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.tile .k { font-size: 14px; color: var(--ink-soft); }
+.tile .v { font-size: 27px; font-weight: 600; letter-spacing: -.01em; line-height: 1.2; }
+.tile.hero { background: var(--ink); border-color: var(--ink); color: var(--cream); }
+.tile.hero .k { color: var(--muted-on-dark); }
+.tile.hero .v { font-size: 38px; color: var(--bronze-on-dark); }
+.tile .chg { font: 500 13.5px var(--mono); color: var(--ink-soft); }
+.tile .chg.good { color: var(--right); }
+.tile .chg.bad { color: var(--wrong); }
+.tile.hero .chg, .tile.hero .chg.good { color: var(--cream); }
 
-@media (max-width: 1100px) {
-  body { height: auto; }
-  #one { grid-template-columns: minmax(0, 1fr); }
-  #trace { border-inline: 0; border-block: 1px solid var(--line); }
-  .row { grid-template-columns: minmax(0, 1fr); gap: 4px; }
-  .score { text-align: start; }
+#boards { flex: 1 0 300px; display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 12px; }
+.legend { display: flex; gap: 18px; font-size: 14px; color: var(--ink-soft); }
+.legend span { display: inline-flex; align-items: center; gap: 7px; }
+.legend .swatch { width: 13px; height: 13px; border-radius: 3px; }
+#rows { flex: 1; display: flex; flex-direction: column; justify-content: space-evenly; gap: 2px; }
+.row { display: grid; grid-template-columns: 136px minmax(0, 1fr) 96px; gap: 12px; align-items: center; }
+.row .name { font-size: 15.5px; line-height: 1.25; }
+.row.lead .name { font-weight: 600; }
+.bars { display: flex; flex-direction: column; gap: 2px; }
+.bar { display: flex; align-items: center; gap: 8px; min-height: 19px; }
+.bar i { display: block; height: 17px; width: 0; border-radius: 0 4px 4px 0; transition: width .3s ease; }
+.bar span { font: 500 14.5px var(--mono); white-space: nowrap; }
+.score { font: 600 16px var(--mono); text-align: end; line-height: 1.2; }
+.score small { display: block; font: 400 12.5px var(--sans); color: var(--ink-soft); }
+details.numbers { font-size: 14px; color: var(--ink-soft); }
+details.numbers summary { cursor: pointer; }
+details.numbers table { width: 100%; border-collapse: collapse; margin-top: 6px; font: 13.5px var(--mono); color: var(--ink); }
+details.numbers th, details.numbers td { text-align: end; padding: 3px 8px; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+details.numbers th:first-child, details.numbers td:first-child { text-align: start; }
+#wasteChart { flex: 1; min-height: 210px; position: relative; }
+#wasteChart svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+#wasteChart text { font: 400 12.5px var(--mono); fill: var(--ink-soft); }
+#wasteChart text.end { font: 500 13.5px var(--sans); fill: var(--ink); }
+#tip { position: absolute; z-index: 2; pointer-events: none; padding: 7px 10px; border-radius: 8px; background: var(--ink); color: var(--cream); font: 13px/1.4 var(--mono); white-space: nowrap; }
+
+#failed { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr) minmax(0, .9fr); gap: 12px; flex: none; }
+#failed[hidden] { display: none; }
+#failed .card { padding: 14px 18px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+#failed h2 { font-size: 16px; font-weight: 600; }
+#failed p, #failed li { font-size: 14.5px; line-height: 1.45; }
+#failed ul { margin: 0; padding-inline-start: 18px; }
+.dots-row { display: flex; flex-direction: column; gap: 3px; }
+.dots-row b { font-weight: 500; font-size: 14.5px; }
+.dots { display: flex; flex-wrap: wrap; gap: 3px; }
+.dots i { width: 11px; height: 11px; border-radius: 50%; box-shadow: inset 0 0 0 1.5px var(--line-strong); }
+.dots i.alone { background: var(--alone); box-shadow: none; }
+.dots i.mine { background: var(--bronze); box-shadow: none; }
+.mess { display: flex; flex-direction: column; gap: 3px; }
+.mrow { display: grid; grid-template-columns: 150px minmax(0, 1fr) 44px; gap: 8px; align-items: center; font-size: 13.5px; line-height: 1.2; }
+.mtrack { position: relative; height: 13px; background: var(--sunk); border-radius: 0 4px 4px 0; }
+.mtrack i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--bronze); border-radius: 0 4px 4px 0; }
+.mrow.fails .mtrack i { background: var(--bronze-on-dark); }
+.mtrack u { position: absolute; top: -2px; bottom: -2px; width: 2px; background: var(--ink); text-decoration: none; }
+.mrow span:last-child { font: 500 13.5px var(--mono); text-align: end; }
+
+body > footer { padding: 6px 28px; font-size: 13.5px; color: var(--ink-soft); border-top: 1px solid var(--line); background: var(--sunk); }
+
+@media (max-width: 1500px) {
+  #one { grid-template-columns: minmax(250px, 290px) minmax(0, 1fr) minmax(270px, 310px); gap: 12px; padding: 12px 14px; }
+  #steps { grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr) minmax(0, 1.1fr) minmax(0, 1.2fr); gap: 8px; }
+  #steps li { padding: 9px 10px 9px 30px; }
+  #steps li::before { left: 10px; top: 13px; }
+  #steps .detail { font-size: 16px; }
+  .hbar { grid-template-columns: minmax(0, 1fr); gap: 1px; }
+}
+@media (max-height: 850px) and (min-width: 1181px) {
+  #steps .why, #charts .note, .r-note { display: none; }
+  #steps li { min-height: 0; }
+  #verdict { min-height: 64px; }
+}
+@media (max-width: 1180px) {
+  html, body { height: auto; }
+  main { overflow: visible !important; }
+  #one { grid-template-columns: minmax(0, 1fr); padding: 12px 16px; }
+  #thread { max-height: 240px; }
+  #steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  #sums { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  #boards, #failed { grid-template-columns: minmax(0, 1fr); flex: none; }
+  #all { padding: 12px 16px; }
+  body > header, body > footer { padding-inline: 16px; }
+  .brand .line { display: none; }
+}
+@media (max-width: 640px) {
+  #steps, #charts { grid-template-columns: minmax(0, 1fr); }
+  #duel { grid-template-columns: minmax(0, 1fr); }
+  .link { transform: rotate(90deg); margin-block: -12px; }
   #sums { grid-template-columns: minmax(0, 1fr); }
+  .row { grid-template-columns: minmax(0, 1fr) 84px; }
+  .row .bars { grid-column: 1 / -1; grid-row: 2; }
+  .mrow { grid-template-columns: 112px minmax(0, 1fr) 40px; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
@@ -125,7 +255,15 @@ footer { padding: 7px 28px; font-size: 14px; color: var(--muted); border-top: 1p
 </head>
 <body>
 <header>
-  <div class="brand"><span class="coin" aria-hidden="true">هـ</span><b>Halala</b><span class="line">What a correct answer really costs</span></div>
+  <div class="brand">
+    <svg class="mark" viewBox="0 0 200 200" role="img" aria-label="Halala mark: the letter ع and the digit 3 mirrored inside a coin">
+      <circle cx="100" cy="100" r="98" fill="#C98A4B"/>
+      <path d="M84 34 A25 25 0 0 0 84 84 A41 41 0 0 0 84 166" fill="none" stroke="#16140F" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M116 34 A25 25 0 0 1 116 84 A41 41 0 0 1 116 166" fill="none" stroke="#16140F" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <b>Halala</b><span class="pip" aria-hidden="true"></span><span class="ar" lang="ar" dir="rtl">هللة</span>
+    <span class="line">What a right answer really costs</span>
+  </div>
   <nav role="tablist" aria-label="Views">
     <button role="tab" id="tabOne" aria-selected="true" aria-controls="one">One question</button>
     <button role="tab" id="tabAll" aria-selected="false" aria-controls="all">All traffic</button>
@@ -134,21 +272,46 @@ footer { padding: 7px 28px; font-size: 14px; color: var(--muted); border-top: 1p
 </header>
 
 <main id="one" role="tabpanel" aria-labelledby="tabOne">
-  <section aria-label="Ask">
-    <h2>Ask the way you type</h2>
+  <section id="chat" class="card" aria-label="Ask">
+    <h2 class="eyebrow">Ask the way you type</h2>
     <div id="thread" aria-live="polite"><p class="empty">Ask anything, in any form of Arabic or English.</p></div>
     <div id="picks"></div>
     <form id="ask"><label class="sr" hidden for="q">Question</label>
       <input id="q" dir="auto" maxlength="400" autocomplete="off" placeholder="wesh ..." aria-label="Question">
       <button id="send">Ask</button></form>
   </section>
-  <section id="trace" aria-label="What Halala did">
-    <h2>What Halala did</h2>
-    <ol id="steps"></ol>
+
+  <section id="stage" aria-label="What happened">
+    <ol id="steps" aria-label="What Halala did"></ol>
+    <div id="verdict" role="status"><span class="sign" id="vSign" aria-hidden="true"></span><h2 id="vText"></h2></div>
+    <div id="duel">
+      <article class="side card" id="sideAlone">
+        <div class="who"><span class="swatch alone"></span>ALLaM alone<span class="mark-chip"></span></div>
+        <div class="ans" dir="auto"></div>
+        <div class="bill"></div>
+      </article>
+      <div class="link" aria-hidden="true">→</div>
+      <article class="side card" id="sideMine">
+        <div class="who"><span class="swatch mine"></span><span class="side-name">With Halala</span><span class="mark-chip"></span></div>
+        <div class="ans" dir="auto"></div>
+        <div class="bill"></div>
+      </article>
+    </div>
+    <div id="charts">
+      <figure class="card">
+        <figcaption>Tokens on this question</figcaption>
+        <div class="hbars" id="thisQ"></div>
+      </figure>
+      <figure class="card">
+        <figcaption>What one right answer costs, across a test</figcaption>
+        <div class="hbars" id="bigger"></div>
+        <p class="note">Tokens spent ÷ right answers, on the sealed test's 11 questions in each form. Wrong answers are where the cost piles up: alone, only 2 of 11 Arabizi answers came back right.</p>
+      </figure>
+    </div>
   </section>
+
   <section id="till" aria-label="Receipt">
-    <h2>Receipt</h2>
-    <div id="receipt"><div class="r-title">HALALA</div><div class="r-sub">Your receipt prints here</div></div>
+    <div id="receipt"></div>
   </section>
 </main>
 
@@ -159,23 +322,24 @@ footer { padding: 7px 28px; font-size: 14px; color: var(--muted); border-top: 1p
   </div>
   <div id="meter"><i></i></div>
   <div id="now" dir="auto">Every question is priced alone and through Halala, on real model calls. Where Halala changes nothing, one call counts for both.</div>
-  <div class="key"><span><i style="background:var(--alone)"></i>ALLaM alone</span><span><i style="background:var(--right)"></i>With Halala</span></div>
-  <div id="rows"></div>
   <div id="sums"></div>
-  <div id="failed" hidden>
-    <h2>On questions held back</h2>
-    <p>One logged test on 55 sealed questions. A right answer in Arabizi went from 317 tokens to 65, against 50 in English, and right answers from 2 to 8 of 11. The saving is almost all on Arabizi: the other forms use about the same tokens. On this test, one-fifth Arabizi, tokens per right answer fell 17.6%, and less Arabizi means less saving. The gap is smaller, not closed.</p>
-    <h2>What didn't work</h2>
-    <ul>
-      <li>A word list for Saudi dialect: a net gain of 3 of 100, short of the 5 set beforehand, so it was dropped. Saudi is still open.</li>
-      <li>A learned router with repeated sampling: no better than the simple design, and slower.</li>
-      <li>Asking a model to rewrite Arabizi: no version beat the free rewrite.</li>
-      <li>The first Arabizi rewrite: 2 of 15 on its first unseen test, so it was rebuilt around real Arabic words.</li>
-    </ul>
+  <div id="boards">
+    <figure class="card">
+      <figcaption>Tokens for one right answer, by way of writing</figcaption>
+      <div class="legend"><span><i class="swatch alone"></i>ALLaM alone</span><span><i class="swatch mine"></i>With Halala</span></div>
+      <div id="rows"></div>
+      <details class="numbers"><summary>Show the numbers</summary><div id="numbers"></div></details>
+    </figure>
+    <figure class="card">
+      <figcaption>Tokens wasted on wrong answers, as the traffic runs</figcaption>
+      <div class="legend"><span><i class="swatch alone"></i>ALLaM alone</span><span><i class="swatch mine"></i>With Halala</span></div>
+      <div id="wasteChart" tabindex="0" role="img" aria-label="Line chart of tokens wasted on wrong answers as the questions run. Use the left and right arrow keys to read each point."></div>
+    </figure>
   </div>
+  <div id="failed" hidden></div>
 </main>
 
-<footer>Tokens are the pieces of text an AI reads and writes, and they're how AI is priced. Development questions, which the rewrite was built on, on a community build of ALLaM 7B.</footer>
+<footer>Tokens are the pieces of text an AI reads and writes, and they're how AI is priced. The live questions here are development questions, which the rewrite was built on, on a community build of ALLaM 7B.</footer>
 
 <script>
 const $ = id => document.getElementById(id);
@@ -184,8 +348,18 @@ const ORDER = ["en", "msa", "najdi", "mixed", "arabizi"];
 const MODELS = { "allam-7b-q4-inst": "ALLaM 7B", "gemma3:4b": "Gemma 3 4B" };
 const modelName = name => MODELS[name] || name;
 const PICKS = ["sa-007", "sa-008", "sa-001"];
-const STEPS = [["form", "Form detected"], ["rewrite", "Rewrite"], ["route", "Model chosen"], ["answer", "Answer"]];
+const STEPS = [["form", "Form detected", "How the question was written"], ["rewrite", "Rewrite", "Arabizi into Arabic letters, with no model call"],
+               ["route", "Model chosen", "Which model answers"], ["answer", "Answer", "With what it really cost"]];
+const COIN = `<svg viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="98" fill="#9C5A22"/><path d="M84 34 A25 25 0 0 0 84 84 A41 41 0 0 0 84 166" fill="none" stroke="#FAFAF8" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/><path d="M116 34 A25 25 0 0 1 116 84 A41 41 0 0 1 116 166" fill="none" stroke="#FAFAF8" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+/* Measured results, shown as typed here. Sources: runs/local_gemma/sealed.md, arabizi_fresh3.md and messy_typing.md. */
+const SEALED = [{ label: "Arabizi, ALLaM alone", value: 317, kind: "alone" }, { label: "Arabizi, with Halala", value: 65, kind: "mine" }, { label: "English, for comparison", value: 50, kind: "alone" }];
+const HELD_BACK = { total: 41, alone: 3, mine: 32 };
+const MESSY = [["As written", 65], ["First letter capital", 65], ["An emoji on the end", 64], ["No punctuation", 63], ["Stretched letters", 55], ["Swapped letters", 50], ["ALL CAPITALS", 46], ["One typo", 39], ["No vowels", 38], ["No number letters", 26], ["Two typos", 17]];
+const MESSY_TOTAL = 75, PASS_MARK = 44;
+
 let info = null, questions = [], number = 0, busy = false, stopping = false;
+const waste = { alone: [0], mine: [0], total: 225, x: null, y: null, pick: null };
 
 function el(tag, className, text) {
   const node = document.createElement(tag);
@@ -194,6 +368,7 @@ function el(tag, className, text) {
   return node;
 }
 const tokens = value => Math.round(value).toLocaleString("en");
+const compact = value => value >= 1000 ? `${+(value / 1000).toFixed(1)}K` : String(value);
 
 async function* ask(body) {
   const response = await fetch("api/ask", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
@@ -215,23 +390,23 @@ async function* ask(body) {
   }
 }
 
-/* One question: the trace fills in as it happens, then the receipt prints. */
+/* One question: the trace fills in as it happens, then the outcome and the receipt appear. */
 function resetTrace() {
   const list = $("steps");
   list.replaceChildren();
-  for (const [key, title] of STEPS) {
+  for (const [key, title, hint] of STEPS) {
     const item = el("li");
     item.id = "s-" + key;
-    item.append(el("b", "", title));
+    item.append(el("b", "", title), el("div", "why", hint));
     list.append(item);
   }
 }
 function step(key, detail, why, state = "done") {
   const item = $("s-" + key);
   item.className = state;
-  item.querySelector("b").nextSibling?.remove();
+  item.querySelector(".detail")?.remove();
   item.querySelector(".why")?.remove();
-  if (detail) { const d = el("div", "detail", detail); d.dir = "auto"; item.append(d); }
+  if (detail) { const d = el("div", "detail", detail); d.dir = "auto"; d.title = detail; item.append(d); }
   if (why) item.append(el("div", "why", why));
 }
 function why(event, form) {
@@ -239,6 +414,77 @@ function why(event, form) {
   if (event.route === "fallback") return "The smaller model gave no usable answer, so ALLaM answers";
   if (form === "en") return "English stays on ALLaM: the smaller model saved nothing in tests";
   return "Arabic stays on the model built for it";
+}
+function setVerdict(kind, message) {
+  $("verdict").className = kind;
+  $("vSign").textContent = { good: "✓", bad: "!", plain: "=", idle: "?" }[kind];
+  $("vText").textContent = message;
+}
+function fillSide(id, call, name) {
+  const side = $(id), answer = side.querySelector(".ans"), chip = side.querySelector(".mark-chip");
+  const shown = call ? call.text || "(no answer)" : "–";
+  side.className = "side card" + (!call || call.correct === null ? "" : call.correct ? " right" : " wrong");
+  answer.textContent = shown;
+  answer.title = shown;
+  answer.className = "ans" + (!call ? " none" : shown.length > 24 ? " long" : "");
+  chip.className = "mark-chip" + (!call || call.correct === null ? "" : call.correct ? " right" : " wrong");
+  chip.textContent = !call ? "" : call.correct === null ? "Not checked" : call.correct ? "✓ RIGHT" : "✗ WRONG";
+  const bill = side.querySelector(".bill");
+  bill.replaceChildren();
+  if (call) {
+    bill.append(el("b", "", tokens(call.spent)), ` tokens${call.correct === false ? " wasted" : ""}`);
+    side.classList.remove("reveal");
+    void side.offsetWidth;
+    side.classList.add("reveal");
+  }
+  if (name) side.querySelector(".side-name").textContent = name;
+}
+function hbars(box, rows) {
+  const top = Math.max(1, ...rows.map(r => r.value));
+  box.replaceChildren(...rows.map(r => {
+    const row = el("div", "hbar"), track = el("div", "track"), fill = el("i", r.kind);
+    fill.style.width = `calc((100% - 92px) * ${r.value / top})`;
+    track.append(fill, el("span", "", tokens(r.value) + (r.note ? ` ${r.note}` : "")));
+    row.append(el("span", "name", r.label), track);
+    row.title = `${r.label}: ${tokens(r.value)} tokens`;
+    return row;
+  }));
+}
+function clearOutcome(kind, message) {
+  setVerdict(kind, message);
+  $("duel").className = "";
+  fillSide("sideAlone", null);
+  fillSide("sideMine", null, "With Halala");
+  $("thisQ").replaceChildren(el("p", "note", "Ask a question to see what it cost."));
+}
+function outcome(rewritten, mine, spent, alone) {
+  const before = alone.tokens, after = spent.tokens, saved = before - after;
+  if (alone.same_call) {
+    if (mine.correct === false) return ["bad", "Nothing to rewrite, and ALLaM got this one wrong. Halala doesn't help here yet."];
+    if (mine.correct === null) return ["plain", "Nothing to rewrite, so Halala stayed out of the way. Typed questions aren't scored."];
+    return ["plain", "Nothing to rewrite. ALLaM got this one right, and Halala stayed out of the way."];
+  }
+  if (mine.correct === null) return ["plain", rewritten && saved > 0 ? `Compare the two answers. Halala used ${tokens(saved)} fewer tokens. Typed questions aren't scored.` : "Compare the two answers. Typed questions aren't scored."];
+  if (mine.correct && alone.correct === false) {
+    if (saved > 0) return ["good", `A wrong answer became a right one, and you saved ${tokens(saved)} tokens.`];
+    return ["good", saved < 0 ? `A wrong answer became a right one, for ${tokens(-saved)} more tokens.` : "A wrong answer became a right one, for the same tokens."];
+  }
+  if (mine.correct) return ["plain", saved > 0 ? `Both right. Halala used ${tokens(saved)} fewer tokens.` : saved < 0 ? `Both right. Halala cost ${tokens(-saved)} more tokens.` : "Both right, for the same tokens."];
+  return ["bad", alone.correct ? "Halala made this one worse: ALLaM alone got it right." : "Both wrong. Halala didn't help on this one."];
+}
+function showOutcome(rewritten, mine, spent, alone) {
+  const [kind, message] = outcome(rewritten, mine, spent, alone);
+  setVerdict(kind, message);
+  if (alone.same_call) {
+    $("duel").className = "single";
+    fillSide("sideMine", { ...mine, spent: spent.tokens }, "ALLaM, left as typed");
+    hbars($("thisQ"), [{ label: "One call, both ways", value: spent.tokens, kind: "alone", note: mine.correct === false ? "wasted" : "" }]);
+    return;
+  }
+  fillSide("sideAlone", { ...alone, spent: alone.tokens });
+  fillSide("sideMine", { ...mine, spent: spent.tokens }, "With Halala");
+  hbars($("thisQ"), [{ label: "ALLaM alone", value: alone.tokens, kind: "alone", note: alone.correct === false ? "wasted" : "" },
+                     { label: "With Halala", value: spent.tokens, kind: "mine", note: mine.correct === false ? "wasted" : "" }]);
 }
 function line(parts, className) {
   const row = el("div", "r-row " + (className || ""));
@@ -250,25 +496,35 @@ function text(value, className) {
   row.dir = "auto";
   return row;
 }
-const verdict = correct => correct === null ? line(["Not checked"]) : correct ? line(["RIGHT"], "r-right") : line(["WRONG"], "r-wrong");
+const verdict = correct => correct === null ? line(["Not checked"]) : correct ? line(["✓ RIGHT"], "r-right") : line(["✗ WRONG"], "r-wrong");
 
+function receiptHead(sub) {
+  const head = el("div", "r-head");
+  head.innerHTML = COIN;
+  head.append(el("div", "r-title", "Halala"), el("div", "r-sub", sub));
+  return head;
+}
 function receiptLines(question, form, rewritten, mine, spent, alone) {
   number += 1;
-  const lines = [el("div", "r-title", "HALALA"), el("div", "r-sub", "Receipt " + String(number).padStart(4, "0")), el("div", "r-rule"),
-                 text(question), line(["Form", NAMES[form]]), el("div", "r-rule")];
+  const lines = [receiptHead("Receipt " + String(number).padStart(4, "0")), el("div", "r-rule"), text(question), line(["Form", NAMES[form]]), el("div", "r-rule")];
   if (alone.same_call) {
-    lines.push(line(["Left as typed"]), text(mine.text), verdict(mine.correct), line([mine.correct === false ? "Wasted" : "ALLaM", tokens(spent.tokens)]),
+    lines.push(el("div", "r-label", "LEFT AS TYPED"), text(mine.text), verdict(mine.correct), line([mine.correct === false ? "Wasted" : "ALLaM", tokens(spent.tokens)]),
                el("div", "r-rule"), line(["TOTAL", tokens(spent.tokens)], "r-total"));
   } else {
     const before = alone.tokens, after = spent.tokens;
-    lines.push(line(["WITHOUT HALALA"]), text(alone.text || "(no answer)"), verdict(alone.correct), line([alone.correct === false ? "Wasted" : "ALLaM", tokens(before)]), el("div", "r-rule"),
-               line(["WITH HALALA"]));
+    lines.push(el("div", "r-label", "WITHOUT HALALA"), text(alone.text || "(no answer)"), verdict(alone.correct), line([alone.correct === false ? "Wasted" : "ALLaM", tokens(before)]), el("div", "r-rule"),
+               el("div", "r-label", "WITH HALALA"));
     if (rewritten) lines.push(line(["Rewrite, no model", "0"]));
     lines.push(text(mine.text || "(no answer)"), verdict(mine.correct), line([mine.correct === false ? "Wasted" : modelName(mine.model), tokens(after)]), el("div", "r-rule"), line(["TOTAL", tokens(after)], "r-total"));
-    if (alone.correct === false && mine.correct) lines.push(line(["You kept a right answer"], "r-right"));
-    else if (rewritten && mine.correct && after < before) lines.push(line(["Saved", tokens(before - after)], "r-right"));
+    const kept = alone.correct === false && mine.correct, saved = rewritten && mine.correct && after < before;
+    if (kept || saved) {
+      const box = el("div", "r-saved");
+      box.append(el("div", "big", saved ? `You saved ${tokens(before - after)} tokens` : "You got a right answer"));
+      if (saved && kept) box.append(el("div", "plus", "and got a right answer"));
+      lines.push(box);
+    }
   }
-  lines.push(el("div", "r-rule"), el("div", "r-note", "Amounts are tokens, the pieces of text an AI reads and writes."));
+  lines.push(el("div", "r-note", "Amounts are tokens, the pieces of text an AI reads and writes."));
   return lines;
 }
 async function print(lines) {
@@ -278,7 +534,8 @@ async function print(lines) {
   for (const node of lines) {
     node.classList.add("print");
     paper.append(node);
-    if (!calm) await new Promise(done => setTimeout(done, 90));
+    $("till").scrollTop = $("till").scrollHeight;
+    if (!calm) await new Promise(done => setTimeout(done, 70));
   }
 }
 function bubble(kind, value) {
@@ -300,6 +557,8 @@ async function askOne(question, answers = []) {
   if (busy || !question.trim()) return;
   lock(true);
   resetTrace();
+  clearOutcome("idle", "Asking both ways...");
+  $("receipt").replaceChildren(receiptHead("Your receipt prints here"));
   bubble("you", question);
   const reply = bubble("mine", "...");
   let form, rewritten, mine, spent, alone;
@@ -308,19 +567,21 @@ async function askOne(question, answers = []) {
       if (e.step === "form") { form = e.form; step("form", NAMES[e.form]); step("rewrite", "", "Working", "now"); }
       else if (e.step === "rewrite") { rewritten = e.rewritten; step("rewrite", e.rewritten ? e.prompt : "Nothing to rewrite", e.rewritten ? "Rules and real Arabic words, with no model call" : ""); step("route", "", "Choosing", "now"); }
       else if (e.step === "route") { step("route", modelName(e.model), why(e, form)); step("answer", "", "Thinking", "now"); }
-      else if (e.step === "answer") { mine = e; reply.textContent = e.text || "(no answer)"; step("answer", e.text || "(no answer)", `${e.tokens} tokens, ${e.active_s.toFixed(1)} seconds of compute`); }
+      else if (e.step === "answer") { mine = e; reply.textContent = e.text || "(no answer)"; $("thread").scrollTop = $("thread").scrollHeight; step("answer", e.text || "(no answer)", `${e.tokens} tokens, ${e.active_s.toFixed(1)} seconds of compute`); }
       else if (e.step === "spent") spent = e;
       else if (e.step === "direct") alone = e;
     }
+    showOutcome(rewritten, mine, spent, alone);
     await print(receiptLines(question, form, rewritten, mine, spent, alone));
   } catch (error) {
     reply.textContent = "The model didn't answer.";
     step("answer", "", error.message, "fail");
+    setVerdict("bad", "The model didn't answer.");
   }
   lock(false);
 }
 
-/* All traffic: every question, both ways, with the bars building up as they go. */
+/* All traffic: every question, both ways, with the charts building up as they go. */
 function shuffled(items) {
   let seed = 13;
   const random = () => { seed = (seed * 1664525 + 1013904223) % 4294967296; return seed / 4294967296; };
@@ -329,53 +590,180 @@ function shuffled(items) {
   return out;
 }
 function fresh() { return { spent: 0, right: 0, seen: 0, wasted: 0 }; }
+const costOf = side => side.right ? side.spent / side.right : null;
 function buildRows() {
   $("rows").replaceChildren();
   for (const form of ORDER) {
-    const row = el("div", "row");
+    const row = el("div", "row" + (form === "arabizi" ? " lead" : ""));
     row.id = "r-" + form;
-    const name = el("div", "name");
-    name.append(el("b", "", NAMES[form]));
-    const bars = el("div");
+    const bars = el("div", "bars");
     for (const kind of ["alone", "mine"]) {
-      const bar = el("div", "bar " + kind);
-      bar.append(el("i"), el("span", "", "-"));
+      const bar = el("div", "bar");
+      bar.append(el("i", kind), el("span", "", "-"));
       bars.append(bar);
     }
-    row.append(name, bars, el("div", "score", "-"));
+    row.append(el("div", "name", NAMES[form]), bars, el("div", "score", "-"));
     $("rows").append(row);
   }
+  drawNumbers(null);
+}
+function tile(label, before, after, change, tone, hero) {
+  const box = el("div", "tile card" + (hero ? " hero" : ""));
+  box.append(el("span", "k", label), el("span", "v", before === null ? "–" : `${before} → ${after}`), el("span", "chg " + (tone || ""), change || " "));
+  return box;
+}
+function drawTiles(tally) {
+  const add = (kind, key) => tally ? ORDER.reduce((sum, f) => sum + tally[f][kind][key], 0) : 0;
+  const change = (a, b) => a ? `${b <= a ? "−" : "+"}${Math.abs(Math.round((b - a) / a * 100))}%` : "";
+  const alone = tally && costOf(tally.arabizi.alone), mine = tally && costOf(tally.arabizi.mine);
+  const has = tally && add("alone", "seen") > 0;
+  const gained = add("mine", "right") - add("alone", "right");
+  $("sums").replaceChildren(
+    tile("One right answer in Arabizi, in tokens", mine ? (alone ? tokens(alone) : "none yet") : null, mine ? tokens(mine) : "", alone && mine ? change(alone, mine) : "", "good", true),
+    tile("Right answers", has ? add("alone", "right") : null, add("mine", "right"), has ? `${gained >= 0 ? "+" : "−"}${Math.abs(gained)} of ${add("mine", "seen")}` : "", gained >= 0 ? "good" : "bad"),
+    tile("Tokens wasted on wrong answers", has ? tokens(add("alone", "wasted")) : null, tokens(add("mine", "wasted")), has ? change(add("alone", "wasted"), add("mine", "wasted")) : "", add("mine", "wasted") <= add("alone", "wasted") ? "good" : "bad"),
+    tile("Tokens spent", has ? tokens(add("alone", "spent")) : null, tokens(add("mine", "spent")), has ? change(add("alone", "spent"), add("mine", "spent")) : ""));
+}
+function drawNumbers(tally) {
+  const table = el("table"), head = el("tr");
+  for (const name of ["Way of writing", "Alone, right", "Alone, tokens", "Halala, right", "Halala, tokens"]) head.append(el("th", "", name));
+  table.append(head);
+  for (const form of ORDER) {
+    const row = el("tr"), a = tally?.[form].alone, m = tally?.[form].mine;
+    const cost = side => side && costOf(side) !== null ? tokens(costOf(side)) : "-";
+    for (const cell of [NAMES[form], a ? a.right : "-", cost(a), m ? m.right : "-", cost(m)]) row.append(el("td", "", cell));
+    table.append(row);
+  }
+  $("numbers").replaceChildren(table);
 }
 function draw(tally) {
-  const cost = side => side.spent / Math.max(1, side.right);
-  const top = Math.max(1, ...ORDER.flatMap(f => [cost(tally[f].alone), cost(tally[f].mine)]));
+  const top = Math.max(1, ...ORDER.flatMap(f => [costOf(tally[f].alone) || 0, costOf(tally[f].mine) || 0]));
   for (const form of ORDER) {
     const row = $("r-" + form), sides = tally[form];
     ["alone", "mine"].forEach((kind, i) => {
-      const bar = row.querySelectorAll(".bar")[i], side = sides[kind];
-      bar.querySelector("i").style.width = (cost(side) / top * 86) + "%";
-      bar.querySelector("span").textContent = side.right ? tokens(cost(side)) : "-";
+      const bar = row.querySelectorAll(".bar")[i], cost = costOf(sides[kind]);
+      bar.querySelector("i").style.width = `calc((100% - 62px) * ${(cost || 0) / top})`;
+      bar.querySelector("span").textContent = cost === null ? "-" : tokens(cost);
+      bar.title = `${NAMES[form]}, ${kind === "alone" ? "ALLaM alone" : "with Halala"}: ${cost === null ? "no right answer yet" : tokens(cost) + " tokens for one right answer"}`;
     });
     const score = row.querySelector(".score");
     score.textContent = `${sides.alone.right} → ${sides.mine.right}`;
     score.append(el("small", "", `right, of ${sides.mine.seen}`));
   }
-  const add = (kind, key) => ORDER.reduce((sum, f) => sum + tally[f][kind][key], 0);
-  const box = (a, b, label) => { const d = el("div"); d.append(el("b", "", `${a} → ${b}`), el("span", "", label)); return d; };
-  $("sums").replaceChildren(
-    box(add("alone", "right"), add("mine", "right"), "right answers"),
-    box(tokens(add("alone", "spent")), tokens(add("mine", "spent")), "tokens spent"),
-    box(tokens(add("alone", "wasted")), tokens(add("mine", "wasted")), "tokens wasted on wrong answers"));
+  drawTiles(tally);
+  drawNumbers(tally);
+  drawWaste();
+}
+function niceTop(value) {
+  const power = 10 ** Math.floor(Math.log10(Math.max(value, 1)));
+  return [1, 2, 2.5, 5, 10].map(step => step * power).find(top => top >= value);
+}
+function drawWaste() {
+  const box = $("wasteChart"), W = box.clientWidth, H = box.clientHeight;
+  if (!W || !H) return;
+  const left = 46, right = 118, top = 12, bottom = 26, last = waste.alone.length - 1;
+  const ceiling = niceTop(Math.max(...waste.alone, ...waste.mine, 100));
+  const x = i => left + i / waste.total * (W - left - right), y = v => H - bottom - v / ceiling * (H - top - bottom);
+  waste.x = x; waste.y = y;
+  const path = series => series.map((v, i) => `${i ? "L" : "M"}${x(i).toFixed(1)} ${y(v).toFixed(1)}`).join("");
+  const grid = [0, .25, .5, .75, 1].map(f => {
+    const v = f * ceiling, py = y(v).toFixed(1);
+    return `<line x1="${left}" x2="${W - right}" y1="${py}" y2="${py}" stroke="#E3DED4"/><text x="${left - 8}" y="${+py + 4}" text-anchor="end">${compact(v)}</text>`;
+  }).join("");
+  const axis = [0, .25, .5, .75, 1].map(f => `<text x="${x(f * waste.total).toFixed(1)}" y="${H - 8}" text-anchor="middle">${Math.round(f * waste.total)}</text>`).join("");
+  const apart = Math.abs(y(waste.alone[last]) - y(waste.mine[last])) >= 20;
+  const end = (series, color, name) => last ? `<circle cx="${x(last).toFixed(1)}" cy="${y(series[last]).toFixed(1)}" r="5" fill="${color}" stroke="#FFFFFF" stroke-width="2"/>` +
+    (apart ? `<text class="end" x="${(x(last) + 10).toFixed(1)}" y="${(y(series[last]) + 5).toFixed(1)}">${tokens(series[last])}</text>` : "") : "";
+  const idle = last ? "" : `<text x="${left + (W - left - right) / 2}" y="${top + (H - top - bottom) / 2}" text-anchor="middle">Press Run all questions</text>`;
+  box.querySelector("svg")?.remove();
+  box.insertAdjacentHTML("afterbegin", `<svg aria-hidden="true">${grid}${axis}${idle}
+    <path d="${path(waste.alone)}" fill="none" stroke="#A0978A" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="${path(waste.mine)}" fill="none" stroke="#9C5A22" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+    ${end(waste.alone, "#A0978A")}${end(waste.mine, "#9C5A22")}
+    <line id="cross" y1="${top}" y2="${H - bottom}" stroke="#C9BFAE" visibility="hidden"/></svg>`);
+  if (waste.pick !== null) readWaste(Math.min(waste.pick, last));
+}
+function readWaste(i) {
+  const box = $("wasteChart"), cross = $("cross");
+  if (!waste.x || !cross) return;
+  waste.pick = i;
+  const px = waste.x(i);
+  cross.setAttribute("x1", px); cross.setAttribute("x2", px); cross.setAttribute("visibility", "visible");
+  let tip = $("tip");
+  if (!tip) { tip = el("div"); tip.id = "tip"; box.append(tip); }
+  tip.textContent = `Question ${i}: alone ${tokens(waste.alone[i])}, Halala ${tokens(waste.mine[i])}`;
+  tip.style.top = "10px";
+  tip.style.left = `${Math.max(0, Math.min(px + 10, box.clientWidth - tip.offsetWidth))}px`;
+}
+function hideWaste() {
+  waste.pick = null;
+  $("tip")?.remove();
+  $("cross")?.setAttribute("visibility", "hidden");
+}
+function wireWaste() {
+  const box = $("wasteChart");
+  box.addEventListener("pointermove", event => {
+    const last = waste.alone.length - 1;
+    if (!last || !waste.x) return;
+    const left = waste.x(0), width = waste.x(waste.total) - left, spot = event.clientX - box.getBoundingClientRect().left;
+    readWaste(Math.max(0, Math.min(last, Math.round((spot - left) / width * waste.total))));
+  });
+  box.addEventListener("pointerleave", hideWaste);
+  box.addEventListener("focus", () => { if (waste.alone.length > 1) readWaste(waste.alone.length - 1); });
+  box.addEventListener("blur", hideWaste);
+  box.addEventListener("keydown", event => {
+    const move = { ArrowLeft: -1, ArrowRight: 1 }[event.key];
+    if (!move || waste.pick === null) return;
+    event.preventDefault();
+    readWaste(Math.max(0, Math.min(waste.alone.length - 1, waste.pick + move)));
+  });
+  new ResizeObserver(drawWaste).observe(box);
+}
+function buildResults() {
+  const held = el("section", "card");
+  held.append(el("h2", "", "On questions held back"));
+  for (const [name, count, kind] of [["ALLaM alone", HELD_BACK.alone, "alone"], ["With Halala", HELD_BACK.mine, "mine"]]) {
+    const row = el("div", "dots-row"), dots = el("div", "dots");
+    for (let i = 0; i < HELD_BACK.total; i++) dots.append(el("i", i < count ? kind : ""));
+    row.append(el("b", "", `${name}: ${count} of ${HELD_BACK.total} Arabizi questions right`), dots);
+    held.append(row);
+  }
+  held.append(el("p", "", "The 11 sealed and the last 30 blind, pooled. On the sealed test, a right answer in Arabizi went from 317 tokens to 65, against 50 in English. The saving is almost all on Arabizi: on this one-fifth mix, tokens per right answer fell 17.6%, and less Arabizi means less saving. The gap is smaller, not closed."));
+  const messy = el("section", "card"), bars = el("div", "mess");
+  messy.append(el("h2", "", "When typing gets messy"));
+  for (const [name, right] of MESSY) {
+    const row = el("div", "mrow" + (right < PASS_MARK ? " fails" : "")), track = el("div", "mtrack"), fill = el("i"), mark = el("u");
+    fill.style.width = `${right / MESSY_TOTAL * 100}%`;
+    mark.style.left = `${PASS_MARK / MESSY_TOTAL * 100}%`;
+    track.append(fill, mark);
+    row.append(el("span", "", name), track, el("span", "", String(right)));
+    row.title = `${name}: ${right} of ${MESSY_TOTAL} right with Halala`;
+    bars.append(row);
+  }
+  messy.append(bars, el("p", "note", `Right answers with Halala, of ${MESSY_TOTAL}. The black line is the pass mark of ${PASS_MARK}, set before the run. ALLaM alone never got above 6. 45 of these questions helped build the rewrite, so these bars flatter it a little.`));
+  const failed = el("section", "card"), list = el("ul");
+  failed.append(el("h2", "", "What didn't work"));
+  for (const item of ["A word list for Saudi dialect: a net gain of 3 of 100, short of the 5 set beforehand, so it was dropped. Saudi is still open.",
+                      "A learned router with repeated sampling: no better than the simple design, and slower.",
+                      "Asking a model to rewrite Arabizi: no version beat the free rewrite.",
+                      "The first Arabizi rewrite: 2 of 15 on its first unseen test, so it was rebuilt around real Arabic words."]) list.append(el("li", "", item));
+  failed.append(list);
+  $("failed").replaceChildren(held, messy, failed);
 }
 async function runAll() {
   if (busy) { stopping = true; return; }
   if (!questions.length) { $("now").textContent = "No questions loaded. Is the server running?"; return; }
   stopping = false;
   $("failed").hidden = true;
+  $("meter").firstElementChild.style.width = "0";
   $("go").textContent = "Stop";
   buildRows();
+  drawTiles(null);
   const tally = Object.fromEntries(ORDER.map(f => [f, { alone: fresh(), mine: fresh() }]));
   const order = shuffled(questions);
+  waste.alone = [0]; waste.mine = [0]; waste.total = order.length;
+  hideWaste();
+  drawWaste();
   lock(true);
   $("go").disabled = false;   // it's the Stop button while the stream runs
   try {
@@ -392,6 +780,8 @@ async function runAll() {
       sides.alone.spent += alone.tokens; sides.mine.spent += spent.tokens;
       if (alone.correct) sides.alone.right++; else sides.alone.wasted += alone.tokens;
       if (mine.correct) sides.mine.right++; else sides.mine.wasted += spent.tokens;
+      waste.alone.push(ORDER.reduce((sum, f) => sum + tally[f].alone.wasted, 0));
+      waste.mine.push(ORDER.reduce((sum, f) => sum + tally[f].mine.wasted, 0));
       $("meter").firstElementChild.style.width = ((i + 1) / order.length * 100) + "%";
       draw(tally);
     }
@@ -436,7 +826,13 @@ function pickButtons() {
 }
 async function start() {
   resetTrace();
+  clearOutcome("idle", "Ask a question to see what a right answer really costs.");
+  hbars($("bigger"), SEALED);
+  $("receipt").replaceChildren(receiptHead("Your receipt prints here"));
   buildRows();
+  drawTiles(null);
+  buildResults();
+  wireWaste();
   $("tabOne").onclick = () => show("one");
   $("tabAll").onclick = () => show("all");
   $("go").onclick = runAll;
