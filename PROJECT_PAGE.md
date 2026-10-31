@@ -45,8 +45,10 @@ answers out of 11, then real seconds per correct answer as a multiple of English
 | Mixed Arabic-English | 11, 1.0x | 11, 1.1x |
 | **All 55** | **44 correct, 0.37 seconds each** | **51 correct, 0.30 seconds each** |
 
-That's 18.5% less real compute per correct answer. With 11 questions in each form, one question moves a form by 9%, so the form
-figures are rough.
+**The saving is on Arabizi.** The other four forms cost about the same as ALLaM alone. Across all 55, total compute fell 5.7% and
+right answers rose from 44 to 51, which makes compute per correct answer 18.5% lower. That figure depends on the traffic: a fifth of
+these questions are Arabizi, and it falls to about 10% if a tenth are, and 5% if a twentieth are. With 11 questions in each form, one
+question moves a form by 9%, so the form figures are rough.
 
 On 30 more Arabizi questions, written blind by a separate agent that never saw the code, ALLaM got 1 right as typed and Halala got
 24, against 28 in proper Arabic. Without its list of real Arabic words, Halala got 14. That batch looks easier than the one before
@@ -61,7 +63,8 @@ questions, so they overstate it.
 
 A question comes in and is cleaned up, then Halala detects its form. Arabizi is rewritten into Arabic script by rules and a list
 of real Arabic words, with no model call. Arabic goes to ALLaM. English can go to a smaller model when the hardware has room for
-both. A free check catches empty or refused answers, and every answer's real cost is recorded.
+both, though that setting is off in every result here and saved nothing when tested. A free check catches empty or refused answers,
+and every answer's real cost is recorded.
 
 **How it was tested**
 
@@ -84,7 +87,7 @@ both. A free check catches empty or refused answers, and every answer's real cos
 | A learned router with certified thresholds and repeated sampling | No better than the simple design, and slower |
 | Asking a model to rewrite Arabizi | Every version lost to the rules |
 | The first Arabizi rewrite | 2 of 15 on its first unseen test, against 14 in proper Arabic, so it was rebuilt around real Arabic words |
-| English to the small model on one 4 GB GPU | 169% of ALLaM alone in mixed traffic, against 85% with room for both, so it's a setting |
+| English to the small model | No saving: 0.53 seconds per correct answer against 0.52 on ALLaM, on 45 development questions, and 169% of ALLaM alone in mixed traffic on one 4 GB GPU. It stays a setting, off in every result here |
 
 ---
 
@@ -102,6 +105,10 @@ both. A free check catches empty or refused answers, and every answer's real cos
 
 **Isn't this just a router?** Barely. The contribution is measuring the tax by form, and a free fix for the biggest gap. A learned
 router was tested and didn't earn its place.
+
+**Does it save compute on every question?** No. The saving is on Arabizi. English and Arabic cost about what they did: Arabic stays
+on ALLaM on purpose, and English on the smaller model saved nothing when tested. The point is that compute is wasted unevenly, so the
+biggest leak can be found and closed for free. How much that saves overall depends on how much of the traffic is Arabizi.
 
 **Is the Dialect Tax fixed?** No. Arabizi still costs 1.5 times English on the sealed test, keeping Arabic on ALLaM avoids the
 cheap-model cost, and Saudi is still open.

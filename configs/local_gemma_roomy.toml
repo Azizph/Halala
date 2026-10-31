@@ -5,7 +5,7 @@ data = "data/saudi_parallel.dev.jsonl"
 sealed = "data/sealed/saudi_parallel.test.jsonl"
 
 [cascade]
-route_english = true      # with room for both, English on Gemma cost 85% of ALLaM alone (runs/local_gemma_roomy/measure.md)
+route_english = true      # for hardware with room for both. It saved nothing when tested on one GPU (runs/local_gemma/english_small_model.md)
 
 [models.small]
 backend = "ollama"
