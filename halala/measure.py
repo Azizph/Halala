@@ -199,5 +199,5 @@ def cmd_sealed(cfg: dict, unseal: bool) -> str:
                          "opening is logged.")
     items = open_sealed(cfg)
     small, large = _models(cfg, cached=True)
-    md, summary = _tax_table(_two_ways(items, small, large, cfg), f"{len(items)} sealed questions, seen by nobody until this run.")
+    md, summary = _tax_table(_two_ways(items, small, large, cfg), f"{len(items)} sealed questions, held back until this run.")
     return _save(cfg, "sealed", md, summary)

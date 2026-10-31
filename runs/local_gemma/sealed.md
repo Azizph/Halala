@@ -1,6 +1,6 @@
-Tested once. Reopened once on 2026-10-31 to count tokens from the saved answers, with new model calls blocked, and the right answers and seconds matched the first run exactly.
+Tested once. Reopened once on 2026-10-31 to count tokens from the saved answers, with no new model calls, and the right answers and seconds matched the first run exactly.
 
-55 sealed questions, seen by nobody until this run. Each form shows correct answers, then the tax: real seconds per correct answer as a multiple of English on the same row. Identical runs vary by up to about 20%, so small differences mean little.
+55 sealed questions, held back until this run. Each form shows correct answers, then the tax: real seconds per correct answer as a multiple of English on the same row. Identical runs vary by up to about 20%, so small differences mean little.
 
 | Design | Correct | Seconds per correct | en | msa | najdi | arabizi | mixed |
 |---|---|---|---|---|---|---|---|

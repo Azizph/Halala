@@ -9,8 +9,8 @@ in English takes ALLaM about 50 tokens. Type the same question in Arabizi and it
 about 1.2 times English.
 
 That's the **Dialect Tax**: the extra you pay, and the wrong answers you get, for writing the way you speak. Average scores hide it.
-The usual way to save compute, sending work to a cheaper model, adds to it: Gemma pays 1.5 to 1.9 times its English cost on Arabic,
-by tokens.
+The usual way to save compute, sending work to a cheaper model, adds to it: on a public benchmark, Gemma pays 1.5 to 1.9 times its
+English cost on Arabic, by tokens.
 
 The real halala has almost left daily life because of inflation. The goal is bringing the cost of a right answer back down to the
 halala, however you write. Arabizi is the first leak: a habit from the old internet, the worst case, and small enough to fix and test
@@ -27,20 +27,22 @@ Halala is a thin layer in front of the model that works through the tax, leak by
 
 ## How it works
 
-A question comes in and is cleaned up, then Halala detects its form. Arabizi is rewritten into Arabic script by rules and a list
-of real Arabic words, with no model call. Arabic goes to ALLaM. English can go to a smaller model when the hardware has room for
-both, though that setting is off in every result here and saved nothing when tested. A free check catches empty or refused answers,
-and every answer's real cost is recorded.
+A question comes in, Halala detects its form, then cleans it up. Arabizi is rewritten into Arabic script by a short hand list, about
+250,000 real Arabic words and rules, with no model call. Arabic goes to ALLaM. English can go to a smaller model, though that setting
+is off in every result here, and it saved nothing when tested on a machine without room for both. Every answer's real cost is
+recorded.
 
 **Where that leaves the tax:** on the sealed test, 55 questions tested once, Arabizi goes from 2 to 8 of 11 correct, and from 317 to
-64 tokens per right answer, against 50 in English (`runs/local_gemma/sealed.md`). Each form has only 11 questions there, so those
-figures are rough. Tokens repeat exactly but they aren't compute, so keep real seconds one layer down: Arabizi's tax goes from 8.1
-times English to 1.5 times, and seconds per right answer fall 18.5%. **The saving is on Arabizi alone.** English and Arabic cost about
-what they did, because Arabic stays on ALLaM on purpose and English on the smaller model saved nothing when tested
+65 tokens per right answer, against 50 in English (`runs/local_gemma/sealed.md`, 64.5 exactly). Each form has only 11 questions there,
+so those figures are rough. Token counts barely move on the same setup but they aren't compute, so keep model time one layer down:
+Arabizi's tax goes from 8.1 times English to 1.5 times, and seconds per right answer fall 18.5%. **The saving is almost all on
+Arabizi:** 6 of the 7 extra right answers and 118 of the 122 tokens saved. English and Arabic use about the tokens they did, because
+Arabic stays on ALLaM on purpose and English on the smaller model saved nothing when tested
 (`runs/local_gemma/english_small_model.md`). Across all 55, right answers rise from 44 to 51 and total tokens fall 4.5%, so tokens per
-right answer are 17.5% lower on a test that's one-fifth Arabizi. That figure follows the share of Arabizi in the traffic: about 10%
-at a tenth, and about 6% at a twentieth. On 30 other Arabizi questions nobody had seen, ALLaM alone gets 1 right and Halala gets 24, against 28 of 30 when the same questions are written in
-proper Arabic (`runs/local_gemma/arabizi_fresh3.md`). That batch looks easier than the one before it, because the previous rewrite
+right answer are 17.6% lower on a test that's one-fifth Arabizi. That figure follows the share of Arabizi in the traffic: by
+calculation about 10% at a tenth and about 6% at a twentieth, or 16%, 8% and 4% counting Arabizi's change alone. On the last 30 blind
+Arabizi questions, ALLaM alone gets 1 right and Halala gets 24, against 28 of 30 when the same questions are written in
+Arabic letters (`runs/local_gemma/arabizi_fresh3.md`). That batch looks easier than the one before it, because the previous rewrite
 got 23 there and 18 on the earlier one. Without its list of real words, this rewrite gets 14 (`runs/local_gemma/arabizi_parts.md`).
 On the development questions, which the rewrite was built on, Arabizi goes from 8 to 38 of 45 correct and from 327 to 55 tokens per
 right answer, and right answers across all 225 rise from 179 to 208 (`runs/local_gemma/dialect_tax.md`), with real compute per right
@@ -63,11 +65,11 @@ Receipts are in tokens, real counts from the server. Say on screen what a token 
 
 ### The video
 
-1. Open on a real receipt for a wrong answer.
-2. Show a realistic user asking the way they actually type.
-3. Follow one question through the trace.
+1. Open on a wrong answer anyone can spot: typed in Arabizi, ALLaM says a week has 30 days.
+2. Ask the same question in Arabic, where ALLaM gets it right: it knows the answer, it just couldn't read the question.
+3. Follow one question through the trace, to its receipt.
 4. Run the traffic stream.
-5. End on the before-and-after Dialect Tax table in tokens, including what didn't work.
+5. End on the results, what didn't work, and the next leak.
 
 If time allows, add one more thing: show that any app can point at Halala with a one-line change, which would make it feel like
 a product a Humain engineer could use.
@@ -116,9 +118,9 @@ Say what didn't work. The evidence is in `runs/`, and the code is in git at `f9a
 
 | Idea | Result | Evidence |
 |---|---|---|
-| Saudi word list | 45 to 48 of 100, needed a net gain of 5 | `runs/local_gemma/dialect_rewrite.md` |
+| Saudi word list | A net gain of 3 of 100, needed 5 | `runs/local_gemma/dialect_rewrite.md` |
 | Learned router, thresholds and repeated sampling | No better than the simple design, and slower | `runs/local_gemma/dev/results.md` |
-| Model rewrites of Arabizi, with and without examples | All worse than the rules | `runs/rewrite_eval_final.md` |
+| Model rewrites of Arabizi, with and without examples | None beat the rules plus word list | `runs/rewrite_eval_final.md` |
 | English to Gemma | No saving: 0.53 seconds per correct answer against 0.52 on ALLaM, with Gemma only part-way on this GPU, and 169% of ALLaM alone in mixed traffic on one 4 GB GPU | `runs/local_gemma/english_small_model.md`, `runs/local_gemma/measure_interleaved.md` |
 | Freer replies for dialect and Arabizi | 7 more right answers, but Najdi's tax rose to 2.5 times and Arabizi's to 3.4 | `runs/local_gemma/dialect_tax_instructions.md` |
 | Capping answer length | Saved nothing at 24 tokens, and lost accuracy at 16 or fewer | Run on 2026-10-30, 225 dev questions |

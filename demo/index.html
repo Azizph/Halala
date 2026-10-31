@@ -154,36 +154,36 @@ footer { padding: 7px 28px; font-size: 14px; color: var(--muted); border-top: 1p
 
 <main id="all" role="tabpanel" aria-labelledby="tabAll" hidden>
   <div class="top">
-    <div><h1>The Dialect Tax, live</h1><p>What one right answer costs, in tokens, for each way of writing</p></div>
+    <div><h1>The Dialect Tax, live</h1><p>What one right answer costs, in tokens, for each way of writing. A fifth of these questions are Arabizi.</p></div>
     <button id="go">Run all questions</button>
   </div>
   <div id="meter"><i></i></div>
-  <div id="now" dir="auto">Every question goes through ALLaM alone and through Halala, on real model calls.</div>
+  <div id="now" dir="auto">Every question is priced alone and through Halala, on real model calls. Where Halala changes nothing, one call counts for both.</div>
   <div class="key"><span><i style="background:var(--alone)"></i>ALLaM alone</span><span><i style="background:var(--right)"></i>With Halala</span></div>
   <div id="rows"></div>
   <div id="sums"></div>
   <div id="failed" hidden>
-    <h2>On questions nobody saw</h2>
-    <p>One logged test on 55 sealed questions. A right answer in Arabizi went from 317 tokens to 64, against 50 in English, and right answers from 2 to 8 of 11. The saving is on Arabizi: the other forms cost about the same. On this test, one-fifth Arabizi, tokens per right answer fell 17.5%, and less Arabizi means less saving. The gap is smaller, not closed.</p>
+    <h2>On questions held back</h2>
+    <p>One logged test on 55 sealed questions. A right answer in Arabizi went from 317 tokens to 65, against 50 in English, and right answers from 2 to 8 of 11. The saving is almost all on Arabizi: the other forms use about the same tokens. On this test, one-fifth Arabizi, tokens per right answer fell 17.6%, and less Arabizi means less saving. The gap is smaller, not closed.</p>
     <h2>What didn't work</h2>
     <ul>
-      <li>A word list for Saudi dialect: 45 to 48 of 100, short of the mark set beforehand, so it was dropped. Saudi is still open.</li>
+      <li>A word list for Saudi dialect: a net gain of 3 of 100, short of the 5 set beforehand, so it was dropped. Saudi is still open.</li>
       <li>A learned router with repeated sampling: no better than the simple design, and slower.</li>
-      <li>Asking a model to rewrite Arabizi: every version lost to the free rules.</li>
+      <li>Asking a model to rewrite Arabizi: no version beat the free rewrite.</li>
       <li>The first Arabizi rewrite: 2 of 15 on its first unseen test, so it was rebuilt around real Arabic words.</li>
     </ul>
   </div>
 </main>
 
-<footer>Tokens are the pieces of text an AI reads and writes, and they're how AI is priced. Development questions, on a community build of ALLaM 7B.</footer>
+<footer>Tokens are the pieces of text an AI reads and writes, and they're how AI is priced. Development questions, which the rewrite was built on, on a community build of ALLaM 7B.</footer>
 
 <script>
 const $ = id => document.getElementById(id);
-const NAMES = { en: "English", msa: "Formal Arabic", dialect: "Saudi dialect", najdi: "Najdi", arabizi: "Arabizi", mixed: "Mixed Arabic and English" };
+const NAMES = { en: "English", msa: "Formal Arabic", dialect: "Arabic dialect", najdi: "Najdi", arabizi: "Arabizi", mixed: "Mixed Arabic and English" };
 const ORDER = ["en", "msa", "najdi", "mixed", "arabizi"];
 const MODELS = { "allam-7b-q4-inst": "ALLaM 7B", "gemma3:4b": "Gemma 3 4B" };
 const modelName = name => MODELS[name] || name;
-const PICKS = ["sa-001", "sa-008", "sa-044"];
+const PICKS = ["sa-007", "sa-008", "sa-001"];
 const STEPS = [["form", "Form detected"], ["rewrite", "Rewrite"], ["route", "Model chosen"], ["answer", "Answer"]];
 let info = null, questions = [], number = 0, busy = false, stopping = false;
 
@@ -237,7 +237,7 @@ function step(key, detail, why, state = "done") {
 function why(event, form) {
   if (event.route === "small") return "English goes to the smaller model";
   if (event.route === "fallback") return "The smaller model gave no usable answer, so ALLaM answers";
-  if (form === "en") return "English stays on ALLaM: this hardware has no room for both models";
+  if (form === "en") return "English stays on ALLaM: the smaller model saved nothing in tests";
   return "Arabic stays on the model built for it";
 }
 function line(parts, className) {
@@ -257,16 +257,16 @@ function receiptLines(question, form, rewritten, mine, spent, alone) {
   const lines = [el("div", "r-title", "HALALA"), el("div", "r-sub", "Receipt " + String(number).padStart(4, "0")), el("div", "r-rule"),
                  text(question), line(["Form", NAMES[form]]), el("div", "r-rule")];
   if (alone.same_call) {
-    lines.push(line(["Nothing to fix here"]), text(mine.text), verdict(mine.correct), line(["ALLaM", tokens(spent.tokens)]),
+    lines.push(line(["Left as typed"]), text(mine.text), verdict(mine.correct), line([mine.correct === false ? "Wasted" : "ALLaM", tokens(spent.tokens)]),
                el("div", "r-rule"), line(["TOTAL", tokens(spent.tokens)], "r-total"));
   } else {
     const before = alone.tokens, after = spent.tokens;
     lines.push(line(["WITHOUT HALALA"]), text(alone.text || "(no answer)"), verdict(alone.correct), line([alone.correct === false ? "Wasted" : "ALLaM", tokens(before)]), el("div", "r-rule"),
                line(["WITH HALALA"]));
     if (rewritten) lines.push(line(["Rewrite, no model", "0"]));
-    lines.push(text(mine.text || "(no answer)"), verdict(mine.correct), line([modelName(mine.model), tokens(after)]), el("div", "r-rule"), line(["TOTAL", tokens(after)], "r-total"));
+    lines.push(text(mine.text || "(no answer)"), verdict(mine.correct), line([mine.correct === false ? "Wasted" : modelName(mine.model), tokens(after)]), el("div", "r-rule"), line(["TOTAL", tokens(after)], "r-total"));
     if (alone.correct === false && mine.correct) lines.push(line(["You kept a right answer"], "r-right"));
-    else if (after < before) lines.push(line(["Saved", tokens(before - after)], "r-right"));
+    else if (rewritten && mine.correct && after < before) lines.push(line(["Saved", tokens(before - after)], "r-right"));
   }
   lines.push(el("div", "r-rule"), el("div", "r-note", "Amounts are tokens, the pieces of text an AI reads and writes."));
   return lines;
@@ -354,7 +354,7 @@ function draw(tally) {
     ["alone", "mine"].forEach((kind, i) => {
       const bar = row.querySelectorAll(".bar")[i], side = sides[kind];
       bar.querySelector("i").style.width = (cost(side) / top * 86) + "%";
-      bar.querySelector("span").textContent = side.seen ? tokens(cost(side)) : "-";
+      bar.querySelector("span").textContent = side.right ? tokens(cost(side)) : "-";
     });
     const score = row.querySelector(".score");
     score.textContent = `${sides.alone.right} → ${sides.mine.right}`;
@@ -413,7 +413,7 @@ function show(view) {
 }
 function pickButtons() {
   const box = $("picks");
-  box.replaceChildren(el("span", "label", "Try one the way people type it"));
+  box.replaceChildren(el("span", "label", "Try one in Arabizi"));
   for (const group of PICKS) {
     const q = questions.find(x => x.group === group && x.form === "arabizi");
     if (!q) continue;
