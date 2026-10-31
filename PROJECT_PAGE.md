@@ -77,6 +77,13 @@ got 24, at 60 tokens per right answer, against 28 when the same questions are wr
 real words, keeping the rules and a short hand list, Halala got 14. That batch looks easier than the one before it, because the
 previous version of the rewrite got 23 there and 18 on the earlier one.
 
+**When typing gets messy:** 75 Arabizi questions outside the sealed set were retyped ten ways, under a rule set before the run: a way
+of typing holds up if Halala keeps two-thirds of its right answers and doesn't fall below ALLaM alone. Six held up, including emojis,
+stretched letters and swapped letters. Four didn't: from 65 right answers, one typo leaves 39, no vowels 38, no number letters 26 and
+two typos 17. Halala never fell below ALLaM alone, and two full runs matched on every row (`runs/local_gemma/messy_typing.md`). All
+capitals passes on the total, but gets 14 of the 30 questions unseen at the freeze. It's a one-line fix, left out so the sealed result
+stays valid.
+
 On the 225 development questions, right answers rise from 179 to 208, and Arabizi from 8 to 38 of 45, at 327 tokens per right answer
 down to 55. The rewrite was built on those questions, so they overstate it.
 
@@ -102,7 +109,7 @@ recorded.
   wrote them.
 - **Real measurements:** token counts and seconds both come from the server, and failed attempts count as spend. Speed drifts between
   runs, and the sealed run replays identical prompts from a cache, which keeps that drift out of most of its comparison.
-- **Tests and checks:** 69 tests on mock models, a regression check on the tax table, and a fresh clone that reproduced the development
+- **Tests and checks:** 72 tests on mock models, a regression check on the tax table, and a fresh clone that reproduced the development
   and blind counts.
 
 **What didn't work**
@@ -112,7 +119,7 @@ recorded.
 | A word list to turn Saudi dialect into formal Arabic | A net gain of 3 of 100, short of the 5 set beforehand, so it was dropped |
 | A learned router with certified thresholds and repeated sampling | No better than the simple design, and slower |
 | Asking a model to rewrite Arabizi | No version beat the rules plus word list |
-| The first Arabizi rewrite | 2 of 15 on its first unseen test, against 14 in proper Arabic, so it was rebuilt around real Arabic words |
+| The first Arabizi rewrite | 2 of 15 on its first unseen test, against 14 in Arabic letters, so it was rebuilt around real Arabic words |
 | English to the small model | No saving: 0.53 seconds per correct answer against 0.52 on ALLaM, on 45 development questions, and 169% of ALLaM alone in mixed traffic on one 4 GB GPU. It stays a setting, off in every result here |
 
 ---
@@ -160,4 +167,5 @@ AI is priced and they barely move between runs, so they're the clearest unit to 
 beside them, and cost choices were made on seconds.
 
 **What doesn't this show?** These results use a community build of ALLaM 7B, not Humain's served models. The test sets are small, so
-a difference of a few points can be noise. Arabizi may do worse on words the lists don't hold.
+a difference of a few points can be noise. Arabizi may do worse on words the lists don't hold, and no test question has come from a
+real message yet.

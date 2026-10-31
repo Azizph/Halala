@@ -21,7 +21,7 @@ def main(argv: list[str] | None = None) -> int:
 
     a = with_config("ask", "send one question through Halala and print each step")
     a.add_argument("question")
-    with_config("dialect-tax", "real seconds per correct answer by form, before and after each fix")
+    with_config("dialect-tax", "tokens and real seconds per correct answer by form, with and without Halala")
     f = with_config("fresh", "Arabizi on unseen text, from questions nobody tuned on")
     f.add_argument("--data", default="data/arabizi_fresh.jsonl")
     k = with_config("check", "regression gate on the dialect-tax table")

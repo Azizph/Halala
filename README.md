@@ -21,7 +21,7 @@ build `allam-7b-q4-inst` from `configs/allam.Modelfile`. Then use these commands
 |---|---|
 | `python -m halala ask "wesh 3asmat el sa3odiya?"` | Sends one question through Halala and prints each step |
 | `python -m halala dialect-tax` | Tokens and real seconds per correct answer by form, with and without Halala |
-| `python -m halala fresh --data data/arabizi_fresh3.jsonl` | Arabizi on questions nobody tuned on, against the same questions in proper Arabic |
+| `python -m halala fresh --data data/arabizi_fresh3.jsonl` | Arabizi on questions nobody tuned on, against the same questions in Arabic letters |
 | `python -m halala check` | Fails if a form falls two or more correct answers below the saved baseline |
 | `python -m halala measure` | ALLaM alone against Halala on mixed traffic |
 | `python -m halala dialect-audit` | The tax on a public benchmark, in 7 forms, on both models |

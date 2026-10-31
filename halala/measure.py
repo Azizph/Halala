@@ -1,6 +1,6 @@
 """What a correct answer really costs, by how the question was written: the Dialect Tax, in real seconds and tokens.
 
-`dialect-tax` shows the tax in each form before and after each fix, and `check` guards that table against regressions.
+`dialect-tax` shows the tax in each form with and without Halala, and `check` guards that table against regressions.
 `measure` shows what Halala does to mixed traffic. `sealed` is the one run on unseen questions. Seconds are the server's own
 evaluation time, so failed attempts count as spend and nothing is estimated.
 """

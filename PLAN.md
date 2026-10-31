@@ -125,7 +125,7 @@ Say what didn't work. The evidence is in `runs/`, and the code is in git at `f9a
 | Freer replies for dialect and Arabizi | 7 more right answers, but Najdi's tax rose to 2.5 times and Arabizi's to 3.4 | `runs/local_gemma/dialect_tax_instructions.md` |
 | Capping answer length | Saved nothing at 24 tokens, and lost accuracy at 16 or fewer | Run on 2026-10-30, 225 dev questions |
 | Answer cache for repeated questions | No repeats in the data to reuse | Consultant's review, 2026-10-30 |
-| The first Arabizi rewrite on unseen text | 2 of 15, against 14 in proper Arabic, which is why it was rebuilt | `runs/local_gemma/arabizi_fresh_before.md` |
+| The first Arabizi rewrite on unseen text | 2 of 15, against 14 in Arabic letters, which is why it was rebuilt | `runs/local_gemma/arabizi_fresh_before.md` |
 | Treating a vowel before two consonants as short | About one word in 441, on 90 checked questions | Run on 2026-10-31, 90 questions that were no longer unseen |
 | Capping how much a word's commonness counts | Within a word or two either way on 60 checked questions | Run on 2026-10-31, 45 dev and 15 fresh questions |
 | Making an untyped hamza free | Cost a blind question: `القمر` became `الأقمار` and `أول` became `أوائل` | `runs/local_gemma/arabizi_fresh2.md` |
@@ -137,7 +137,9 @@ Ideas that aren't in the plan. They stay here unless the builder moves them onto
 - Open replies on the benchmark, to see if "reply with only the letter" causes part of the Saudi gap. It needs 100 fresh questions.
 - A retry of the Saudi word list on fresh questions, adding `ايش من الجاي` and `الي`.
 - A Dialect Tax scorecard across models: done, in `runs/local_gemma/scorecard.md`. Of the four models that ran properly, ALLaM pays the least on the five dialects: 1.1 to 1.2 times English, against 1.5 to 2.2 for the others.
-- Messy typing, run at the builder's request on 2026-10-31. 75 Arabizi questions outside the sealed set, each retyped ten ways with fixed seeds: first capital, all capitals, no punctuation, an emoji, stretched letters, one typo, two typos, swapped letters, no number letters and no vowels. **Rule set before the run:** a way of typing holds up if Halala keeps at least two-thirds of the right answers it gets as written, and doesn't fall below ALLaM alone. All ten are reported, whichever way they fall, and the rewrite stays frozen.
+- Messy typing, run at the builder's request on 2026-10-31. 75 Arabizi questions outside the sealed set, each retyped ten ways with fixed seeds: first capital, all capitals, no punctuation, an emoji, stretched letters, one typo, two typos, swapped letters, no number letters and no vowels. **Rule set before the run:** a way of typing holds up if Halala keeps at least two-thirds of the right answers it gets as written, and doesn't fall below ALLaM alone. All ten are reported, whichever way they fall, and the rewrite stays frozen. Done, in `runs/local_gemma/messy_typing.md`: six held up, four didn't, Halala never fell below ALLaM alone, and two full runs matched on every row.
+- All capitals: lower-casing first is a one-line fix, left out so the sealed result stays valid.
+- Ask ten real people to type five questions. No test question has come from a real message yet.
 - A short test of telling the model which dialect it's reading, as a first step on the Saudi leak.
 - An answer memory shared across forms looks weak: rewritten Arabizi matches the proper Arabic exactly on only 6 of 30 unseen
   questions, and no other pair of forms matched.
